@@ -1,0 +1,33 @@
+<h2>系统配置</h2>
+
+<span style='color: red; font-size: medium;'>1.本界面为设置系统的基本配置信息，可不做更改。<br></b></span>
+<table class="table table-striped">
+    <thead>
+    <?php
+    foreach ($column as $key => $value) {
+        echo "<th/>".$value."</th>";
+    }
+    ?>
+    </thead>
+    <?php
+    foreach ($setting as $key_name => $row) {
+        ?><tr><?php
+        foreach ($column as $key => $value) {
+            if($key == 'key_value'){
+                echo "<td id=".$row['id'].">".$row[$key]."</td>";
+                continue;
+            }
+            if($key == 'operation'){
+                ?><td/><?php
+                echo "<button class='btn btn-primary' id='edit-".$row["id"]."' onclick='edit(".$row['id'].",\"".$row['key_value']."\")'>编辑</button>";
+                ?></td><?php
+                continue;
+            }
+            echo "<td>".$row[$key]."</td>";
+        }
+        ?></tr><?php
+    }
+    ?>
+</table>
+
+<script src="/js/setting/config.js"></script>
