@@ -1,0 +1,107 @@
+<?php
+$title = '配置表model使用说明';
+$this->headTitle($title);
+?>
+    <h2><?php echo $this->escapeHtml($title); ?></h2>
+
+
+    <h3>在controller中引入Table</h3>
+    <pre>
+    public $config_table;
+    protected function getConfigTable()
+    {
+        if (!$this->config_table) {
+            $sm = $this->getServiceLocator();
+            $this->config_table = $sm->get('Setting\Model\ConfigTable');
+        }
+        return $this->config_table;
+    }
+    </pre>
+    <hr/>
+    <h3>1.获取一对多配置</h3>
+    <p>原型</p>
+    <pre>
+    /**
+     * @param $key_name string|array 传入需要查询的key不可空，空就返回空数组
+     * @param array $value_name string|array 传入需要查询的value的name，可以空，可以为字符串，可以为array(string,string)
+     * @param bool $with_value_name bool 是否需要把value_name作为返回值数组的key
+     * @return array|\Zend\Db\Adapter\Driver\ResultInterface 返回数组，每个元素为一个配置项的所有信息，包括编号，名称，中文，等信息
+     */
+    public function getConfigValueByKey($key_name,$value_name = array(),$with_value_name = true)
+</pre>
+    <h4>一对多的配置信息，传入key值，获取包含所有信息的value数组</h4>
+    <code>$stu_status = $this->config_table->getConfigValueByKey("stu_status");</code><br/><br/>
+<?php
+print_r($this->stu_status);
+echo "<br/><br/>";
+?>
+
+
+    <h4>一对多的配置信息，传入key值，传入value_name/编号 获取指定key_name，指定value_name的value数组</h4>
+    <code>$stu_status2 = $this->config_table->getConfigValueByKey("stu_status",10);</code><br/><br/>
+    结果为数组，循环var_dump每个元素如下<br/>
+<?php
+print_r($this->stu_status2);
+echo "<br/><br/>";
+?>
+
+
+    <h4>一对多的配置信息，传入key值，传入value_name/编号数组 获取指定key_name，指定value_name的value数组</h4>
+    <code>$stu_status3 = $this->config_table->getConfigValueByKey("stu_status",array(2,3));</code><br/><br/>
+
+<?php
+print_r($this->stu_status3);
+echo "<br/><br/>";
+?>
+
+    <h4>一对多的配置信息，传入key值，传入value_name/编号数组 获取指定key_name，指定value_name的value数组</h4>
+    <code>$stu_status4 = $this->config_table->getConfigValueByKey("stu_status",array(),false,true);</code><br/><br/>
+<?php
+print_r($this->stu_status4);
+?>
+
+
+    <hr/>
+    <h3>2.获取一对一的配置</h3>
+    <p>原型</p>
+    <pre>
+    /**
+     * 根据配置项的key，获取配置项的值
+     * @param $key_name string|array 传入需要查询的key
+     * @param $one_value_only boolean 当只传入一个key时，是否只返回第一个匹配结果的key_value，默认为只返回一个值
+     * @param $with_key_name boolean 返回的数组key是否为传入的key_name
+     * @return array|\Zend\Db\Adapter\Driver\ResultInterface
+     */
+    public function getConfigKey($key_name,$one_value_only = true,$with_key_name = true)
+</pre>
+<?php
+if(isset($school_name)){
+    ?>
+    <h4>一对一配置，根据key_name获取key_value</h4>学校名称：<br/>
+    <code>$school_name =  $this->config_table->getConfigKey("school_name");</code><br/>
+    <?php
+    var_dump($school_name);
+}
+?>
+
+
+<?php
+if(isset($sys_info2)){?>
+    <h4>一对一配置，获取多个</h4>学校其它信息2：
+    <code>$sys_info2 = $this->config_table->getConfigKey(array("system_name","current_year"),true,false);</code><br/>
+
+    <?php
+    var_dump($sys_info2);
+}
+?>
+
+
+<?php
+if(isset($sys_info)){
+    ?>
+    <h4>一对一配置，获取多个。把返回值数组的key变为传入的key</h4>学校其它信息：<br/>
+    <code>$sys_info = $this->config_table->getConfigKey(array("system_name","current_year"));</code><br/>
+    <?php
+    var_dump($sys_info);
+}
+?>

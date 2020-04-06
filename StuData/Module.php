@@ -1,15 +1,13 @@
 <?php
 
-namespace Setting;
+namespace StuData;
 
+use StuData\Model\TStuBase;
+use StuData\Model\TStuBaseTable;
 use Zend\Mvc\MvcEvent;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Db\TableGateway\TableGateway;
-
-use Setting\Model\ConfigTable;
-use Setting\Model\ConfigKey;
-
 
 class Module
 {

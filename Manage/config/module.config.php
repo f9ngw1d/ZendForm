@@ -15,7 +15,7 @@ return array(
                     'route'    => '/manage',
                     'defaults' => array(
                         '__NAMESPACE__' => 'Manage\Controller',
-                        'controller'    => 'Manage',
+                        'controller'    => 'Setting',
                         'action'        => 'index',
                     ),
                 ),
@@ -28,7 +28,7 @@ return array(
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'param1'		 => '[a-zA-Z0-9]*',
+                                'param1'     => '[a-zA-Z0-9]*',
                                 'param2'    => '[a-zA-Z0-9]*',
                                 'param3'    => '[a-zA-Z0-9]*',
                                 'param4'    => '[a-zA-Z0-9]*',
@@ -46,7 +46,7 @@ return array(
 
     'view_manager' => array(
         'template_path_stack' => array(
-            'stu' => __DIR__ . '/../view',
+            'manage' => __DIR__ . '/../view',
         ),
     ),
 );

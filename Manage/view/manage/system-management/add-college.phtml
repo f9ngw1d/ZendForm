@@ -1,0 +1,252 @@
+<?php
+$title = '添加学院信息';
+$this->headTitle($title);
+?>
+<!--<h3><?php echo $this->escapeHtml($title);?></h3>-->
+<style type="text/css">
+    .message{
+        color: #b23131;
+    }
+</style>
+<!--  提交审核按钮 -->
+<!--<br><br>-->
+<?php
+//if(in_array(1,$this->rid)){
+//    echo " <a href = '".$this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college"))."' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>";
+//}
+//?>
+<!--<br/>-->
+<!--<input id="confirmcheck" type="button" onclick="javascript:return ifCheck()" class="btn" value=" 提交审核 ">-->
+<!---<a href = '<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college")); ?>' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>
+<br/><br/>
+----->
+<br>
+<!--<div class = "tab-content" >-->
+<!-- ******************** Tab1 学院信息填写 ******************** -->
+<div class = "tab-pane active" id = "addinfo2" >
+    <!--<h3>添加科研或实践项目经历</h3>-->
+    <form class="form-horizontal"  action="/manage/system-manage/addCollege/uid/<?php echo $this->uid?>" method="post" enctype="multipart/form-data">
+        <div class="control-group">
+            <label class="control-label" for="college_id">学院编号</label>
+            <div class = "controls">
+                <!--<input type="text" id="project_name" />-->
+                <textarea   rows="1" id="college_id" name="college_id" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                <div class='text-right'>
+                    <em style='color:red'>50</em>/<span>50</span>字符
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="college_name">学院名称</label>
+            <div class = "controls">
+                <!--<input type="text" id="project_name" />-->
+                <textarea   rows="1" id="college_name" name="college_name" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                <div class='text-right'>
+                    <em style='color:red'>50</em>/<span>50</span>字符
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="college_id">学院电话</label>
+            <div class = "controls">
+                <!--<input type="text" id="project_name" />-->
+                <textarea   rows="1" id="phone" name="phone" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                <div class='text-right'>
+                    <em style='color:red'>50</em>/<span>50</span>字符
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="college_id">网址</label>
+            <div class = "controls">
+                <!--<input type="text" id="project_name" />-->
+                <textarea   rows="1" id="ip_address" name="ip_address" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                <div class='text-right'>
+                    <em style='color:red'>50</em>/<span>50</span>字符
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="college_id">办公楼地址</label>
+            <div class = "controls">
+                <!--<input type="text" id="project_name" />-->
+                <textarea   rows="1" id="address" name="address" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                <div class='text-right'>
+                    <em style='color:red'>50</em>/<span>50</span>字符
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="button" id="add_college" class="btn btn-primary"> 确认添加学院 </button>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="span12">
+        <?php if($this->college_table){
+            ?>
+            <h3>已添加的学院信息</h3>
+            <table class='table table-striped table-hover table-condensed'>
+                <thead>
+                <th>编号</th>
+                <th>名称</th>
+                <th>联系电话</th>
+                <th>办公地址</th>
+                <th>网址</th>
+                <th>操作</th>
+                </thead>
+                <tbody>
+                <?php
+                foreach ($this->college_table as $key => $row) {
+                    ?>
+                    <tr>
+
+                        <td class="span2"> <?php echo $row->college_id;?></td>
+                        <td class="span3"> <?php echo $row->college_name;?></td>
+                        <td class="span3"> <?php echo $row->phone;?></td>
+                        <td class="span3"> <?php echo $row->ip_address;?></td>
+                        <td  class="span2"><?php echo $row->address;?></td>
+                        <td  class="span2">
+                            <!--<?php echo $row->project_id;?>-->
+                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college","id"=>$row->college_id)); ?>'  onclick='javascript:return ifCheckdel()' class="button">删除  </a>
+                        </td>
+                    </tr>
+                <?php } ?> <!-- 循环输出项目记录-->
+                </tbody>
+            </table>
+        <?php  } ?>
+    </div>
+
+
+</div>
+<!--</div>-->
+<script type="text/javascript" src="<?php echo $this->basePath('js/stu/stuconfirm.js?version=1.1.1');?>"></script>
+<script>
+
+    /*
+    *显示限制textarea输入字符数目
+    */
+    function textAreaChange(obj) {
+        var $this = $(obj);
+        var count_total = $this.next().children('span').text();
+        var count_input = $this.next().children('em');
+        var area_val = $this.val();
+        if(area_val.len()>count_total){
+            area_val = autoAddEllipsis(area_val,count_total);//根据字节截内容
+            $this.val(area_val);
+            count_input.text(0);//显示可输入数
+        }else{
+            count_input.text(count_total - area_val.len());//显示可输入数
+        }
+    }
+    /*
+     * 得到字符串的字节长度
+     */
+    String.prototype.len = function(){
+        return this.replace(/[^\x00-\xff]/g, "xx").length;
+    };
+    /*
+     * 处理过长的字符串，截取并添加省略号
+     * 注：半角长度为1，全角长度为2
+     * pStr:字符串
+     * pLen:截取长度
+     * return: 截取后的字符串
+     */
+    function autoAddEllipsis(pStr, pLen) {
+        var _ret = cutString(pStr, pLen);
+        var _cutFlag = _ret.cutflag;
+        var _cutStringn = _ret.cutstring;
+        return _cutStringn;
+    }
+    /*
+    * 取得指定长度的字符串
+    * 注：半角长度为1，全角长度为2
+    * pStr:字符串
+    * pLen:截取长度
+    * return: 截取后的字符串
+    */
+    function cutString(pStr, pLen) {
+        // 原字符串长度
+        var _strLen = pStr.length;
+        var _tmpCode;
+        var _cutString;
+        // 默认情况下，返回的字符串是原字符串的一部分
+        var _cutFlag = "1";
+        var _lenCount = 0;
+        var _ret = false;
+        if (_strLen <= pLen/2){_cutString = pStr;_ret = true;}
+        if (!_ret){
+            for (var i = 0; i < _strLen ; i++ ){
+                if (isFull(pStr.charAt(i))){_lenCount += 2;}
+                else {_lenCount += 1;}
+                if (_lenCount > pLen){_cutString = pStr.substring(0, i);_ret = true;break;}
+                else if(_lenCount == pLen){_cutString = pStr.substring(0, i + 1);_ret = true;break;}
+            }
+        }
+        if (!_ret){_cutString = pStr;_ret = true;}
+        if (_cutString.length == _strLen){_cutFlag = "0";}
+        return {"cutstring":_cutString, "cutflag":_cutFlag};
+    }
+    /*
+     * 判断是否为全角
+     *
+     * pChar:长度为1的字符串
+     * return: true:全角
+     *         false:半角
+     */
+    function isFull (pChar){
+        if((pChar.charCodeAt(0) > 128)){return true;}
+        else{return false;}
+    }
+
+
+    $(document).ready(function(){
+
+        $("#add_project").click(function () {
+            var project_name = $("#project_name").val();
+            var abstract = $("#abstract").val();
+            var conclusion = $("#conclusion").val();
+            var achievement = $("#achievement").val();
+            var file = $("#certificate").val();
+            var certificate_level = $("#certificate_level").val();
+            // alert(file+ '/' +certificate.name + '/' + certificate.type + '/' + certificate.size);
+            if(!project_name){
+                alert("项目名称不可以为空！");
+                $("#project_name").focus();
+            } else if(!abstract){
+                alert("项目概要不可以为空！");
+                $("#abstract").focus();
+            }else if(!conclusion){
+                alert("项目结论不可以为空！");
+                $("#conclusion").focus();
+            }else if(!achievement){
+                alert("项目成果不可以为空！");
+                $("#achievement").focus();
+            }else if(!certificate_level){
+                alert("请选择项目级别！");
+                $("#certificate_level").focus();
+            }else if(file){
+                var typeAllow = ["jpg","jpeg","png"];//允许的后缀
+                var certificate = document.getElementById("certificate").files[0];
+                var certificatetype = (certificate.name.substring(certificate.name.lastIndexOf(".")+1,certificate.name.length)).toLowerCase(); // 判断文件类型是否在要求的里面
+                if(certificate.size/1024 >2000){//如果上传了文件，就判断大小
+                    $("#certificate").focus();
+                    alert("获奖凭证超出2M!");
+                }
+                else if($.inArray(certificatetype,typeAllow) < 0){
+                    $("#certificate").focus();
+                    alert(certificate.name + " 的文件后缀不符合该文件凭证上传格式！请重新上传!");
+                    return false;
+                }
+                else{
+                    $(this).prop("type","submit");
+                }
+            }else{
+                $(this).prop("type","submit");
+            }
+        })
+    });
+
+</script>

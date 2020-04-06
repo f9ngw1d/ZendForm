@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8814669b-be8e-410f-99f3-5dd3a54bf410" name="Default Changelist" comment="" />
+    <list default="true" id="8814669b-be8e-410f-99f3-5dd3a54bf410" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Manage/config/module.config.php" beforeDir="false" afterPath="$PROJECT_DIR$/../Manage/config/module.config.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Module.php" beforeDir="false" afterPath="$PROJECT_DIR$/Module.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/module.config.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/module.config.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,7 +18,11 @@
       <executable />
     </execution>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1Zv8lxTSMZuhBi91Sg58c97ft4B" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -20,6 +30,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
   </component>
   <component name="RecentsManager">
@@ -39,6 +50,7 @@
       <updated>1585708361528</updated>
       <workItem from="1585708362701" duration="1431000" />
       <workItem from="1585736451011" duration="1342000" />
+      <workItem from="1586005363759" duration="742000" />
     </task>
     <servers />
   </component>

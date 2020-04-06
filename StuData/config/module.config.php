@@ -7,13 +7,13 @@ return array(
     ),
     'router' => array(
         'routes' => array(
-            'setting' => array(
+            'studata' => array(
                 'type'    => 'Literal',
                 'options' => array(
-                    'route'    => '/setting',
+                    'route'    => '/studata',
                     'defaults' => array(
                         '__NAMESPACE__' => 'StuData\Controller',
-                        'controller'    => 'StuData',
+                        'controller'    => 'ShowDataInfo',
                         'action'        => 'index',
                     ),
                 ),
@@ -44,7 +44,7 @@ return array(
 
     'view_manager' => array(
         'template_path_stack' => array(
-            'setting' => __DIR__ . '/../view',
+            'studata' => __DIR__ . '/../view',
         ),
     ),
 );

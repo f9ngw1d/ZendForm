@@ -163,4 +163,8 @@ class SettingController extends AbstractActionController
         }
         return $this->config_table;
     }
+    public function deleteAllDataAction()
+    {
+
+    }
 }
