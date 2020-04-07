@@ -2,9 +2,9 @@
 return array(
     'controllers' => array(
         'invokables' => array(
-            'Manage\Controller\Setting' => 'Stu\Controller\SettingController',
-            'Manage\Controller\SystemManagement' => 'Stu\Controller\SystemManagementController',
-            'Manage\Controller\State2CheckProject' => 'Stu\Controller\State2CheckProjectController',
+            'Manage\Controller\Setting' => 'Manage\Controller\SettingController',
+            'Manage\Controller\SystemManagement' => 'Manage\Controller\SystemManagementController',
+            'Manage\Controller\State2CheckProject' => 'Manage\Controller\State2CheckProjectController',
         ),
     ),
     'router' => array(
