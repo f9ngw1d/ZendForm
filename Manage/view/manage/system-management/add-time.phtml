@@ -1,0 +1,139 @@
+<?php
+$url = '//ajax/page/';
+?>
+<?php
+$title = '添加时间设置信息';
+$this->headTitle($title);
+?>
+<!--<h3><?php echo $this->escapeHtml($title);?></h3>-->
+<style type="text/css">
+    .message{
+        color: #b23131;
+    }
+</style>
+
+<br><br>
+<div class='message'>
+    1. 设置招生工作的几个时间节点。可手动开启或关闭，亦可设置好开始时间及结束时间，由系统自动开关<br/>
+    2. 对系统已添加好的时间设置，只可更改开始及结束时间和开关状态，不可更改名称<br/>
+    <br/>
+</div>
+
+
+<div class = "tab-pane active" id = "addinfo2" >
+    <!--<h3>设置时间</h3>-->
+    <form class="form-horizontal"  action="/manage/system-manage/addTime/uid/<?php echo $this->uid?>" method="post" enctype="multipart/form-data">
+        <div class="control-group">
+            <label class="control-label" for="name">项目名称</label>
+            <div class = "controls">
+                <span class = 'message'>*&nbsp;</span>
+                <textarea   rows="2" id="name" name="name"></textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="start_time">开始时间</label>
+            <div class = "controls">
+                <textarea   rows="2" id="start_time" name="start_time"></textarea>
+                <div class='text-right'>
+                    <span>例：2019-08-16 00:00:00</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="end_time">结束时间</label>
+            <div class = "controls">
+                <textarea   rows="2" id="end_time" name="end_time"></textarea>
+                <div class='text-right'>
+                    <span>例：2019-08-17 22:31:24</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="status">开关状态</label>
+            <div class = "controls">
+                <select name="cars" style="width:110px">
+                    <option value="auto">自动</option>
+                    <option value="manual">手动</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="description">备注</label>
+            <div class = "controls">
+                <textarea   rows="2" id="description" name="description"></textarea>
+                <div class='text-right'>
+                    <button type="button" id="manage_time" class="btn btn-primary"> 设置 </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="span12">
+        <?php if($this->time_table){
+            ?>
+            <h3>已设项</h3>
+            <table class='table table-striped table-hover table-condensed'>
+                <thead>
+                <th>编号</th>
+                <th>名称</th>
+                <th>开始</th>
+                <th>结束</th>
+                <th>备注</th>
+                <th>状态</th>
+                </thead>
+                <tbody>
+                <?php
+                foreach ($this->time_table as $key => $row) {
+                    ?>
+                    <tr>
+
+                        <td class="span2"> <?php echo $row->id;?></td>
+                        <td class="span3"> <?php echo $row->name;?></td>
+                        <td class="span3"> <?php echo $row->start;?></td>
+                        <td class="span3"> <?php echo $row->end;?></td>
+                        <td  class="span2"><?php echo $row->description;?></td>
+                        <td  class="span2">
+                            <!--<?php echo $row->project_id;?>-->
+                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-time","id"=>$row->college_id)); ?>'  onclick='javascript:return ifCheckdel()' class="button">编辑  </a>
+                        </td>
+                    </tr>
+                <?php } ?> <!-- 循环输出项目记录-->
+                </tbody>
+            </table>
+        <?php  } ?>
+        <?php if ($this->pageCount): ?>
+            <div class="paginationControl">
+                <!-- Previous page link -->
+                <?php
+                echo "共计".$url.$this->pageCount."条数据";
+                ?>
+                <?php if (isset($this->previous)): ?>
+                    <a href="<?php echo $url. $this->previous; ?>">
+                        < 上一页
+                    </a> |
+                <?php else: ?>
+                    <span class="disabled">< 上一页</span> |
+                <?php endif; ?>
+
+                <!-- Numbered page links -->
+                <?php foreach ($this->pagesInRange as $page): ?>
+                    <?php if ($page != $this->current): ?>
+                        <a href="<?php echo $url. $page;?>">
+                            <?php echo $page; ?>
+                        </a> |
+                    <?php else: ?>
+                        <?php echo $page; ?> |
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <!-- Next page link -->
+                <?php if (isset($this->next)): ?>
+                    <a href="<?php echo $url. $this->next; ?>">
+                        下一页 >
+                    </a>
+                <?php else: ?>
+                    <span class="disabled">下一页 ></span>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+    </div>
