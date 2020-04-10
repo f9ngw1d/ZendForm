@@ -1,0 +1,97 @@
+<style>
+    label span, label {
+        text-align: left;
+        margin-right: 30px;
+        height: 35px;
+    }
+
+    input[type="text"] {
+        height: 20px;
+        width: 140px;
+        margin-bottom: 0;
+    }
+
+    select {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    label {
+        font-size: 15px;
+        text-align: center;
+        width: 150px;
+        margin-right: 10px;
+    }
+    .message1{
+        color: #EE0000;
+    }
+    .message2{
+
+        color:  #A9A9A9;
+    }
+</style>
+<?php
+$title = '高校信息';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
+    <?php
+    echo "<li><a href='/basicinfo/uniset/uniset' >添加高校信息</a></li>";
+    echo "<li><a href='/basicinfo/uniset/unisearch' >查询高校信息</a></li>";
+    ?>
+</ul>
+
+<h2>添加高校</h2>
+<div id="add">
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action',$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"uniset")));
+    $form->prepare();
+
+    echo $this->form()->openTag($form);
+    ?>
+</div>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('university_name')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('university_name')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：北京大学</span></div>
+</div>
+<br>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('university_id')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('university_id')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：10001</span></div>
+</div>
+<br>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('SSDM')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('SSDM')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：11</span></div>
+</div>
+<br>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('SSDMC')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('SSDMC')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：北京市</span></div>
+</div>
+<br>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('is985')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('is985')); ?></div>
+</div>
+<br>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('is211')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('is211')); ?></div>
+</div>
+<br>
+<div class="row">
+    <div class="span3"><?php echo $this->formLabel($form->get('freetest_qualified')); ?></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('freetest_qualified')); ?></div>
+</div>
+<br>
+<div class="row">
+    <div class="span7" style="text-align: center;"><?php echo $this->formElement($form->get('submit')); ?></div>
+</div>
+<br>
+<?php   echo $this->form()->closeTag();
+?>

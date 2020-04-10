@@ -1,0 +1,300 @@
+<style>
+    label span, label {
+        text-align: left;
+        margin-right: 30px;
+        height: 35px;
+    }
+
+    input[type="text"] {
+        height: 20px;
+        width: 140px;
+        margin-bottom: 0;
+    }
+
+    select {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    label {
+        margin-right: 40px;
+    }
+    .message1{
+        color: #EE0000;
+    }
+    .message2{
+
+        color:  #A9A9A9;
+    }
+</style>
+<?php
+$title = '高校信息';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
+    <?php
+    echo "<li><a href='".$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"uniset"))."' >添加高校信息</a></li>";
+    echo "<li><a href='".$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"unisearch"))."' >查询高校信息</a></li>";
+    ?>
+</ul>
+
+<h2>查询高校</h2>
+<span style='color: red; font-size: medium;'>1、以下共有七个查询条件，可只输入一个条件进行查询<br><br></span>
+<div id="add">
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action', $this->url("basicinfo/default",array("controller"=>"uniset","action"=>"unisearch")));
+    $form->prepare();
+
+    echo $this->form()->openTag($form);
+    ?>
+
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('university_name')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('university_name')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：北京大学</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('university_id')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('university_id')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：1001</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('SSDM')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('SSDM')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：11</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('SSDMC')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('SSDMC')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：北京市</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('is985')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('is985')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('is211')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('is211')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span3"><?php echo $this->formLabel($form->get('freetest_qualified')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('freetest_qualified')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span7" style="text-align: center;"><?php echo $this->formElement($form->get('submit')); ?></div>
+    </div>
+    <br>
+    <?php
+    echo $this->form()->closeTag();?>
+</div>
+<?php
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
+        }
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
+        }
+    }
+
+    return $obj;
+}
+
+if(isset($this->uni_list)){
+    echo "<table class='table table-hover'>";
+    echo "<tr>";
+    foreach ($this->column as $key => $value){
+        echo "<th>$value</th>";
+    }
+    echo "</tr>";
+    foreach ($this->uni_list as $univer){
+        echo "<tr>";
+        //var_dump($univer);
+        $uniarr = object_to_array($univer);
+        $aaa=json_encode($uniarr);
+        $str = 'editform('.$aaa.')';
+        //var_dump($name);
+        foreach ($this->column as $key => $value){
+            if ($key == 'opra')
+            {
+                //$id = $uniarr['id'];
+                //echo "id---------------------->".$id;
+                echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";}
+            else if ($uniarr[$key] == 1)
+                echo "<td>是</td>";
+            else
+                echo "<td>".$uniarr[$key]."</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
+if(isset($this->condArr)){
+    $params = "/param1/";
+    foreach ($this->condArr as $key=>$value)
+    {
+        $pieces = explode('"', $value);
+        $params .= $pieces[0].$pieces[1].'&';
+    }
+    $new_params = substr($params, 0, -1);
+//echo 'param-------------------------->'.$new_params;
+}
+
+$url = '/basicinfo/uniset/unisearch/param/';
+if ($this->pageCount):
+    ?>
+
+    <div class="paginationControl">
+        <!-- Previous page link -->
+        共计
+        <?php echo $this->total_num?$this->total_num:0 ;?>条数据
+        <?php if (isset($this->previous)):
+            //echo 'precious--------------------->'.$url. $this->previous?>
+            <a href="<?php echo $url. $this->previous .$new_params; ?>">
+                < 上一页
+            </a> |
+        <?php else: ?>
+            <span class="disabled">< 上一页</span> |
+        <?php endif; ?>
+
+        <!-- Numbered page links -->
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+                <a href="<?php echo $url. $page .$new_params;?>">
+
+                    <?php echo $page; ?>
+                </a> |
+            <?php else: ?>
+                <?php echo $page; ?> |
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <!-- Next page link -->
+        <?php if (isset($this->next)): ?>
+            <a href="<?php echo $url. $this->next .$new_params; ?>">
+                下一页 >
+            </a>
+        <?php else: ?>
+            <span class="disabled">下一页 ></span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<div class="modal fade" id="myEditModal" tabindex=-1  aria-lablledby="myEditModalLabel" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="myEditModalLabel">修改高校信息</h3>
+            </div>
+            <div class="modal-body">
+                <?php
+                $form1 = $this->form1;
+                $form1->setAttribute('action',$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"unisearch")));
+                $form1->setAttribute('method','POST');
+                $form1->prepare();
+
+                echo $this->form()->openTag($form1);?>
+
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('university_name')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('university_name')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('university_id')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('university_id')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('SSDM')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('SSDM')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('SSDMC')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('SSDMC')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('is985')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('is985')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('is211')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('is211')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('freetest_qualified')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('freetest_qualified')); ?></div>
+                </div>
+                <br>
+
+            </div>
+            <div class="modal-footer" >
+                <button type="submit" class="btn btn-primary" id="confirmEdit" value="addMedicine">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <?php
+                $this->form()->closeTag();
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="application/javascript">
+    //编辑学生成绩
+    function editform(item,name,id) {
+        //去掉名字中间的空格
+        //var item=JSON.stringify(items);
+
+        //alert(item.freetest_qualified);
+        $("#uniids").val(item.university_id);
+        $("#uninames").val(item.university_name);
+        $("#SSDMs").val(item.SSDM);
+        $("#SSDMCs").val(item.SSDMC);
+        $("#is985s").val(item.is985);
+        $("#is211s").val(item.is211);
+        $("#freetest_qualifieds").val(item.freetest_qualified);
+        // $("#freetest_qualifieds").attr('value',item.freetest_qualified);
+        $("#confirmEdits").click(function()
+        {
+            $.post('basicinfo/managetime/add',function()
+            {
+                //location.reload();
+            });
+        });
+
+
+        //s$("#myEditModal").modal('toggle');
+    }
+
+    function checkCookie()
+    {
+        var college_id=getCookie("college_id");
+        if (college_id!="")
+        {
+            var subject_id=getCookie("subject_id");
+            var profession_id=getCookie("profession_id");
+            selected(profession_id,subject_id,college_id);
+
+            if(profession_id!="00"){
+                profressionChange(profession_id,subject_id,college_id);
+            }else{
+                subjectChange(subject_id,college_id,profession_id);
+
+            }
+        }
+    }
+</script>
+

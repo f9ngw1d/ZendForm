@@ -43,23 +43,18 @@ $this->headTitle($title);
             <label class="control-label" for="college_id">学院电话</label>
             <div class = "controls">
                 <textarea   rows="1" id="phone" name="phone" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="college_id">网址</label>
             <div class = "controls">
                 <textarea   rows="1" id="ip_address" name="ip_address" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="college_id">办公楼地址</label>
             <div class = "controls">
                 <textarea   rows="1" id="address" name="address" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-                <div class='text-right'>
-                    <em style='color:red'>50</em>/<span>50</span>字符
-                </div>
             </div>
         </div>
         <div class="control-group">
@@ -88,7 +83,6 @@ $this->headTitle($title);
                 foreach ($this->college_table as $key => $row) {
                     ?>
                     <tr>
-
                         <td class="span2"> <?php echo $row->college_id;?></td>
                         <td class="span3"> <?php echo $row->college_name;?></td>
                         <td class="span3"> <?php echo $row->phone;?></td>
@@ -97,7 +91,7 @@ $this->headTitle($title);
                         <td  class="span2">
                             <!--<?php echo $row->project_id;?>-->
                             <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college","id"=>$row->college_id)); ?>'  onclick='javascript:return ifCheckdel()' class="button">删除  </a>
-                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college","id"=>$row->college_id)); ?>'  onclick='javascript:return ifCheckdel()' class="button">编辑  </a>
+                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college","id"=>$row->college_id)); ?>'  onclick='javascript:return edit()' class="button">编辑  </a>
                         </td>
                     </tr>
                 <?php } ?> <!-- 循环输出项目记录-->
@@ -111,42 +105,30 @@ $this->headTitle($title);
 <!--</div>-->
 <script type="text/javascript" src="<?php echo $this->basePath('js/stu/stuconfirm.js?version=1.1.1');?>"></script>
 <script>
-    /*
-     * 判断是否为全角
-     *
-     * pChar:长度为1的字符串
-     * return: true:全角
-     *         false:半角
-     */
-    function isFull (pChar){
-        if((pChar.charCodeAt(0) > 128)){return true;}
-        else{return false;}
-    }
-
 
     $(document).ready(function(){
 
         $("#add_project").click(function () {
             var college_id = $("#college_id").val();
-            var college_name = $("college_name").val();
+            var college_name = $("#college_name").val();
             var phone = $("#phone").val();
             var ip_address = $("#ip_address").val();
-            var address =$("address").val();
+            var address =$("#address").val();
             // alert(file+ '/' +certificate.name + '/' + certificate.type + '/' + certificate.size);
             if(!college_id){
-                alert("项目名称不可以为空！");
+                alert("学院编号不可以为空！");
                 $("#college_id").focus();
             } else if(!college_name){
-                alert("项目概要不可以为空！");
+                alert("学院名称不可以为空！");
                 $("#college_name").focus();
             }else if(!phone){
-                alert("项目结论不可以为空！");
+                alert("学院电话不可以为空！");
                 $("#phone").focus();
             }else if(!ip_address){
-                alert("项目成果不可以为空！");
+                alert("网址不可以为空！");
                 $("#ip_address").focus();
             }else if(!address){
-                alert("请选择项目级别！");
+                alert("办公楼地址不可以为空！");
                 $("#address").focus();
             }else{
                 $(this).prop("type","submit");

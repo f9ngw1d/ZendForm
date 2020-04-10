@@ -1,139 +1,301 @@
-<?php
-$url = '//ajax/page/';
-?>
-<?php
-$title = '添加时间设置信息';
-$this->headTitle($title);
-?>
-<!--<h3><?php echo $this->escapeHtml($title);?></h3>-->
-<style type="text/css">
-    .message{
-        color: #b23131;
+<style>
+    label span, label {
+        text-align: left;
+        margin-right: 40px;
+        height: 35px;
+    }
+
+    input[type="text"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    input[type="datetime"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    input[type="select"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    select {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    label {
+        margin-right: 40px;
+    }
+    .message1{
+        color: #EE0000;
+    }
+
+    .message2{
+
+        color:  #A9A9A9;
     }
 </style>
+<script type="text/javascript">
+    function getindex()
+    {
 
-<br><br>
-<div class='message'>
-    1. 设置招生工作的几个时间节点。可手动开启或关闭，亦可设置好开始时间及结束时间，由系统自动开关<br/>
-    2. 对系统已添加好的时间设置，只可更改开始及结束时间和开关状态，不可更改名称<br/>
-    <br/>
+        var obj = event.srcElement;
+        var trobj = obj.parentElement.parentElement;
+        var tbobj = trobj.parentElement;
+        //var url = window.location.href;
+        var index = trobj.rowIndex-1;
+        var id = parseInt(document.getElementById("id").innerText)+parseInt(index);
+        var add = "http://211.71.149.244:11111/manage/systemManagement/edit/param1/"+id;
+        //alert(url);
+        //window.location.replace(add);
+        //window.location.href=add;
+
+        var url = window.location.protocol + "//"+window.location.host;
+        if(window.location.port){
+            url = url +":"+ post;
+        }
+        url = url+"/manage/systemManagement/edit/param1/"+id;
+        //http://tm59/stu/register/register
+        alert(url);
+        window.location.replace(url);
+
+    }
+</script>
+
+<?php
+//echo $this->flag;
+if($this->flag == 1)
+    echo "<script>alert('设置成功！')</script>";
+?>
+<div id="div2">
+    <h2>设置时间</h2>
+
+    <span style='color: red; font-size: medium;'>1.设置招生工作的几个时间节点。可手动开启或关闭，亦可设置好开始及结束时间，由系统自动开关。<br>2、对于系统已添加的时间设置，只可更改开始及结束时间和开关状态，不可更改名称。</b></span>
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action', $this->url('manage/default',array('controller'=>'systemManagement','action'=>'add')));
+    $form->prepare();
+
+    echo $this->form()->openTag($form);?>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('name')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('name')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('start_time')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('start_time')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：2019-08-16 00:00:00</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('end_time')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('end_time')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：2019-08-17 22:31:24</span></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('status')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('status')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('description')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('description')); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->formElement($form->get('submit')); ?></div>
+    </div>
+    <br>
+
+    <?php echo $this->form()->closeTag();
+    ?>
 </div>
 
+<h3>已设项</h3>
+<?php
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
+        }
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
+        }
+    }
 
-<div class = "tab-pane active" id = "addinfo2" >
-    <!--<h3>设置时间</h3>-->
-    <form class="form-horizontal"  action="/manage/system-manage/addTime/uid/<?php echo $this->uid?>" method="post" enctype="multipart/form-data">
-        <div class="control-group">
-            <label class="control-label" for="name">项目名称</label>
-            <div class = "controls">
-                <span class = 'message'>*&nbsp;</span>
-                <textarea   rows="2" id="name" name="name"></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="start_time">开始时间</label>
-            <div class = "controls">
-                <textarea   rows="2" id="start_time" name="start_time"></textarea>
-                <div class='text-right'>
-                    <span>例：2019-08-16 00:00:00</span>
-                </div>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="end_time">结束时间</label>
-            <div class = "controls">
-                <textarea   rows="2" id="end_time" name="end_time"></textarea>
-                <div class='text-right'>
-                    <span>例：2019-08-17 22:31:24</span>
-                </div>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="status">开关状态</label>
-            <div class = "controls">
-                <select name="cars" style="width:110px">
-                    <option value="auto">自动</option>
-                    <option value="manual">手动</option>
-                </select>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="description">备注</label>
-            <div class = "controls">
-                <textarea   rows="2" id="description" name="description"></textarea>
-                <div class='text-right'>
-                    <button type="button" id="manage_time" class="btn btn-primary"> 设置 </button>
-                </div>
-            </div>
-        </div>
-    </form>
+    return $obj;
+}
 
+if(isset($this->time)){
+    echo "<table class='table table-hover'>";
+    echo "<tr>";
+    foreach ($this->column as $key => $value){
+        echo "<th>$value</th>";
+    }
+    echo "</tr>";
+    foreach ($this->time as $timer){
+        //var_dump($univer);
+        $uniarr = object_to_array($timer);
+        $aaa=json_encode($uniarr);
+        $str = 'editform('.$aaa.')';
+        //echo $str;
+        foreach ($this->column as $key => $value){
 
-    <div class="span12">
-        <?php if($this->time_table){
-            ?>
-            <h3>已设项</h3>
-            <table class='table table-striped table-hover table-condensed'>
-                <thead>
-                <th>编号</th>
-                <th>名称</th>
-                <th>开始</th>
-                <th>结束</th>
-                <th>备注</th>
-                <th>状态</th>
-                </thead>
-                <tbody>
-                <?php
-                foreach ($this->time_table as $key => $row) {
-                    ?>
-                    <tr>
+            if ($key == 'id')
+                echo "<td id='id'>".$uniarr[$key]."</td>";
+            else if($key == 'status')
+            {
+                if ($uniarr[$key] == -1) {
+                    echo "<td>关</td>";
+                }
+                else {
+                    echo "<td>开</td>";
+                }
+            }
+            else if ($key == 'sta') {
+                if ($uniarr[$key] == 0) {
+                    echo "<td>已截止</td>";
+                }
+                else {
+                    echo "<td>进行中</td>";
+                }
+            }
+            else if ($key == 'oprat')
+            {
+                //$id = $uniarr['id'];
+                //echo "id---------------------->".$id;
+                echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
+            }
+            else
+                echo "<td>".$uniarr[$key]."</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
+$url_arr = '/manage/systemManagement/addTime/param1/';
+if(isset($url_arr)){
+    $get_param = "";
+    for($i=1;$i<=5;$i++){
+        if(isset($url_arr['param'.$i])){
+            $get_param .= "/param".$i."/".$url_arr['param'.$i];//$url_arr['param'.$i];
+        }
+    }
+}
+$url = '/manage/systemManagement/addTime/param1/';
+if ($this->pageCount):
+    ?>
 
-                        <td class="span2"> <?php echo $row->id;?></td>
-                        <td class="span3"> <?php echo $row->name;?></td>
-                        <td class="span3"> <?php echo $row->start;?></td>
-                        <td class="span3"> <?php echo $row->end;?></td>
-                        <td  class="span2"><?php echo $row->description;?></td>
-                        <td  class="span2">
-                            <!--<?php echo $row->project_id;?>-->
-                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-time","id"=>$row->college_id)); ?>'  onclick='javascript:return ifCheckdel()' class="button">编辑  </a>
-                        </td>
-                    </tr>
-                <?php } ?> <!-- 循环输出项目记录-->
-                </tbody>
-            </table>
-        <?php  } ?>
-        <?php if ($this->pageCount): ?>
-            <div class="paginationControl">
-                <!-- Previous page link -->
-                <?php
-                echo "共计".$url.$this->pageCount."条数据";
-                ?>
-                <?php if (isset($this->previous)): ?>
-                    <a href="<?php echo $url. $this->previous; ?>">
-                        < 上一页
-                    </a> |
-                <?php else: ?>
-                    <span class="disabled">< 上一页</span> |
-                <?php endif; ?>
+    <div class="paginationControl">
+        <!-- Previous page link -->
+        共计<?php echo $this->total_num?$this->total_num:0 ;?>条数据
+        <?php if (isset($this->previous)): ?>
+            <a href="<?php echo $url. $this->previous .$get_param; ?>">
+                < 上一页
+            </a> |
+        <?php else: ?>
+            <span class="disabled">< 上一页</span> |
+        <?php endif; ?>
 
-                <!-- Numbered page links -->
-                <?php foreach ($this->pagesInRange as $page): ?>
-                    <?php if ($page != $this->current): ?>
-                        <a href="<?php echo $url. $page;?>">
-                            <?php echo $page; ?>
-                        </a> |
-                    <?php else: ?>
-                        <?php echo $page; ?> |
-                    <?php endif; ?>
-                <?php endforeach; ?>
-                <!-- Next page link -->
-                <?php if (isset($this->next)): ?>
-                    <a href="<?php echo $url. $this->next; ?>">
-                        下一页 >
-                    </a>
-                <?php else: ?>
-                    <span class="disabled">下一页 ></span>
-                <?php endif; ?>
-            </div>
+        <!-- Numbered page links -->
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+                <a href="<?php echo $url. $page .$get_param;?>">
+
+                    <?php echo $page; ?>
+                </a> |
+            <?php else: ?>
+                <?php echo $page; ?> |
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <!-- Next page link -->
+        <?php if (isset($this->next)): ?>
+            <a href="<?php echo $url. $this->next; ?>">
+                下一页 >
+            </a>
+        <?php else: ?>
+            <span class="disabled">下一页 ></span>
         <?php endif; ?>
     </div>
+<?php endif; ?>
+
+<div class="modal fade" id="myEditModal" tabindex=-1  aria-lablledby="myEditModalLabel" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="myEditModalLabel">修改时间设置</h3>
+            </div>
+            <div class="modal-body">
+                <?php
+                $form1 = $this->form1;
+                $form1->setAttribute('action',$this->url('manage/default',array('controller'=>'systemManagement','action'=>'add')));
+                $form1->setAttribute('method','POST');
+                $form1->prepare();
+
+                echo $this->form()->openTag($form1);?>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('name')); ?></div>
+                    <div class="span7" readonly="true" disabled="true"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('name')); ?><span class = 'message1'>（不可更改）</span></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('start_time')); ?></div>
+                    <div class="span8"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('start_time')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：2019-08-16 00:00:00</span></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('end_time')); ?></div>
+                    <div class="span8"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('end_time')); ?>
+                        <span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;例：2019-08-17 22:31:24</span></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('status')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('status')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('description')); ?></div>
+                    <div class="span7"><?php echo $this->formElement($form1->get('description')); ?></div>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer" >
+                <button type="submit" class="btn btn-primary" id="confirmEdit" >确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <?php
+                $this->form()->closeTag();
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript">
+    //编辑学生成绩
+    function editform(item) {
+        //去掉名字中间的空格
+        //var item=JSON.stringify(items);
+        //alert(item.name);
+        $("#names").attr('value',item.name);
+        $("#start_times").attr('value',item.start_time);
+        $("#end_times").val(item.end_time);
+        $("#statuss").val(item.status);
+        $("#descriptions").val(item.description);
+        $("#confirmEdits").click(function()
+        {
+            $.post('manage/systemManagement/addTime',function()
+            {
+                //location.reload();
+            });
+        });
+
+
+        //s$("#myEditModal").modal('toggle');
+    }
+</script>
+

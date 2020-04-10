@@ -93,7 +93,6 @@ class SettingController extends AbstractActionController
             echo json_encode(array('code'=>'1','msg'=>'更新失败，请检查后重试'));
             exit();
         }
-
         exit();
     }
     /*
