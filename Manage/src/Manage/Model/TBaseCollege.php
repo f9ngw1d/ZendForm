@@ -14,16 +14,20 @@ class TBaseCollege implements InputFilterAwareInterface
     public $free_stu;
     public $phone;
     public $manager_id;
+    public $ip_address;
+    public $address;
 
     //简单地将 data 数组中的数据拷贝到College实体属性。ORM映射
     public function exchangeArray($data){
         $this->college_id = (!empty($data['college_id'])) ? $data['college_id'] : null;
         $this->college_name = (!empty($data['college_name']))? $data['college_name'] : null;
         $this->dean_id = (!empty($data['dean_id']))?$data['dean_id']:null;
+        $this->manager_id = (!empty($data['manager_id']))?$data['manager_id']:null;
         $this->total_stu = (!empty($data['total_stu']))?$data['total_stu']:null;
         $this->free_stu = (!empty($data['free_stu']))?$data['free_stu']:null;
         $this->phone = (!empty($data['phone']))?$data['phone']:null;
-        $this->manager_id = (!empty($data['manager_id']))?$data['manager_id']:null;
+        $this->ip_address = (!empty($data['ip_address']))?$data['ip_address']:null;
+        $this->address = (!empty($data['address']))?$data['address']:null;
     }
     public function getArrayCopy()
     {

@@ -27,7 +27,7 @@ class TDbUniversityTable implements InputFilterAwareInterface{
         $this->university_id = (!empty($data['university_id']))? $data['university_id'] : null;
         $this->is985 = (!empty($data['is985'])) ? $data['is985'] : null;
         $this->is211 = (!empty($data['is211'])) ? $data['is211'] : null;
-        $this->freetest_qualified = (!empty($data['freetest_qualified'])) ? $data['freetest_qualified'] : null;
+        $this->freetest_qualified = (!empty($data['freetest_qualified   '])) ? $data['freetest_qualified'] : null;
         $this->SSDM = (!empty($data['SSDM'])) ? $data['SSDM'] : null;
         $this->SSDMC = (!empty($data['SSDMC'])) ? $data['SSDMC'] : null;
 

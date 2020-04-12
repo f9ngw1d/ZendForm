@@ -286,7 +286,7 @@ if ($this->pageCount):
         $("#end_times").val(item.end_time);
         $("#statuss").val(item.status);
         $("#descriptions").val(item.description);
-        $("#confirmEdits").click(function()
+        $("#confirmEdit").click(function()
         {
             $.post('manage/systemManagement/addTime',function()
             {

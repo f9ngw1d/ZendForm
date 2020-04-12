@@ -59,5 +59,25 @@ class TBaseCollegeTable
         }
         return $row;
     }
+    public function saveCollege(TBaseCollege $college)
+    {
+        $data = array(
+            'college_id' => $college->college_id,
+            'college_name' => $college->college_name,
+            'phone' => $college->phone,
+            'ip_address' => $college->ip_address,
+            'address' => $college->address,
+        );
+        //var_dump($data);
+        $id = $college->college_id;
 
+        if ($this->getCollegebyStaffid($id)) {
+            echo "update<br><br>";
+            $this->tableGateway->update($data, array('college_id' => $id));
+        } else
+        {
+            echo "insert<br><br>";
+            $this->tableGateway->insert($data);
+        }
+    }
 }

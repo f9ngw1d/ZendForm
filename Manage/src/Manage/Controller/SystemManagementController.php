@@ -6,8 +6,8 @@ use Manage\Form\TimeeditForm;
 use Manage\Form\TimesetForm;
 use Manage\Form\UnisearchForm;
 use Manage\Form\UnisetForm;
-use Manage\Model\Managetime;
-use Student\Model\UniversityFree;
+use Manage\Form\CollegeAddForm;
+use Manage\Model\TBaseCollege;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -20,42 +20,91 @@ use Zend\Db\Sql\Select;
 
 class SystemManagementController extends AbstractActionController
 {
-    protected $universityfreeTable;
+    protected $TDbUniversityTable;
     protected $ManageTimeTable;
-
+    protected $TBaseCollegeTable;
     public function getManageTimeTable()
     {
-        if (!$this->ManagetimeTable) {
+        if (!$this->ManageTimeTable) {
             $sm = $this->getServiceLocator();
             $this->ManageTimeTable = $sm->get('Manage\Model\ManageTimeTable');
         }
-        return $this->ManagetimeTable;
+        return $this->ManageTimeTable;
     }
     public function getUniversityFreeTable()
     {
-        if (!$this->universityfreeTable) {
+        if (!$this->TDbUniversityTable) {
             $sm = $this->getServiceLocator();
-            $this->universityfreeTable = $sm->get('Student\Model\UniversityFreeTable');
+            $this->TDbUniversityTable = $sm->get('Manage\Model\TDbUniversityTable');
         }
-        return $this->universityfreeTable;
+        return $this->TDbUniversityTable;
+    }
+    public function getTBaseCollegeTable()
+    {
+        if (!$this->TBaseCollegeTable) {
+            $sm = $this->getServiceLocator();
+            $this->TBaseCollegeTable = $sm->get('Manage\Model\TBaseCollegeTable');
+        }
+        return $this->TBaseCollegeTable;
     }
     public function addUserAction(){
 
     }
     public function addCollegeAction(){
-        $login_id_container = new Container('uid');
-        $login_id = $login_id_container->item;
-        if (!isset($login_id)) {
-            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+        $rid_container =  new Container('rid');
+        $ridArr = $rid_container->item;//login 用户的权限rid
+
+        $login_Container = new Container('uid');
+        $login_id = $login_Container->item;
+
+        $uid = $this->params()->fromRoute('uid'); //从路由尝试取uid
+
+        if (!in_array(1, $ridArr) && (!in_array(8, $ridArr)) && (!in_array(9, $ridArr)) && !in_array(10, $ridArr) && !in_array(11, $ridArr) && !in_array(12, $ridArr)) {
+            //1学生 8/12 学科方向 9/11 院长院秘书 10 研究生院
+            echo "<script>alert('您不具有访问权限！');</script>";
+            echo "<script type=\"text/javascript\">window.location.replace('/info');</script>";
+            return false;
+        } //权限判断
+        //var_dump($uid);
+        //echo "<br>uid<br>";
+        //var_dump($login_id);
+        //echo "<br>loginid<br>";
+        if (is_null($uid)){ //学生自己登陆的话，url上面是空的
+            $uid = $login_id;
         }
-        $rid_container = new Container('rid');
-        $rid_arr = $rid_container->item;//login 用户的权限
-        if (!isset($rid_arr)) {
-            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+        $form = new CollegeAddForm();
+        $request =$this->getRequest();
+        if($request->isPost())
+        {
+            $col = new TBaseCollege();
+            $formdata  = array(
+                'college_id' => $_POST['college_id'],
+                'college_name' => $_POST['college_name'],
+                'phone' => $_POST['phone'],
+                'ip_address' => $_POST['ip_address'],
+                'address' => $_POST['address'],
+            );
+            $col->exchangeArray($formdata);
+            //var_dump($uni);
+            if($this->getTBaseCollegeTable()->saveCollege($col))
+                echo "<script>alert('添加成功')</script>";
         }
-        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
-            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
-        }
+        $college_table =  $this->getTBaseCollegeTable()->getCollege($uid);
+//        $column = array(
+//            'college_id' =>'编号',
+//            'college_name'=>'名称',
+//            'phone'=>'联系电话',
+//            'ip_address'=>'网址',
+//            'address'=>'办公楼地址',
+//        );
+
+        $view = new ViewModel(array(
+//            'column' => $column,
+            'college_table'=>$college_table,
+            'uid' => $uid,
+            'rid'=> $ridArr,
+        ));
+        return $view;
     }
     public  function addTimeAction(){
         $login_id_container = new Container('uid');
@@ -231,7 +280,7 @@ class SystemManagementController extends AbstractActionController
                          //$this->setService->savePost($post);
                          $flag = 1;
                          //echo "<script>alert('修改成功')</script>";
-                         return $this->redirect()->toRoute('basicinfo/default',array('controller'=>'Managetime','action'=>'add'));
+                         return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addTime'));
                      } catch (\Exception $e) {
                          die($e->getMessage());
                      }
@@ -273,7 +322,7 @@ class SystemManagementController extends AbstractActionController
         }
         $per_page = 10;
         $offset = ($current_page-1)*$per_page;
-        //echo    'curent_page---------------------------->'.$current_page;
+        //echo    'current_page---------------------------->'.$current_page;
         //var_dump($current_page);
         $conArr = array();
         $uni_list = array();
@@ -350,7 +399,7 @@ class SystemManagementController extends AbstractActionController
                     'freetest_qualified' => $_POST['freetest_qualified'],
                 );
                 //$form1->setData($request->getPost());
-                $uni = new UniversityFree();
+                $uni = new TDbUniversity();
 
                 $uni->exchangeArray($formdata);
                 //var_dump($uni);
@@ -440,7 +489,7 @@ class SystemManagementController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $uni = new UniversityFree();
+            $uni = new TDbUniversity();
             //$form->setInputFilter($uni->getInputFilter());
             $formdata  = array(
                 'university_id' => $_POST['university_id'],

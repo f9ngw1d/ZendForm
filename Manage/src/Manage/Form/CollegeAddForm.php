@@ -1,70 +1,46 @@
 <?php
-
 namespace Manage\Form;
 
-use Manage\Model\SystemManagement;
+use Zend\Form\Element;
 use Zend\Form\Form;
-use Zend\Stdlib\Hydrator\ClassMethods;
+use Zend\Session\Container;
 
-class collegeAddForm extends Form
-{
-    public function __construct($name = null, $options = array())
-    {
-        parent::__construct($name, $options);
+class CollegeAddForm extends Form{
 
+    public function __construct(){
+        //给表添加元素
+        //学院编号
         $this->add(array(
-            'type' => 'hidden',
-            'name' => 'id'
+            'name' => 'college_id',
+            'type' => 'number'
         ));
-
+        //名称
         $this->add(array(
-            'type' => 'text',
-            'name' => 'name',
-            'options' => array(
-                'label' => '项目名称'
+            'name' => 'college_name',
+            'type' => 'text'
+        ));
+        //联系电话
+        $this->add(array(
+            'name' => 'phone',
+            'type' => 'text'
+        ));
+        //网址
+        $this->add(array(
+            'name' => 'ip_address',
+            'type' => 'url'
+        ));
+        $this->add(array(
+            'name' => 'address',
+            'type' => 'text'
+        ));
+        $this->add(array(//提交按钮
+            'name'=>'add_college',
+            'type'=>'submit',
+            'attributes'=>array(
+                'value'=>'确认添加学院',
+                'id'=>'add_college',
+                'class'=>'btn btn-primary',
             ),
-        ));
-
-        $this->add(array(
-            'type' => 'datetime',
-            'name' => 'start_time',
-            'options' => array(
-                'label' => '开始时间'
-            ),
-        ));
-
-        $this->add(array(
-            'type' => 'datetime',
-            'name' => 'end_time',
-            'options' => array(
-                'label' => '结束时间'
-            ),
-        ));
-
-        $this->add(array(
-            'type' => 'text',
-            'name' => 'description',
-            'options' => array(
-                'label' => '备注(选填)'
-            ),
-        ));
-
-        $this->add(array(
-            'type' => 'select',
-            'name' => 'status',
-            'options' => array(
-                'label' => '开关状态',
-            ),
-
-        ));
-
-        $this->add(array(
-            'type' => 'submit',
-            'name' => 'submit',
-            'attributes' => array(
-                'value' => '设置',
-                'class' => 'btn btn-primary',
-            )
         ));
     }
 }

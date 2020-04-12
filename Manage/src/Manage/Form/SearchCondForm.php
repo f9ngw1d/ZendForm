@@ -1,6 +1,6 @@
 <?php
 
-namespace Setting\Form;
+namespace Manage\Form;
 
 use Zend\Form\Form;
 use Zend\Form\Element;
@@ -58,7 +58,7 @@ class SearchCondForm extends Form implements InputFilterProviderInterface
         $this->add(array(
             'name' => 'user_name',
             'type' => 'Text',
-            'options' => array(//                'label' => '姓名',
+            'options' => array(                     //'label' => '姓名',
             ),
             'attributes' => array(
                 'id' => 'user_name',

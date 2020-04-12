@@ -75,13 +75,5 @@ class timeEditForm extends Form
             )
         ));
 
-        $this->add(array(
-            'type' => 'submit',
-            'name' => 'submit',
-            'attributes' => array(
-                'value' => '设置',
-                'class' => 'btn btn-primary',
-            )
-        ));
     }
 }
