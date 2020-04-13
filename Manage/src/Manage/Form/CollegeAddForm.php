@@ -1,46 +1,65 @@
 <?php
+
 namespace Manage\Form;
 
-use Zend\Form\Element;
+use Manage\Model\SystemManagement;
 use Zend\Form\Form;
-use Zend\Session\Container;
+use Zend\Stdlib\Hydrator\ClassMethods;
 
-class CollegeAddForm extends Form{
+class CollegeAddForm extends Form
+{
+    public function __construct($name = null, $options = array())
+    {
+        parent::__construct($name, $options);
 
-    public function __construct(){
-        //给表添加元素
-        //学院编号
         $this->add(array(
+            'type' => 'text',
             'name' => 'college_id',
-            'type' => 'number'
-        ));
-        //名称
-        $this->add(array(
-            'name' => 'college_name',
-            'type' => 'text'
-        ));
-        //联系电话
-        $this->add(array(
-            'name' => 'phone',
-            'type' => 'text'
-        ));
-        //网址
-        $this->add(array(
-            'name' => 'ip_address',
-            'type' => 'url'
-        ));
-        $this->add(array(
-            'name' => 'address',
-            'type' => 'text'
-        ));
-        $this->add(array(//提交按钮
-            'name'=>'add_college',
-            'type'=>'submit',
-            'attributes'=>array(
-                'value'=>'确认添加学院',
-                'id'=>'add_college',
-                'class'=>'btn btn-primary',
+            'options' => array(
+                'label' => '学院编号'
             ),
+        ));
+
+        $this->add(array(
+            'type' => 'text',
+            'name' => 'college_name',
+            'options' => array(
+                'label' => '学院名称'
+            ),
+        ));
+
+        $this->add(array(
+            'type' => 'text',
+            'name' => 'phone',
+            'options' => array(
+                'label' => '学院电话'
+            ),
+        ));
+
+        $this->add(array(
+            'type' => 'text',
+            'name' => 'ip_address',
+            'options' => array(
+                'label' => '网址'
+            ),
+        ));
+
+        $this->add(array(
+            'type' => 'text',
+            'name' => 'address',
+            'options' => array(
+                'label' => '办公楼地址',
+            ),
+
+        ));
+
+        $this->add(array(
+            'type' => 'submit',
+            'name' => 'submit',
+            'attributes' => array(
+                'value' => '确认添加学院',
+                'class' => 'btn btn-primary',
+            )
         ));
     }
 }

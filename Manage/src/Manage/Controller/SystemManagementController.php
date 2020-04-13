@@ -8,6 +8,7 @@ use Manage\Form\UnisearchForm;
 use Manage\Form\UnisetForm;
 use Manage\Form\CollegeAddForm;
 use Manage\Model\TBaseCollege;
+use Manage\Model\TDbUniversity;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -31,7 +32,7 @@ class SystemManagementController extends AbstractActionController
         }
         return $this->ManageTimeTable;
     }
-    public function getUniversityFreeTable()
+    public function TDbUniversityTable()
     {
         if (!$this->TDbUniversityTable) {
             $sm = $this->getServiceLocator();
@@ -51,75 +52,123 @@ class SystemManagementController extends AbstractActionController
 
     }
     public function addCollegeAction(){
-        $rid_container =  new Container('rid');
-        $ridArr = $rid_container->item;//login 用户的权限rid
+//        $login_id_container = new Container('uid');
+//        $login_id = $login_id_container->item;
+//        if (!isset($login_id)) {
+//            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+//        }
+//        $rid_container = new Container('rid');
+//        $rid_arr = $rid_container->item;//login 用户的权限
+//        if (!isset($rid_arr)) {
+//            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+//        }
+//        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
+//            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
+//        }
+//        $current_page = $this->params()->fromRoute('param1');
+//        if (empty($current_page)) {
+//            $current_page = 1;
+//        }
+        //var_dump($current_page);
 
-        $login_Container = new Container('uid');
-        $login_id = $login_Container->item;
-
-        $uid = $this->params()->fromRoute('uid'); //从路由尝试取uid
-
-        if (!in_array(1, $ridArr) && (!in_array(8, $ridArr)) && (!in_array(9, $ridArr)) && !in_array(10, $ridArr) && !in_array(11, $ridArr) && !in_array(12, $ridArr)) {
-            //1学生 8/12 学科方向 9/11 院长院秘书 10 研究生院
-            echo "<script>alert('您不具有访问权限！');</script>";
-            echo "<script type=\"text/javascript\">window.location.replace('/info');</script>";
-            return false;
-        } //权限判断
-        //var_dump($uid);
-        //echo "<br>uid<br>";
-        //var_dump($login_id);
-        //echo "<br>loginid<br>";
-        if (is_null($uid)){ //学生自己登陆的话，url上面是空的
-            $uid = $login_id;
-        }
+        //var_dump($uni_list);
+//        $per_page = 2;
+//        $offset = ($current_page - 1) * $per_page;
+//        echo $per_page."-----------------".$offset;
         $form = new CollegeAddForm();
-        $request =$this->getRequest();
-        if($request->isPost())
-        {
-            $col = new TBaseCollege();
+
+        //$form->get('submit')->setValue('Add');
+        // echo "request<br><br>";
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            //echo "post<br><br>";
+            //$postData = $this->getRequest()->getPost()->toArray();
+            //if (strcmp($postData['submit'], '确定') == 0) {
+
+            /// }
+            $uni = new TBaseCollege();
             $formdata  = array(
                 'college_id' => $_POST['college_id'],
                 'college_name' => $_POST['college_name'],
                 'phone' => $_POST['phone'],
                 'ip_address' => $_POST['ip_address'],
-                'address' => $_POST['address'],
+                'address' => $_POST['address']
             );
-            $col->exchangeArray($formdata);
+            //var_dump($form->getData());
+            $uni->exchangeArray($formdata);
             //var_dump($uni);
-            if($this->getTBaseCollegeTable()->saveCollege($col))
-                echo "<script>alert('添加成功')</script>";
+            if($this->getTBaseCollegeTable()->saveCollege($uni))
+                echo "<script>alert('设置成功')</script>";
         }
-        $college_table =  $this->getTBaseCollegeTable()->getCollege($uid);
-//        $column = array(
-//            'college_id' =>'编号',
-//            'college_name'=>'名称',
-//            'phone'=>'联系电话',
-//            'ip_address'=>'网址',
-//            'address'=>'办公楼地址',
-//        );
+        $college = $this->getTBaseCollegeTable()->fetchAll();
+//        $time = $this->getTBaseCollegeTable()->findAll($per_page, $offset);
+        //var_dump($time);
+//        $timesta = array();
+//        foreach ($time as $tt)
+//        {
+//            foreach ($tt as $key => $value)
+//            {
+//                if($key == 'id')
+//                    array_push($timesta, $this->getTBaseCollegeTable()->getTimeSta($value));
+//            }
+//        }
+        //var_dump($timesta);
+//        $i=0;
+//        foreach ($time as &$tt)
+//        {
+//            $a['sta']=$timesta[$i];
+//            array_merge($tt,$a);
+//            $tt['sta'] = $timesta[$i];
+//            $i++;
+            //echo $tt['sta'];
+            //var_dump($tt);
+//        }
+        //echo "times:";
+        //var_dump($time);
+
+//        $total_num = $this->getManagetimeTable()->getTotalnum();
+//        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
+//        $paginator->setCurrentPageNumber($current_page);
+//        $total_page = ceil($total_num / $per_page);
+//
+//        $pagesInRange = array();
+//        for ($i = 1; $i <= $total_page; $i++) {
+//            $pagesInRange[] = $i;
+//        }
+
+
+        //return array('form' => $form);
+
+
+        $column = array(
+            'college_id' =>'学院编号',
+            'college_name'=>'学院名称',
+            'phone'=>'电话',
+            'ip_address'=>'网址',
+            'address'=>'办公楼地址',
+        );
 
         $view = new ViewModel(array(
-//            'column' => $column,
-            'college_table'=>$college_table,
-            'uid' => $uid,
-            'rid'=> $ridArr,
+            'column' => $column,
+            'college' => $college,
+            'form' => $form,
         ));
         return $view;
     }
     public  function addTimeAction(){
-        $login_id_container = new Container('uid');
-        $login_id = $login_id_container->item;
-        if (!isset($login_id)) {
-            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
-        }
-        $rid_container = new Container('rid');
-        $rid_arr = $rid_container->item;//login 用户的权限
-        if (!isset($rid_arr)) {
-            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
-        }
-        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
-            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
-        }
+//        $login_id_container = new Container('uid');
+//        $login_id = $login_id_container->item;
+//        if (!isset($login_id)) {
+//            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+//        }
+//        $rid_container = new Container('rid');
+//        $rid_arr = $rid_container->item;//login 用户的权限
+//        if (!isset($rid_arr)) {
+//            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+//        }
+//        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
+//            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
+//        }
         $current_page = $this->params()->fromRoute('param1');
         if (empty($current_page)) {
             $current_page = 1;
@@ -343,7 +392,7 @@ class SystemManagementController extends AbstractActionController
             }
             //var_dump($new_params);
             $conArr = $new_params;
-            $uni_list = $this->getUniversityFreeTable()->getUnibyCon($conArr,$per_page,$offset);
+            $uni_list = $this->TDbUniversityTable()->getUnibyCon($conArr,$per_page,$offset);
             //var_dump($uni_list);
         }
 
@@ -403,7 +452,7 @@ class SystemManagementController extends AbstractActionController
 
                 $uni->exchangeArray($formdata);
                 //var_dump($uni);
-                if($this->getUniversityFreeTable()->updateUni($uni))
+                if($this->TDbUniversityTable()->updateUni($uni))
                     echo "<script>alert('修改成功')</script>";
                 else
                     echo "<script>alert('修改失败')</script>";
@@ -421,14 +470,13 @@ class SystemManagementController extends AbstractActionController
                     //var_dump($form->getData());
                     foreach ($form->getData() as $key => $value)
                     {
-
                         if($value != null && $key != 'submit'){//echo $key."=".$value;
                             array_push($conArr,$key.'="'.$value.'"');}
                     }
                     //var_dump($conArr);
                     try {
                         //echo 'sear';
-                        $uni_list = $this->getUniversityFreeTable()->getUnibyCon($conArr,$per_page,$offset);
+                        $uni_list = $this->TDbUniversityTable()->getUnibyCon($conArr,$per_page,$offset);
 
                         //echo "<br>unilist<br>";
                         // var_dump($uni_list);
@@ -442,7 +490,7 @@ class SystemManagementController extends AbstractActionController
         //$uni_list  = $this->getUniversityTable()->getUni($per_page,$offset);
         //var_dump($uni_list);
 
-        $total_num  = $this->getUniversityFreeTable()->getConnum($conArr);
+        $total_num  = $this->TDbUniversityTable()->getConnum($conArr);
         $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($uni_list));
         $paginator->setCurrentPageNumber($current_page);
         $total_page = ceil($total_num/$per_page);
@@ -472,17 +520,17 @@ class SystemManagementController extends AbstractActionController
     public function  uniSetAction(){
         $login_id_container = new Container('uid');
         $login_id = $login_id_container->item;
-        if (!isset($login_id)) {
-            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
-        }
+//        if (!isset($login_id)) {
+//            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+//        }
         $rid_container = new Container('rid');
         $rid_arr = $rid_container->item;//login 用户的权限
-        if (!isset($rid_arr)) {
-            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
-        }
-        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
-            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
-        }
+//        if (!isset($rid_arr)) {
+//            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+//        }
+//        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
+//            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
+//        }
         $form = new UnisetForm();
 
         //$form->get('submit')->setValue('Add');
@@ -504,10 +552,10 @@ class SystemManagementController extends AbstractActionController
             $uni->exchangeArray($formdata);
             var_dump($uni->university_name);
 
-            if($this->getUniversityFreeTable()->getUnibyname($uni->university_name))
+            if($this->TDbUniversityTable()->getUnibyname($uni->university_name))
                 echo "<script>alert('请勿重复添加！')</script>";
             else{
-                if($this->getUniversityFreeTable()->saveUniversity($uni))
+                if($this->TDbUniversityTable()->saveUniversity($uni))
                     echo "<script>alert('添加成功')</script>";
                 else
                     echo "<script>alert('添加失败')</script>";

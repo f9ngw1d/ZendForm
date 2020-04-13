@@ -4,44 +4,232 @@
  * table: db_university_free
  * 推免资格学校
  */
+
 namespace Manage\Model;
 
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterAwareInterface;
-use Zend\InputFilter\InputFilterInterface;
+use Zend\Db\Tablegateway\TableGateway;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
 
-class TDbUniversityTable implements InputFilterAwareInterface{
-    public $university_name;
-    public $university_id;
-    public $is985;
-    public $is211;
-    public $freetest_qualified;
-    public $SSDM;
-    public $SSDMC;
+class TDbUniversityTable
+{
+    protected $tableGateway;
 
-
-    protected $inputFilter;
-    //数组转换成对象里的属性，插入新用户的时候用
-    public function exchangeArray($data){
-        $this->university_name = (!empty($data['university_name'])) ? $data['university_name'] : null;
-        $this->university_id = (!empty($data['university_id']))? $data['university_id'] : null;
-        $this->is985 = (!empty($data['is985'])) ? $data['is985'] : null;
-        $this->is211 = (!empty($data['is211'])) ? $data['is211'] : null;
-        $this->freetest_qualified = (!empty($data['freetest_qualified   '])) ? $data['freetest_qualified'] : null;
-        $this->SSDM = (!empty($data['SSDM'])) ? $data['SSDM'] : null;
-        $this->SSDMC = (!empty($data['SSDMC'])) ? $data['SSDMC'] : null;
-
+    public function __construct(TableGateway $tg)
+    {
+        $this->tableGateway = $tg;
+        $this->table = 'db_university_free';
     }
 
-    public function getArrayCopy(){
-        return get_object_vars($this);
+    public function fetchAll()
+    {
+        $resultSet = $this->tableGateway->select();
+        return $resultSet;
     }
 
-    //InputFilterAwareInterface的方法，不需要是实现，但是这里不需要，所以直接抛出异常
-    public function setInputFilter(InputFilterInterface $inputFilter){
-        throw new \Exception("Not used");
+    /**
+     * @author cry
+     * 查询具有推免资格的所有大学所在省份
+     */
+    public function getProvinceArr(){
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from('db_university_free')
+            ->quantifier('DISTINCT')
+            ->columns(array('SSDM'=>'SSDM','SSDMC'=>'SSDMC'))
+            ->where('freetest_qualified="1" and SSDMC is not null');
+//            ->order('SSDMC');
+        $statement = $sql->prepareStatementForSqlObject($sl);
+        $result_set = $statement->execute();
+        $result_arr = iterator_to_array($result_set);
+        if($result_arr){
+            foreach ($result_arr as $key => $row){
+                $ssdm = $row['SSDM'];
+                $provinceArr[$ssdm] = $row['SSDMC'];
+            }
+        }
+        return $provinceArr;
     }
-    //返回一个过滤器
-    public function getInputFilter(){
+    /**
+     * @author cry
+     * 查询具有推免资格的选中省份的所有大学
+     */
+    public function getUniArrByPid($pid){
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from('db_university_free')
+            ->quantifier('DISTINCT')
+            ->columns(array('university_id'=>'university_id','university_name'=>'university_name'))
+            ->where('freetest_qualified="1" and SSDM = '.$pid);
+        $statement = $sql->prepareStatementForSqlObject($sl);
+        $result_set = $statement->execute();
+        $result_arr = iterator_to_array($result_set);
+        $unisArr = array();
+        if($result_arr){
+            foreach ($result_arr as $key => $row){
+                $unisArr[$row['university_id']] = $row['university_name'];
+            }
+        }
+        return $unisArr;
+    }
+    /**
+     * @author cry
+     * 根据大学name查询大学
+     */
+    public function getUniversity($name)
+    {//查询
+        $rowset = $this->tableGateway->select(array('university_name' => $name));
+        $row = $rowset->current();
+        if (!$row) {
+            return false;
+        }
+        return $row;
+    }
+    /**
+     * @author cry
+     * 根据大学id查询大学 推免
+     */
+    public function getUniversitybyId($id)
+    {
+        $id = (int)$id;
+        $rowset = $this->tableGateway->select(array('university_id' => $id));
+        $row = $rowset->current();
+        if (!$row) {
+            return false;
+        }
+        return $row;//->freetest_qualified
+    }
+    /**
+     * @author cry
+     * 增加 和 修改 大学
+     */
+    public function saveUniversity(TDbUniversity $bxyjfx)
+    {
+        $data = array(
+            'university_name' => $bxyjfx->university_name,
+            'university_id' => $bxyjfx->university_id,
+            'is985' => $bxyjfx->is985,
+            'is211' => $bxyjfx->is211,
+            'freetest_qualified' => $bxyjfx->freetest_qualified,
+            'SSDM' =>$bxyjfx->SSDM,
+            'SSDMC' => $bxyjfx->SSDMC,
+        );
+        if (!$this->getUniversity($bxyjfx->university_name)) {
+            return $this->tableGateway->insert($data);
+        } else {
+            return $this->tableGateway->update($data, array('university_name' => $bxyjfx->university_name));
+        }
+    }
+    /**
+     * @author cry
+     * 根据大学名字删大学
+     */
+    public function deleteUniversity($name)
+    {//删
+        $this->tableGateway->delete(array('university_name' => $name));
+    }
+
+    public function getUnibyname($name)
+    {
+        //var_dump($offset);
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from(array('uni' => $this->table))
+            ->columns(array('*'))
+            ->where(array('university_name = ?' => $name));;
+        $statement = $sql->prepareStatementForSqlObject($sl);
+        // echo "statment";
+        //echo ">>>>>>>".$statement->getSql();
+        $resultset = $statement->execute();
+        $resultArr = iterator_to_array($resultset);
+        // var_dump($resultArr);
+        if (empty($resultArr)) {
+            return 0;
+        }
+        else
+            return 1;
+    }
+    /*
+     * lrn    查学校
+     */
+    public function getUniversityByUid($id)
+    {//查询
+        $rowset = $this->tableGateway->select(array('university_id' => $id));
+        $row = $rowset->current();
+        if (!$row) {
+            return false;
+        }
+        return $row;
+    }
+    public function getUnibyCon($condArr,$limit = 0,$offset = 0)
+    {
+        //echo "get";
+        // echo $offset;
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from(array('uni' => $this->table))
+            ->columns(array('*'));
+        foreach($condArr as $cond){
+            $sl->where($cond);
+        }
+        if($limit != 0){
+            $sl->limit($limit);
+        }
+        if($offset != 0){
+            $sl->offset($offset);
+        }
+
+        $statement = $sql->prepareStatementForSqlObject($sl);
+        $resultset = $statement->execute();
+        $resultArr = iterator_to_array($resultset);
+        return $resultArr;
+    }
+
+    public function updateUni(UniversityFree $uni)
+    {
+        //echo  ">>>>>>>>>>>>>>>>>>>>>>>>>>>>update";
+        $data = array(
+            'university_name' => $uni->university_name,
+            'university_id'  => $uni->university_id,
+
+            'is985' => $uni->is985,
+            'is211'  => $uni->is211,
+            'freetest_qualified' => $uni->freetest_qualified,
+            'SSDM'  => $uni->SSDM,
+            'SSDMC' => $uni->SSDMC,
+
+        );
+
+        $id = (int) $uni->university_id;
+        unset($data['university_id']);
+        if($this->tableGateway->update($data, array('university_id' => $id)))
+            return 1;
+    }
+
+    public function getConnum($condArr)
+    {
+        if(!$condArr)
+            return 0;
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from(array('db_university' => $this->table))
+            ->columns(array('count'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
+        foreach($condArr as $cond){
+            $sl->where($cond);
+        }
+
+        $statement = $sql->prepareStatementForSqlObject($sl);
+        $resultset = $statement->execute();
+        $row       = $resultset->current();
+        $rowCount = $row['count'];
+        return $rowCount;
     }
 }

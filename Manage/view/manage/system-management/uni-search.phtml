@@ -35,8 +35,8 @@ $this->headTitle($title);
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 <ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
     <?php
-    echo "<li><a href='".$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"uniset"))."' >添加高校信息</a></li>";
-    echo "<li><a href='".$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"unisearch"))."' >查询高校信息</a></li>";
+    echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSet"))."' >添加高校信息</a></li>";
+    echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSearch"))."' >查询高校信息</a></li>";
     ?>
 </ul>
 
@@ -45,7 +45,7 @@ $this->headTitle($title);
 <div id="add">
     <?php
     $form = $this->form;
-    $form->setAttribute('action', $this->url("basicinfo/default",array("controller"=>"uniset","action"=>"unisearch")));
+    $form->setAttribute('action', $this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSearch")));
     $form->prepare();
 
     echo $this->form()->openTag($form);
@@ -197,7 +197,7 @@ if ($this->pageCount):
             <div class="modal-body">
                 <?php
                 $form1 = $this->form1;
-                $form1->setAttribute('action',$this->url("basicinfo/default",array("controller"=>"uniset","action"=>"unisearch")));
+                $form1->setAttribute('action',$this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSearch")));
                 $form1->setAttribute('method','POST');
                 $form1->prepare();
 

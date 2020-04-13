@@ -79,7 +79,7 @@ if($this->flag == 1)
     <span style='color: red; font-size: medium;'>1.设置招生工作的几个时间节点。可手动开启或关闭，亦可设置好开始及结束时间，由系统自动开关。<br>2、对于系统已添加的时间设置，只可更改开始及结束时间和开关状态，不可更改名称。</b></span>
     <?php
     $form = $this->form;
-    $form->setAttribute('action', $this->url('manage/default',array('controller'=>'systemManagement','action'=>'add')));
+    $form->setAttribute('action', $this->url('manage/default',array('controller'=>'systemManagement','action'=>'addTime')));
     $form->prepare();
 
     echo $this->form()->openTag($form);?>
@@ -232,7 +232,7 @@ if ($this->pageCount):
             <div class="modal-body">
                 <?php
                 $form1 = $this->form1;
-                $form1->setAttribute('action',$this->url('manage/default',array('controller'=>'systemManagement','action'=>'add')));
+                $form1->setAttribute('action',$this->url('manage/default',array('controller'=>'systemManagement','action'=>'addTime')));
                 $form1->setAttribute('method','POST');
                 $form1->prepare();
 

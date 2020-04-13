@@ -158,7 +158,7 @@ class SettingController extends AbstractActionController
     {
         if (!$this->config_table) {
             $sm = $this->getServiceLocator();
-            $this->config_table = $sm->get('Setting\Model\ConfigTable');
+            $this->config_table = $sm->get('Manage\Model\ConfigKeyTable');
         }
         return $this->config_table;
     }

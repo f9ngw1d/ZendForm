@@ -1,139 +1,222 @@
-<?php
-$title = '添加学院信息';
-$this->headTitle($title);
-?>
-<!--<h3><?php echo $this->escapeHtml($title);?></h3>-->
-<style type="text/css">
-    .message{
-        color: #b23131;
+<style>
+    label span, label {
+        text-align: left;
+        margin-right: 40px;
+        height: 35px;
+    }
+
+    input[type="text"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    input[type="datetime"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    input[type="select"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    select {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    label {
+        margin-right: 40px;
+    }
+    .message1{
+        color: #EE0000;
+    }
+
+    .message2{
+
+        color:  #A9A9A9;
     }
 </style>
-<!--  提交审核按钮 -->
-<!--<br><br>-->
+<!--<script type="text/javascript">-->
+<!--    function getindex()-->
+<!--    {-->
+<!---->
+<!--        var obj = event.srcElement;-->
+<!--        var trobj = obj.parentElement.parentElement;-->
+<!--        var tbobj = trobj.parentElement;-->
+<!--        //var url = window.location.href;-->
+<!--        var index = trobj.rowIndex-1;-->
+<!--        var id = parseInt(document.getElementById("id").innerText)+parseInt(index);-->
+<!--        var add = "http://211.71.149.244:11111/manage/systemManagement/edit/param1/"+id;-->
+<!--        //alert(url);-->
+<!--        //window.location.replace(add);-->
+<!--        //window.location.href=add;-->
+<!---->
+<!--        var url = window.location.protocol + "//"+window.location.host;-->
+<!--        if(window.location.port){-->
+<!--            url = url +":"+ post;-->
+<!--        }-->
+<!--        url = url+"/manage/systemManagement/edit/param1/"+id;-->
+<!--        //http://tm59/stu/register/register-->
+<!--        alert(url);-->
+<!--        window.location.replace(url);-->
+<!---->
+<!--    }-->
+<!--</script>-->
+
 <?php
-//if(in_array(1,$this->rid)){
-//    echo " <a href = '".$this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college"))."' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>";
-//}
-//?>
-<!--<br/>-->
-<!--<input id="confirmcheck" type="button" onclick="javascript:return ifCheck()" class="btn" value=" 提交审核 ">-->
-<!---<a href = '<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college")); ?>' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>
-<br/><br/>
------>
-<br>
-<!--<div class = "tab-content" >-->
-<!-- ******************** Tab1 学院信息填写 ******************** -->
-<div class = "tab-pane active" id = "addinfo2" >
-    <!--<h3>添加科研或实践项目经历</h3>-->
-    <form class="form-horizontal"  action="/manage/system-manage/addCollege/uid/<?php echo $this->uid?>" method="post" enctype="multipart/form-data">
-        <div class="control-group">
-            <label class="control-label" for="college_id">学院编号</label>
-            <div class = "controls">
-                <span class = 'message'>*&nbsp;</span>
-                <textarea   rows="1" id="college_id" name="college_id" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="college_name">学院名称</label>
-            <div class = "controls">
-                <textarea   rows="1" id="college_name" name="college_name" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="phone">学院电话</label>
-            <div class = "controls">
-                <textarea   rows="1" id="phone" name="phone" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="ip_address">网址</label>
-            <div class = "controls">
-                <textarea   rows="1" id="ip_address" name="ip_address" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="address">办公楼地址</label>
-            <div class = "controls">
-                <textarea   rows="1" id="address" name="address" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <button type="button" id="add_college" class="btn btn-primary"> 确认添加学院 </button>
-            </div>
-        </div>
-    </form>
+//echo $this->flag;
+if($this->flag == 1)
+    echo "<script>alert('设置成功！')</script>";
+?>
+<div id="div2">
+    <h2>添加学院</h2>
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action', $this->url('manage/default',array('controller'=>'systemManagement','action'=>'addCollege')));
+    $form->prepare();
 
-
-    <div class="span12">
-        <?php if($this->college_table){
-            ?>
-            <h3>已添加的学院信息</h3>
-            <table class='table table-striped table-hover table-condensed'>
-                <thead>
-                <th>编号</th>
-                <th>名称</th>
-                <th>联系电话</th>
-                <th>网址</th>
-                <th>办公地址</th>
-                <th>操作</th>
-                </thead>
-                <tbody>
-                <?php
-                foreach ($this->college_table as $key => $row) {
-                    ?>
-                    <tr>
-                        <td class="span2"> <?php echo $row->college_id;?></td>
-                        <td class="span3"> <?php echo $row->college_name;?></td>
-                        <td class="span3"> <?php echo $row->phone;?></td>
-                        <td class="span3"> <?php echo $row->ip_address;?></td>
-                        <td  class="span2"><?php echo $row->address;?></td>
-                        <td  class="span2">
-                            <!--<?php echo $row->project_id;?>-->
-                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college","id"=>$row->college_id)); ?>'  onclick='javascript:return ifCheckdel()' class="button">删除  </a>
-                            <a href='<?php echo $this->url("manage/addCollege",array("controller"=>"system-management","action"=>"add-college","id"=>$row->college_id)); ?>'  onclick='javascript:return edit()' class="button">编辑  </a>
-                        </td>
-                    </tr>
-                <?php } ?> <!-- 循环输出项目记录-->
-                </tbody>
-            </table>
-        <?php  } ?>
+    echo $this->form()->openTag($form);?>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('college_id')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('college_id')); ?></div>
     </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('college_name')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('college_name')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('phone')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('phone')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('ip_address')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('ip_address')); ?></div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="span2"><?php echo $this->formLabel($form->get('address')); ?></div>
+        <div class="span7"><?php echo $this->formElement($form->get('address')); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->formElement($form->get('submit')); ?></div>
+    </div>
+    <br>
 
-
+    <?php echo $this->form()->closeTag();
+    ?>
 </div>
-<!--</div>-->
-<script type="text/javascript" src="<?php echo $this->basePath('js/stu/stuconfirm.js?version=1.1.1');?>"></script>
-<script>
 
-    $(document).ready(function(){
+<h3>已设项</h3>
+<?php
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
+        }
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
+        }
+    }
 
-        $("#add_project").click(function () {
-            var college_id = $("#college_id").val();
-            var college_name = $("#college_name").val();
-            var phone = $("#phone").val();
-            var ip_address = $("#ip_address").val();
-            var address =$("#address").val();
-            // alert(file+ '/' +certificate.name + '/' + certificate.type + '/' + certificate.size);
-            if(!college_id){
-                alert("学院编号不可以为空！");
-                $("#college_id").focus();
-            } else if(!college_name){
-                alert("学院名称不可以为空！");
-                $("#college_name").focus();
-            }else if(!phone){
-                alert("学院电话不可以为空！");
-                $("#phone").focus();
-            }else if(!ip_address){
-                alert("网址不可以为空！");
-                $("#ip_address").focus();
-            }else if(!address){
-                alert("办公楼地址不可以为空！");
-                $("#address").focus();
-            }else{
-                $(this).prop("type","submit");
-            }
-        })
-    });
+    return $obj;
+}
 
-</script>
+//if(isset($this->time)){
+//    echo "<table class='table table-hover'>";
+//    echo "<tr>";
+//    foreach ($this->column as $key => $value){
+//        echo "<th>$value</th>";
+//    }
+//    echo "</tr>";
+//    foreach ($this->time as $timer){
+//        //var_dump($univer);
+//        $uniarr = object_to_array($timer);
+//        $aaa=json_encode($uniarr);
+//        $str = 'editform('.$aaa.')';
+//        //echo $str;
+//        foreach ($this->column as $key => $value){
+//
+//            if ($key == 'id')
+//                echo "<td id='id'>".$uniarr[$key]."</td>";
+//            else if($key == 'status')
+//            {
+//                if ($uniarr[$key] == -1) {
+//                    echo "<td>关</td>";
+//                }
+//                else {
+//                    echo "<td>开</td>";
+//                }
+//            }
+//            else if ($key == 'sta') {
+//                if ($uniarr[$key] == 0) {
+//                    echo "<td>已截止</td>";
+//                }
+//                else {
+//                    echo "<td>进行中</td>";
+//                }
+//            }
+//            else if ($key == 'oprat')
+//            {
+//                //$id = $uniarr['id'];
+//                //echo "id---------------------->".$id;
+//                echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
+//            }
+//            else
+//                echo "<td>".$uniarr[$key]."</td>";
+//        }
+//        echo "</tr>";
+//    }
+//    echo "</table>";
+//}
+//$url_arr = '/manage/systemManagement/addTime/param1/';
+//if(isset($url_arr)){
+//    $get_param = "";
+//    for($i=1;$i<=5;$i++){
+//        if(isset($url_arr['param'.$i])){
+//            $get_param .= "/param".$i."/".$url_arr['param'.$i];//$url_arr['param'.$i];
+//        }
+//    }
+//}
+//$url = '/manage/systemManagement/addTime/param1/';
+//if ($this->pageCount):
+//    ?>
+<!---->
+<!--    <div class="paginationControl">-->
+<!--        <!-- Previous page link -->-->
+<!--        共计--><?php //echo $this->total_num?$this->total_num:0 ;?><!--条数据-->
+<!--        --><?php //if (isset($this->previous)): ?>
+<!--            <a href="--><?php //echo $url. $this->previous .$get_param; ?><!--">-->
+<!--                < 上一页-->
+<!--            </a> |-->
+<!--        --><?php //else: ?>
+<!--            <span class="disabled">< 上一页</span> |-->
+<!--        --><?php //endif; ?>
+<!---->
+<!--        <!-- Numbered page links -->-->
+<!--        --><?php //foreach ($this->pagesInRange as $page): ?>
+<!--            --><?php //if ($page != $this->current): ?>
+<!--                <a href="--><?php //echo $url. $page .$get_param;?><!--">-->
+<!---->
+<!--                    --><?php //echo $page; ?>
+<!--                </a> |-->
+<!--            --><?php //else: ?>
+<!--                --><?php //echo $page; ?><!-- |-->
+<!--            --><?php //endif; ?>
+<!--        --><?php //endforeach; ?>
+<!---->
+<!--        <!-- Next page link -->-->
+<!--        --><?php //if (isset($this->next)): ?>
+<!--            <a href="--><?php //echo $url. $this->next; ?><!--">-->
+<!--                下一页 >-->
+<!--            </a>-->
+<!--        --><?php //else: ?>
+<!--            <span class="disabled">下一页 ></span>-->
+<!--        --><?php //endif; ?>
+<!--    </div>-->
+<?php //endif; ?>
