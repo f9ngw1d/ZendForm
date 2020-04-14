@@ -16,15 +16,17 @@ class SettingController extends AbstractActionController
 {
 
     public function __construct(){
-        $rid_arr_container = new Container('rid');
-        $rid_arr = $rid_arr_container->item;
-        $redirect_url = "/info";
-        if(!$rid_arr || !in_array(10,$rid_arr)){
-            echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
-            exit();
-        }
+          $rid_arr_container = new Container('rid');
+          $rid_arr = $rid_arr_container->item;
+          $redirect_url = "/info";
+//        if(!$rid_arr || !in_array(10,$rid_arr)){
+//            echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
+//            exit();
+//        }
     }
     public $config_table;
+    /*author:lrn
+    配置信息帮助界面*/
     public function indexAction(){
         $this->getConfigTable();
         $stu_status = $this->config_table->getConfigValueByKey('stu_status');
@@ -46,7 +48,7 @@ class SettingController extends AbstractActionController
             'sys_info2'=>$sys_info2,
         );
     }
-
+/*lrn  配置信息界面*/
     public function configAction(){
         //获取学校、系统名称、技术支持、版权所有、当前招生年份信息
         $column = array(
@@ -164,6 +166,23 @@ class SettingController extends AbstractActionController
     }
     public function deleteAllDataAction()
     {
-
+        $filename='tmk_database'.date("Y-m-d").'-'.time();
+        $dir="tmkbackup";
+        $file_path2="mkdir tmkbackup";
+        chdir("/usr/local/www/tm/public");
+        //echo "当前路径：".getcwd() . "<br>";
+        if(is_dir($dir)){
+        }else{
+            $res=mkdir($dir,0777,true);
+        }
+        // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
+        $db_name="new_freetest";
+        $name="/usr/local/www/tm/public/".$dir."/".$filename.".sql";//数据库文件存储路径
+        $exec="mysqldump --databases ".$db_name." > ".$name;
+        $result=exec($exec);
+        return array(
+            'data_addr'=>"./".$dir."/".$filename.".sql",
+            'file_name'=> $filename.".sql",
+        );
     }
 }
