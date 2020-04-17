@@ -5,6 +5,7 @@ return array(
             'Manage\Controller\Setting' => 'Manage\Controller\SettingController',
             'Manage\Controller\SystemManagement' => 'Manage\Controller\SystemManagementController',
             'Manage\Controller\State2CheckProject' => 'Manage\Controller\State2CheckProjectController',
+            'Manage\Controller\Account' => 'Manage\Controller\AccountController',
         ),
     ),
     'router' => array(

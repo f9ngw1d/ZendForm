@@ -270,6 +270,16 @@ class TStuBaseTable
         }
     }
 
+    public function deleteStuBase()
+    {
+        $res = $this->tableGateway->delete();
+        if($res){
+            return $res;
+        }else{//失败则抛出异常，for事务
+            throw new \Exception("del fail");
+        }
+    }
+
     /**
      * @author cry
      * @function 查询身份证号码或者邮件是否被注册 返回-1是被注册了

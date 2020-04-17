@@ -2,6 +2,9 @@
 
 namespace Manage\Controller;
 
+use Manage\Form\CollegeAddForm;
+use Manage\Form\DeleteAllDataForm;
+use Manage\Model\TBaseCollege;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -9,11 +12,15 @@ use Zend\Session\Storage\SessionArrayStorage;
 use Zend\ProgressBar\Upload\SessionProgress;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
+use Zend\Db\TableGateway\TableGateway;
+use StuData\Model\TStuBase;
 
 //use Check\Form\SearchCondForm;
 
 class SettingController extends AbstractActionController
 {
+
+    protected $TStuBaseTable;
 
     public function __construct(){
           $rid_arr_container = new Container('rid');
@@ -164,25 +171,25 @@ class SettingController extends AbstractActionController
         }
         return $this->config_table;
     }
+
+    public function getTStuBaseTable()//获取数据库Article
+    {
+        if (!$this->TStuBaseTable) {
+            $sm = $this->getServiceLocator();
+            $this->TStuBaseTable = $sm->get('StuData\Model\TStuBaseTable');
+        }
+        return $this->TStuBaseTable;
+    }
     public function deleteAllDataAction()
     {
-        $filename='tmk_database'.date("Y-m-d").'-'.time();
-        $dir="tmkbackup";
-        $file_path2="mkdir tmkbackup";
-        chdir("/usr/local/www/tm/public");
-        //echo "当前路径：".getcwd() . "<br>";
-        if(is_dir($dir)){
-        }else{
-            $res=mkdir($dir,0777,true);
+        $form = new DeleteAllDataForm();
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $this->getTStuBaseTable()->deleteStuBase();
         }
-        // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
-        $db_name="new_freetest";
-        $name="/usr/local/www/tm/public/".$dir."/".$filename.".sql";//数据库文件存储路径
-        $exec="mysqldump --databases ".$db_name." > ".$name;
-        $result=exec($exec);
-        return array(
-            'data_addr'=>"./".$dir."/".$filename.".sql",
-            'file_name'=> $filename.".sql",
-        );
+        $view = new ViewModel(array(
+            'form' => $form,
+        ));
+        return $view;
     }
 }

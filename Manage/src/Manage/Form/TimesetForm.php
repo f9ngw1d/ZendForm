@@ -11,7 +11,7 @@ class TimesetForm extends Form
     public function __construct($name = null, $options = array())
     {
         parent::__construct($name, $options);
-
+        $staop = array('-1' => '自动', '1' => '手动开启');
 
         $this->add(array(
             'type' => 'hidden',

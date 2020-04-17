@@ -1,0 +1,44 @@
+<div class="row-fluid">
+    <?php
+    // module/Login/view/login/login/loginTeacher.phtml
+    echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/school_badge1.png'))->prependStylesheet($this->basePath() . '/css/login.css');
+    $title = "";
+    $this->headTitle($title);
+    echo "";
+    ?>
+    <div class="row">
+    <div class='span6'></div>
+    <div class="span4">
+        <?php
+        header('Content-Type:text/html; charset=utf-8');
+        if($this->opt == 'logout'){
+            setcookie('sign');
+        }
+        if(empty($_COOKIE['sign'])){
+            ?>
+            <form method="post">
+                <h2 class='form-signin-heading'>教师登录</h2>
+                <p><input type="text" name="username" placeholder="邮 箱"/></p>
+                <p><input type="password" name="password" placeholder="密  码"/></p>
+                <p></p>
+                <p>
+                    <input type="text" name="captcha" placeholder="验证码" style="width: 40%"/>
+                    <?php echo "<img onclick='refresh()' id='imgcaptcha' src='".$this->basePath("img/captcha".$this->imgSrc)."' style='height:30px; margin-bottom:8px;'>";//验证码图片,点击刷新图片?>
+                </p>
+                <input type="hidden" name="callback" value="<?php echo $this->callback; ?>" />
+                <input type="submit" class="btn btn-primary" value="登录" />
+            </form>
+
+            <?php
+        }else{
+            $query = http_build_query($_COOKIE);
+
+            echo "系统检测到您已登录 {$_COOKIE['sign']} <a href='?logout=logout'>退出</a>";
+            //header("location:".$this->callback."?sign={$_POST['username']}");
+        }
+        ?>
+    </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="<?php echo $this->basePath("js/manage/login.js");?>"></script>
