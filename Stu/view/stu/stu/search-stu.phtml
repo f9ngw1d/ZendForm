@@ -1,0 +1,57 @@
+<?php
+$title = '查询条件';
+$this->headTitle($title);
+?>
+<h2>推免生审核</h2>
+<h3><?php echo $this->escapeHtml($title);?></h3>
+<?php
+$url_arr = array(
+    'controller'=>'stu',
+    'action'=>'searchStu',
+    'rid'=>$this->rid,
+    'now_stage'=>$this->now_stage,
+    'select_status'=>$this->select_status,
+);
+//echo $this->uid.'stage'.$this->now_stage;
+if(isset($this->cond_from_get)){
+    if(isset($this->cond_from_get['target_college'])){
+        $url_arr['param4'] = $this->cond_from_get['target_college'];
+    }
+    if(isset($this->cond_from_get['status'])){
+        $url_arr['param5'] = $this->cond_from_get['status'];
+    }
+    if(isset($this->cond_from_get['user_name'])){
+        $url_arr['param6'] = $this->cond_from_get['user_name'];
+    }
+}
+$form=$this->form;
+$form->setAttribute('action',$this->url('stu/default',$url_arr));
+$form->setAttribute('method','POST');
+$form->prepare();
+echo $this->form()->openTag($form);//打开
+?>
+<div style='width:100%;display:inline-block;'>
+    <style>
+        .one-column{
+            width: 33%;
+            float: left;
+            line-height: 30px;
+        }
+        label{
+            width: 80px;
+        }
+        form input,form select,button{
+            margin-top: 5px;
+        }
+        button{
+            margin-left: 10px;
+        }
+    </style>
+    <?php
+    echo "<div class='one-column'>".$this->formRow($form->get('target_college'))."</div>";;
+    echo "<div class='one-column'>".$this->formRow($form->get('status'))."</div>";
+    echo "<div class='one-column'>".$this->formRow($form->get('user_name'))."</div>";
+    echo "</div>";
+    echo $this->formSubmit($form->get('submit'));//提交按钮
+    echo $this->form()->closeTag();//关闭
+    ?>

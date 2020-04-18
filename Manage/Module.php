@@ -23,6 +23,8 @@ use Manage\Model\UsrRole;
 use Manage\Model\UsrRoleTable;
 use Manage\Model\UsrTeacher;
 use Manage\Model\UsrTeacherTable;
+use Manage\Model\MTBaseTeam;
+use Manage\Model\MTBaseTeamTable;
 use Zend\Mvc\MvcEvent;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Mvc\ModuleRouteListener;
@@ -172,6 +174,17 @@ class Module{
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new UsrTeacher());
                     return new TableGateway('usr_teacher',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\MTBaseTeamTable' => function($sm){
+                    $tableGateway = $sm->get('MTBaseTeamTableGateway');
+                    $table = new MTBaseTeamTable($tableGateway);
+                    return $table;
+                },
+                'MTBaseTeamTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new MTBaseTeam());
+                    return new TableGateway('base_team',$dbAdapter,null,$resultSetPrototype);
                 },
             )
         );

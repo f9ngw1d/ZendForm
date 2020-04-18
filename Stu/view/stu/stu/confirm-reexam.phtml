@@ -1,0 +1,25 @@
+<?php
+$title = "请仔细核对信息";
+$this->headTitle($title);
+echo "<h3>$title</h3>";
+$url = $this->url('stu/default', array('Controller' => 'stu', 'action' => 'confirmReexam'));
+$url = "/stu/stu/confirmReexam";
+?>
+<div class="row-fluid">
+    <div class="span6" style="font-size: 120%;text-align: left;">
+            <table class="table table-bordered" style="border-radius：5px;border-collapse: collapse;">
+                <?php
+                    foreach ($this->volunteer_info as $course_name => $score)
+                        echo "<tr><td>$course_name</td><td>$score</td></tr>";
+                ?>
+            </table>
+        <span style='color: red; font-size: medium;'>*是否参加上述学科组织的复试?<br></b></span>
+        <bR>
+        <form action="<?php echo $url; ?>" method="post">
+            <div>
+                <input type="submit" name="del"  class="btn btn-primary" value="确认参加复试" />&emsp;&emsp;
+                <input type="submit" name="del" class="btn btn-primary" value="拒绝" />
+            </div>
+        </form>
+    </div>
+</div>

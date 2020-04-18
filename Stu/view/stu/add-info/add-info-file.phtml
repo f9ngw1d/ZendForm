@@ -1,0 +1,194 @@
+<?php
+    $title = '推免生注册补充信息';
+    $this->headTitle($title);
+?>
+<!--<h3><?php echo $this->escapeHtml($title);?></h3>-->
+<style type="text/css">
+    .message{
+        color: #b23131;
+    }
+</style>
+<!--  提交审核按钮 -->
+<br><br>
+<div class='message'>
+    提示1. 请在补充完个人全部信息【基本信息(含必填项)、科研经历(选填)、个人奖励含优秀营员(选填)、文件凭证(含必须上传的项)】后再提交审核。<br/>
+    提示2. 在提交审核之前，您的所填信息可随意更改。<br/>
+    提示3. 请在要求的提交审核期限内提交。<br/>
+    <br/>
+</div>
+<?php
+if(in_array(1,$this->rid)){
+    echo " <a href = '".$this->url("stu/default",array("controller"=>"addinfo","action"=>"stuConfirmcheck"))."' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>";
+}
+?>
+<br/>
+<!--<input id="confirmcheck" type="button" onclick="javascript:return ifCheck()" class="btn" value=" 提交审核 ">-->
+<!---<a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"stuConfirmcheck")); ?>' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>
+<br/><br/>
+-->
+
+<ul class = "nav nav-tabs" id = "myTab" >
+    <li> <a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfo","uid" => $this->uid)); ?>'>基本信息</a></li>
+    <li><a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfoProject","uid" => $this->uid)); ?>'>科研经历</a></li>
+    <li><a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfoHonour","uid" => $this->uid)); ?>' > 个人奖励（含优秀营员） </a></li>
+    <li class="active"><a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfoFile","uid" => $this->uid)); ?>'> 文件凭证 </a></li>
+</ul>
+<!-- ******************** Tab4 文件凭证 ******************** -->
+<div class = "tab-pane active" id = "addinfo4" >
+    <h4>电子材料上传</h4>
+   <div class='message'>
+       提示1. 文件仅限提示的格式，单个文件大小不得超过10M，单次上传总和不得超过40M，文件名中不能出现“.”等特殊符号。若文件过多或过大，建议分多次上传。<br/>
+       提示2. 文件凭证名称中标识为"必填"的文件至少上传1份<br/>
+       提示3. 选择文件以后，点击页面右上方“上传文件”。在提交审核前，请将“必填”项相关文件上传完毕<br/>
+       提示4. 若为经校研究生招生小组审定的高水平运动员或本科为外语专业/小语种的同学，请在“英语四级成绩单”处上传相应的英语四级考试合格证书或该语种国内公共外语相当于英语四级考试合格证书。<br/>
+   </div>
+
+
+    <table class='table table-bordered' style='border-collapse: collapse;'>
+
+        <?php
+        $this->form->setAttribute('action',$this->url('stu/default',array('controller'=>'addinfo','action'=>'addInfoFile',"uid" => $this->uid)));
+        $this->form->setAttribute('method','POST');
+        $this->form->prepare();
+        echo $this->form()->openTag($this->form);
+        ?>
+        <thead>
+        <tr>
+        <td colspan='4'>
+        <div align="right">
+        <!--<?php echo $this->formSubmit($form->get('save'));  ?>-->
+        <button type="button" id="save" name="save" class="btn btn-primary"> 上传文件 </button>
+        </div>
+
+        </td>
+        </tr>
+
+        <th>文件凭证名称</th>
+        <th>上传文件操作</th>
+        <th>文件凭证上传格式</th>
+        <th>文件上传</th>
+        </thead>
+        <tbody>
+        <?php foreach ($this->einfo_list as $row){?>
+
+        <!--<form class="form-horizontal"  method="post">-->
+            <tr>
+            <td class="span4">
+                <?php echo $this->formLabel($form->get('einfo_'.$row->id.'_1')); ?>
+                <span class = 'message'><?php echo (!empty($row->remark)) ? "[*必填]" : null;?></span>
+                <!--<span class = 'message'><?php echo (!empty($row->remark)) ? "[必填]" : "[选填]";?></span>-->
+            </td>
+            <td class="span2">
+                <?php
+                if($this->einfo_status[$row->id] == $row->maxnum){
+                echo "上传文件数目达到最大要求数目！";
+                }else{
+                    for( $i = 1 ; $i <= $row->maxnum ; $i++ ){
+                        //if(!isset($this->srcArr[$row->id] )){
+                            if(!isset($this->srcArr[$row->id][$i])){
+                                echo $this->formElement($form->get('einfo_'.$row->id."_".$i));//上传文件按钮
+                            }
+                        //}
+                    }
+                }
+
+                ?>
+            </td>
+            <td class="span3">
+                <div class="span3"><span class='message'><?php echo $row->surfix; ?></span></div>
+            </td>
+
+            <td class="span7">
+                <?php
+                    if( $this->einfo_status[$row->id]){//已上传
+                        echo "已上传：".$this->einfo_status[$row->id];//显示上传了的文件
+                        echo "<br>";
+
+                        for( $i = 1 ; $i <= $row->maxnum ; $i++ ){
+                            if(isset($this->srcArr[$row->id][$i])){ //对应文件存在
+                ?>
+                <div class='span5'>
+                    <a href='<?php echo $this->basePath($this->srcArr[$row->id][$i]);?>' target='_blank'>查看文件详情</a>
+                </div>
+                <div class='span2'>
+                    <a href='<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"deleteFile","id"=>$row->id,"param3"=>$i,"param2"=>$this->einfo_surfix[$row->id][$i])); ?>' class="button">删除  </a>
+                </div>
+                <br>
+
+
+                <?php }}//for 结束
+                }else{
+                    echo "未上传文件";
+                }
+                ?>
+            </td>
+        </tr>
+        <?php } ?>
+        <!--&lt;!&ndash; 提交按钮&ndash;&gt;-->
+        <!--<tr>-->
+            <!--<td colspan='4'>-->
+                <!--<div align="right">-->
+                    <!--&lt;!&ndash;<?php echo $this->formSubmit($form->get('save'));  ?>&ndash;&gt;-->
+                    <!--<button type="button" id="save" name="save" class="btn btn-primary"> 上传文件 </button>-->
+                <!--</div>-->
+
+            <!--</td>-->
+        <!--</tr>-->
+        <!--</form>-->
+        </tbody>
+        <?php  echo $this->form()->closeTag();?>
+    </table>
+
+</div>
+<script type="text/javascript" src="<?php echo $this->basePath('js/stu/stuconfirm.js?version=1.1.1');?>"></script>
+<script>
+    $(document).ready(function() {
+        $("#save").click(function () {
+            var typeAllow = ["pdf","jpg","jpeg","png"];//允许的后缀
+            var file_input_num = $("input:file").length;
+            var input_file = document.getElementsByTagName("input");
+            var files_size = 0;
+
+            //单独限制个人照片的类型
+            var stu_photo = document.getElementById("einfo_1_1");
+            if(stu_photo){
+
+                if( stu_photo.value  ){//个人照片
+                    var stu_photo_type = (stu_photo.files[0].name.substring(stu_photo.files[0].name.lastIndexOf(".")+1,stu_photo.files[0].name.length)).toLowerCase();
+                    if(($.inArray(stu_photo_type,["jpg","jpeg","png"]) < 0)){
+                        alert("个人照片 的文件后缀不符合该文件凭证上传格式！请重新上传!");
+                        return false;
+                    }
+                }
+            }
+
+
+            for (var i = 0 ; i < file_input_num ; i++) {
+                if(input_file[i].files[0]){ // alert(x[i].files[0].size);
+
+                    var currentfile = input_file[i].files[0]; // alert(currentfile.);
+                    var currentfiletype = (currentfile.name.substring(currentfile.name.lastIndexOf(".")+1,currentfile.name.length)).toLowerCase(); // 判断文件类型是否在要求的里面
+
+                    if( currentfile.size / (1024*1024) > 10 ){ //单个文件大小限制
+                        alert("上传文件中 "+ currentfile.name +"超过10M，此次上传失败！请仔细检查后再进行上传！");
+                        // location.reload();
+                        return false;
+                    }
+                    else if($.inArray(currentfiletype,typeAllow) < 0){//判断单个文件后缀是否符合要求
+                        alert(currentfile.name + " 的文件后缀不符合该文件凭证上传格式！请重新上传!");
+                        return false;
+                    }
+                    else if( files_size / (1024*1024) > 40 ){ //单次上传文件大小限制
+                        // location.reload();
+                        alert("上传文件大小总和超过40M，此次上传失败！！建议分次进行上传！");
+                        return false;
+                    }
+                    else{
+                        files_size = files_size +currentfile.size ;
+                    }
+                }
+            }
+            $(this).prop("type","submit"); //js检验成功 提交表单到controller里面处理
+        })
+    })
+</script>

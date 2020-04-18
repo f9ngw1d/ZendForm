@@ -1,0 +1,24 @@
+<h2>所有申请的夏令营项目</h2>
+
+<table class="table table-striped">
+    <thead>
+    <?php
+    foreach ($column as $key => $value) {
+        echo "<th/>".$value."</th>";
+    }
+    ?>
+    </thead>
+    <?php
+    foreach ($setting as $key_name => $row) {
+        ?><tr><?php
+        foreach ($column as $key => $value) {
+            if($key == 'key_value'){
+                echo "<td id=".$row['id'].">".$row[$key]."</td>";
+                continue;
+            }
+            echo "<td>".$row[$key]."</td>";
+        }
+        ?></tr><?php
+    }
+    ?>
+</table>

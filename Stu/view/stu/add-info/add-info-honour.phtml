@@ -1,0 +1,265 @@
+<?php
+    $title = '推免生注册补充信息';
+    $this->headTitle($title);
+?>
+<!--<h3><?php echo $this->escapeHtml($title);?></h3>-->
+<style type="text/css">
+    .message{
+        color: #b23131;
+    }
+</style>
+<!--  提交审核按钮 -->
+<br><br>
+<div class='message'>
+    提示1. 请在补充完个人全部信息【基本信息(含必填项)、科研经历(选填)、个人奖励含优秀营员(选填)、文件凭证(含必须上传的项)】后再提交审核。<br/>
+    提示2. 在提交审核之前，您的所填信息可随意更改。<br/>
+    提示3. 请在要求的提交审核期限内提交。<br/>
+    <br/>
+</div>
+<?php
+if(in_array(1,$this->rid)){
+    echo " <a href = '".$this->url("stu/default",array("controller"=>"addinfo","action"=>"stuConfirmcheck"))."' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>";
+}
+?>
+<br/>
+<!--<input id="confirmcheck" type="button" onclick="javascript:return ifCheck()" class="btn" value=" 提交审核 ">-->
+<!----<a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"stuConfirmcheck")); ?>' onclick='javascript:return ifCheck()' class='btn btn-danger'>提交审核</a>
+<br/><br/>
+--->
+
+<ul class = "nav nav-tabs" id = "myTab" >
+    <li> <a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfo","uid" => $this->uid)); ?>'>基本信息</a></li>
+    <li><a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfoProject","uid" => $this->uid)); ?>'>科研经历</a></li>
+    <li class="active"><a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfoHonour","uid" => $this->uid)); ?>' > 个人奖励（含优秀营员） </a></li>
+    <li><a href = '<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"addInfoFile","uid" => $this->uid)); ?>'> 文件凭证 </a></li>
+</ul>
+<br>
+    <!-- ******************** Tab3 个人奖励（含优秀营员） ******************** -->
+    <div class = "tab-pane active" id = "addinfo3" >
+        <form class="form-horizontal"  action="/stu/addinfo/addInfoHonour/uid/<?php echo $this->uid?>" method="post" enctype="multipart/form-data">
+            <div class="control-group">
+                <label class="control-label" for="honour_name">获奖名称</label>
+                <div class = "controls">
+                    <!--<input type="text" id="project_name" />-->
+                    <textarea   rows="1" id="honour_name" name="honour_name" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                    <div class='text-right'>
+                        <em style='color:red'>20</em>/<span>20</span>字符
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="specificdesc">具体描述（选填） </label>
+                <div class = "controls">
+                    <textarea class="form-control" rows="3" id="specificdesc" name="specificdesc" onkeyup='textAreaChange(this)' onkeydown='textAreaChange(this)' onchange='textAreaChange(this)'></textarea>
+                    <div class='text-right'>
+                        <em style='color:red'>255</em>/<span>255</span>字符
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="honour_at">获奖时间</label>
+                <div class = "controls">
+                    <input type="month" id="honour_at" name="honour_at" placeholder="格式为：2019-09"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="certificate">获奖凭证（选填）</label>
+                <div class = "controls">
+                    <input type="file" id="certificate" name="certificate"  accept=".png,.jpeg,image/png, image/jpeg, image/jpg"/><span style='color:red'>（格式仅限jpg,jpeg,png，文件大小不能超过2M） </span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="certificate_level">个人奖励级别 </label>
+                <div class="controls">
+                    <select id="certificate_level" name="certificate_level" class="active">
+                        <option value=''>-请选择-</option>
+                        <option value='1'>国家级</option>
+                        <option value='2'>省市级</option>
+                        <option value='3'>校级</option>
+                        <option value='4'>院级</option>
+                        <option value='5'>其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="button" id="add_honour" class="btn btn-primary"> 添加 </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="span12">
+
+            <?php if($this->honour_table){
+            ?>
+            <h3>已提交的记录</h3>
+            <table class='table table-striped table-hover table-condensed'>
+                <thead>
+                    <th>获奖名称</th>
+                    <th>具体描述</th>
+                    <th>获奖时间</th>
+                    <th>获奖凭证</th>
+                    <th>个人奖励级别</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </thead>
+                <tbody>
+                <?php
+                        foreach ($this->honour_table as $key => $row) {
+                ?>
+                <tr>
+                    <td class="span3"> <?php echo $row->honour_name;?></td>
+                    <td class="span4"> <?php echo $row->specificdesc;?></td>
+                    <td class="span2"> <?php echo $row->honour_at;?></td>
+                    <td class="span5">
+                        <?php if($row->certificate){
+                        $image_url = substr($row->certificate,6);
+                        ?>
+                        <img src='<?php echo $this->basePath($image_url); ?>' alt="certificate" />
+                        <?php } ?>
+                    </td>
+                    <!--<td> <?php echo $row->certificate;?></td>-->
+                    <td class="span2"> <?php echo $row->certificate_level;?></td>
+                    <td class="span2"> <?php echo $row->create_at;?></td>
+                    <td class="span2">
+                        <a href='<?php echo $this->url("stu/default",array("controller"=>"addinfo","action"=>"deleteHonour","id"=>$row->honour_id)); ?>' onclick='javascript:return ifCheckdel()' class="button">删除  </a>
+                    </td>
+                </tr>
+
+                <?php }?>
+                </tbody>
+
+            </table>
+
+            <?php }?>
+        </div>
+    </div>
+<script type="text/javascript" src="<?php echo $this->basePath('js/stu/stuconfirm.js?version=1.1.1');?>"></script>
+<script>
+    /*
+    *显示限制textarea输入字符数目
+    */
+    function textAreaChange(obj) {
+        var $this = $(obj);
+        var count_total = $this.next().children('span').text();
+        var count_input = $this.next().children('em');
+        var area_val = $this.val();
+        if(area_val.len()>count_total){
+            area_val = autoAddEllipsis(area_val,count_total);//根据字节截内容
+            $this.val(area_val);
+            count_input.text(0);//显示可输入数
+        }else{
+            count_input.text(count_total - area_val.len());//显示可输入数
+        }
+    }
+    /*
+     * 得到字符串的字节长度
+     */
+    String.prototype.len = function(){
+        return this.replace(/[^\x00-\xff]/g, "xx").length;
+    };
+    /*
+     * 处理过长的字符串，截取并添加省略号
+     * 注：半角长度为1，全角长度为2
+     * pStr:字符串
+     * pLen:截取长度
+     * return: 截取后的字符串
+     */
+    function autoAddEllipsis(pStr, pLen) {
+        var _ret = cutString(pStr, pLen);
+        var _cutFlag = _ret.cutflag;
+        var _cutStringn = _ret.cutstring;
+        return _cutStringn;
+    }
+    /*
+    * 取得指定长度的字符串
+    * 注：半角长度为1，全角长度为2
+    * pStr:字符串
+    * pLen:截取长度
+    * return: 截取后的字符串
+    */
+    function cutString(pStr, pLen) {
+        // 原字符串长度
+        var _strLen = pStr.length;
+        var _tmpCode;
+        var _cutString;
+        // 默认情况下，返回的字符串是原字符串的一部分
+        var _cutFlag = "1";
+        var _lenCount = 0;
+        var _ret = false;
+        if (_strLen <= pLen/2){_cutString = pStr;_ret = true;}
+        if (!_ret){
+            for (var i = 0; i < _strLen ; i++ ){
+                if (isFull(pStr.charAt(i))){_lenCount += 2;}
+                else {_lenCount += 1;}
+                if (_lenCount > pLen){_cutString = pStr.substring(0, i);_ret = true;break;}
+                else if(_lenCount == pLen){_cutString = pStr.substring(0, i + 1);_ret = true;break;}
+            }
+        }
+        if (!_ret){_cutString = pStr;_ret = true;}
+        if (_cutString.length == _strLen){_cutFlag = "0";}
+        return {"cutstring":_cutString, "cutflag":_cutFlag};
+    }
+    /*
+     * 判断是否为全角
+     *
+     * pChar:长度为1的字符串
+     * return: true:全角
+     *         false:半角
+     */
+    function isFull (pChar){
+        if((pChar.charCodeAt(0) > 128)){return true;}
+        else{return false;}
+    }
+    $(document).ready(function() {
+        $("#add_honour").click(function () {
+
+            var honour_name = $("#honour_name").val();
+            // var specificdesc = $("#specificdesc").val();
+            var honour_at = $("#honour_at").val();
+            var file = $("#certificate").val();
+            var certificate_level = $("#certificate_level").val();
+            var timereg = /^\d{4}(-)\d{2}$/;
+            var typeAllow = ["jpg","jpeg","png"];//允许的后缀
+
+            if(!honour_name){
+                $("#honour_name").focus();
+                alert("获奖名称未填写!");
+            }
+            else if(!honour_at){
+                $("#honour_at").focus();
+                alert("获奖时间未填写!");
+            }
+            else if(!certificate_level){
+                $("#certificate_level").focus();
+                alert("个人奖励级别未选择!");
+            }
+            else if(!timereg.test(honour_at)){
+                $("#honour_at").focus();
+                alert("获奖时间格式错误!请按照正确的格式进行填写!正确格式为：2019-09");
+            }
+            else if(file){
+                var certificate = document.getElementById("certificate").files[0];
+                var certificatetype = (certificate.name.substring(certificate.name.lastIndexOf(".")+1,certificate.name.length)).toLowerCase(); // 判断文件类型是否在要求的里面
+                if(certificate.size/1024 >2000){//如果上传了文件，就判断大小
+                    $("#certificate").focus();
+                    alert("获奖凭证超出2M!");
+                    return false;
+                }
+                else if($.inArray(certificatetype,typeAllow) < 0){
+                    $("#certificate").focus();
+                    alert(certificate.name + " 的文件后缀不符合该文件凭证上传格式！请重新上传!");
+                    return false;
+                }
+                else{
+                    // alert("test");
+                    $(this).prop("type","submit");
+                }
+            }else{
+                // alert(honour_at);
+                $(this).prop("type","submit");
+            }
+        })
+    });
+</script>

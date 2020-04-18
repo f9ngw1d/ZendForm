@@ -1,0 +1,15 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: hpr
+ * Date: 2018/8/4
+ * Time: 13:12
+ */
+// module/Login/view/login/login/select-sub-by-cid.phtml
+if($this->target_subject){
+    echo "<option value=''>请选择专业</option>";
+    foreach ($this->target_subject as $sid => $sname) {
+        echo "<option value='".$sid."'>".$sname."</option>";
+    }
+}
+?>

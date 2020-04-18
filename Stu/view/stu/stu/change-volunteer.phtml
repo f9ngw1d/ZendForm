@@ -1,0 +1,73 @@
+<?php
+$title = '修改最终录取学科及方向';
+$title2='修改最终录取导师';
+$this->headTitle($title);
+echo "<a href='/check/check/stulist/rid/".$this->rid."/now_stage/".$this->now_stage."';><<<返回上一界面</a>";
+?>
+<span style='color: red; font-size: medium;'>注意：学院操作此功能前，需要与双方学科、方向负责人、导师沟通、协商一致，避免出现纠纷<br></b></span>
+<?php
+echo "<h3>".$this->escapeHtml($title)."</h3>";
+$form=$this->form;
+$url='/stu/stu/changeVolunteer/uid/'.$this->uid;
+$form->setAttribute('action', $url);//$this->url('stu/default', array('Controller'=>'stu','action' => 'changeVolunteer')));
+$form->setAttribute('method', 'POST');
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('target_college'));		//目标院系
+echo "<br/>";
+echo $this->formRow($form->get('target_subject'));	//目标xueke
+echo "<br/>";
+echo $this->formRow($form->get('target_profession'));	//目标fangxiang
+echo "<br/>";
+echo $this->formSubmit($form->get('submit')); 			//提交
+echo $this->form()->closeTag();
+
+echo "<h3>".$this->escapeHtml($title2)."</h3>";
+$change_tutor_form=$this->change_tutor_form;
+$change_tutor_form->setAttribute('action', $url);//$this->url('stu/default', array('Controller'=>'stu','action' => 'changeVolunteer')));
+$change_tutor_form->setAttribute('method', 'POST');
+$change_tutor_form->prepare();
+echo $this->form()->openTag($change_tutor_form);
+echo $this->formRow($change_tutor_form->get('target_professor'));		//目标院系
+echo "<br/>";
+echo $this->formRow($change_tutor_form->get('target_professor2'));	//目标xueke
+echo "<br/>";
+echo $this->formRow($change_tutor_form->get('target_professor3'));	//目标fangxiang
+echo "<br/>";
+echo $this->formSubmit($change_tutor_form->get('submit2')); 			//提交
+echo $this->form()->closeTag();
+
+
+echo "<h3>已选学院 / 学科 / 方向</h3>";
+
+echo "<table class='table table-hover'>";
+echo "<thead><tr>";
+echo "<th>姓名</th>";
+echo "<th>录取学院</th>";
+echo "<th>录取学科</th>";
+echo "<th>录取方向</th>";
+echo "<th>录取导师</th>";
+echo "<th>意向导师2</th>";
+echo "<th>意向导师3</th>";
+echo "<th>状态</th>";
+echo "</tr></thead>";
+
+echo "<tr>";
+echo "<td>" . $this->username . "</td>";
+echo "<td>" . $this->college . "</td>";
+echo "<td>" . $this->subject . "</td>";
+echo "<td>" . $this->profession . "</td>";
+echo "<td>" . $this->professor1 . "</td>";
+echo "<td>" . $this->professor2 . "</td>";
+echo "<td>" . $this->professor3 . "</td>";
+if($this->status ==10)
+    echo "<td>您已进入审核流程，无法修改！</td>";
+if($this->status < 0)
+    echo "<td>您已被拒绝，请另择他校！</td>";
+if($this->status >0 && $this->status <= 9)
+    echo "<td>可修改</td>";
+echo "</tr>";
+echo "</table>";
+?>
+
+<script type="text/javascript" src="<?php echo $this->basePath('js/stu/change_volunteer.js?v=2');?>"></script>

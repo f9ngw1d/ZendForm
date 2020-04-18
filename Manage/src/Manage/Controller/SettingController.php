@@ -2,9 +2,7 @@
 
 namespace Manage\Controller;
 
-use Manage\Form\CollegeAddForm;
 use Manage\Form\DeleteAllDataForm;
-use Manage\Model\TBaseCollege;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -13,9 +11,7 @@ use Zend\ProgressBar\Upload\SessionProgress;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-use StuData\Model\TStuBase;
 
-//use Check\Form\SearchCondForm;
 
 class SettingController extends AbstractActionController
 {
@@ -66,7 +62,7 @@ class SettingController extends AbstractActionController
             'update_at'=>'更新时间',
             'operation'=>'操作',
         );
-        $setting_data = $this->getConfigTable()->getConfigKey(array('school_name','system_name','copy_right','tech_support','current_year'),false,true);
+        $setting_data = $this->getConfigTable()->getConfigKey(array('school_name','system_name','current_year','short_name','DWDM','KDH','copy_right','tech_support',),false,true);
         return array(
             'setting'=>$setting_data,
             'column'=>$column,
@@ -109,36 +105,36 @@ class SettingController extends AbstractActionController
      * 备份数据库
      */
     public function backupDatabaseAction(){
-        $filename='tmk_database'.date("Y-m-d").'-'.time();
-        $dir="tmkbackup";
-        $file_path2="mkdir tmkbackup";
-        chdir("/usr/local/www/tm/public");
-        //echo "当前路径：".getcwd() . "<br>";
-        if(is_dir($dir)){
-        }else{
-            $res=mkdir($dir,0777,true);
-        }
-        // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
-        $db_name="new_freetest";
-        $name="/usr/local/www/tm/public/".$dir."/".$filename.".sql";//数据库文件存储路径
-        $exec="mysqldump --databases ".$db_name." > ".$name;
-        $result=exec($exec);
-        return array(
-            'data_addr'=>"./".$dir."/".$filename.".sql",
-            'file_name'=> $filename.".sql",
-        );
+//        $filename='tmk_database'.date("Y-m-d").'-'.time();
+//        $dir="tmkbackup";
+//        $file_path2="mkdir tmkbackup";
+//        chdir("/usr/local/www/tm/public");
+//        //echo "当前路径：".getcwd() . "<br>";
+//        if(is_dir($dir)){
+//        }else{
+//            $res=mkdir($dir,0777,true);
+//        }
+//        // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
+//        $db_name="new_freetest";
+//        $name="/usr/local/www/tm/public/".$dir."/".$filename.".sql";//数据库文件存储路径
+//        $exec="mysqldump --databases ".$db_name." > ".$name;
+//        $result=exec($exec);
+//        return array(
+//            'data_addr'=>"./".$dir."/".$filename.".sql",
+//            'file_name'=> $filename.".sql",
+//        );
     }
     public function backupUserFilesAction(){
-        $filename='/tmk_usrupload_data'.date("Y-m-d").'-'.time().".tar.gz";
-        $source_dir="./img/stu/*";
-        $dir="tmkbackup";
-        $file_path2="mkdir tmkbackup";
-        chdir("/usr/local/www/tm/public");
-        // echo "当前路径：".getcwd() . "<br>";
-        if(is_dir($dir)){
-            //echo "yicunzai  mulu";
-        }else{
-            $res=mkdir($dir,0777,true);
+//        $filename='/tmk_usrupload_data'.date("Y-m-d").'-'.time().".tar.gz";
+//        $source_dir="./img/stu/*";
+//        $dir="tmkbackup";
+//        $file_path2="mkdir tmkbackup";
+//        chdir("/usr/local/www/tm/public");
+//        // echo "当前路径：".getcwd() . "<br>";
+//        if(is_dir($dir)){
+//            //echo "yicunzai  mulu";
+//        }else{
+//            $res=mkdir($dir,0777,true);
             /*if ($res){
                 echo "目录 $dir 创建成功";
             }else{
@@ -147,14 +143,14 @@ class SettingController extends AbstractActionController
             //exec($file_path2);
             //exec($file_path2);
             //echo "bucunzai ";
-        }
-        $tar="tar -zcvf ./".$dir.$filename." ".$source_dir;///backup/tmk200.tar.gz /usr/local/www/tm/public/img/*"
-        //echo $tar;
-        $result=exec($tar);
-        return array(
-            'data_addr'=>"./".$dir.$filename,
-            'file_name' => $filename,
-        );
+//        }
+//        $tar="tar -zcvf ./".$dir.$filename." ".$source_dir;///backup/tmk200.tar.gz /usr/local/www/tm/public/img/*"
+//        //echo $tar;
+//        $result=exec($tar);
+//        return array(
+//            'data_addr'=>"./".$dir.$filename,
+//            'file_name' => $filename,
+//        );
     }
 
     public function backupAction(){
@@ -182,14 +178,60 @@ class SettingController extends AbstractActionController
     }
     public function deleteAllDataAction()
     {
-        $form = new DeleteAllDataForm();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $this->getTStuBaseTable()->deleteStuBase();
+        $filename1='tmk_database'.date("Y-m-d").'-'.time();
+        $dir1="tmkbackup";
+        $file_path2="mkdir tmkbackup";
+        chdir("/usr/local/www/tm/public");
+        //echo "当前路径：".getcwd() . "<br>";
+        if(is_dir($dir1)){
+        }else{
+            $res=mkdir($dir1,0777,true);
         }
-        $view = new ViewModel(array(
-            'form' => $form,
-        ));
-        return $view;
+        // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
+        $db_name="new_freetest";
+        $name="/usr/local/www/tm/public/".$dir1."/".$filename1.".sql";//数据库文件存储路径
+        $exec="mysqldump --databases ".$db_name." > ".$name;
+        $result=exec($exec);
+//        return array(
+//            'data_addr1'=>"./".$dir1."/".$filename1.".sql",
+//            'file_name1'=> $filename1.".sql",
+//        );
+        $filename2='/tmk_usrupload_data'.date("Y-m-d").'-'.time().".tar.gz";
+        $source_dir2="./img/stu/*";
+        $dir2="tmkbackup";
+        $file_path="mkdir tmkbackup";
+        chdir("/usr/local/www/tm/public");
+        // echo "当前路径：".getcwd() . "<br>";
+        if(is_dir($dir2)){
+            //echo "yicunzai  mulu";
+        }else{
+            $res=mkdir($dir2,0777,true);
+            /*if ($res){
+                echo "目录 $dir 创建成功";
+            }else{
+                echo "目录 $dir 创建失败";
+            }*/
+            //exec($file_path2);
+            //exec($file_path2);
+            //echo "bucunzai ";
+        }
+        $tar="tar -zcvf ./".$dir2.$filename2." ".$source_dir2;///backup/tmk200.tar.gz /usr/local/www/tm/public/img/*"
+        //echo $tar;
+        $result=exec($tar);
+        return array(
+            'data_addr1'=>"./".$dir1."/".$filename1.".sql",
+            'file_name1'=> $filename1.".sql",
+            'data_addr2'=>"./".$dir2.$filename2,
+            'file_name2' => $filename2,
+        );
+        $sql_query = "
+        SELECT DISTINCT * FROM stu_base
+        JOIN stu_check ON stu_base.uid=stu_check.uid";
+
+        if ($status != "all")
+            $sql_query .= " WHERE stu_check.status=".$status;
+
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        return $rowSet;
     }
 }

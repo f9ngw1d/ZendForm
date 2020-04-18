@@ -1,0 +1,8 @@
+<?php
+if($this->proclassarr){
+    echo "<option value=''>请选择所在城市</option>";
+    foreach ($this->proclassarr as $cid => $cname) {
+    echo "<option value='".$cid."'>".$cname."</option>";
+    }
+}
+?>

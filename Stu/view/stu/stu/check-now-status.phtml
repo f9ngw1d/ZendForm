@@ -1,0 +1,20 @@
+<?php
+foreach ($this->now_status as $key){
+    //var_dump($key);
+    $status_show=$key['value_desc'];
+    $status_num=$key['id'];
+    //echo "<br>";
+}
+$status_num2=$status_num.'0%';
+?>
+<br><br><br><br><br>
+<div class="progress progress-striped">
+    <div class="bar" style="width:<?php echo $status_num2; ?>"></div>
+</div>
+
+<div style="margin:10%;font-size: 150%;text-align: center;">
+    <?php
+    //var_dump($this->now_status);
+    echo "当前状态 : ".$status_show."<br/>";
+    ?>
+</div>

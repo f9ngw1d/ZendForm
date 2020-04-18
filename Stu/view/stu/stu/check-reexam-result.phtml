@@ -1,0 +1,19 @@
+<?php
+$title = "成绩查询";
+$this->headTitle($title);
+echo "<h2>$title</h2>";?>
+<div class="row-fluid">
+    <div class="span6" style="font-size: 120%;text-align: left;">
+        <table class="table table-bordered" style="border-radius：5px;border-collapse: collapse;">
+            <?php
+            if(sizeof($this->stu_score)>1) {
+                foreach ($this->stu_score as $course_name => $score)
+                    echo "<tr><td>$course_name</td><td>$score</td></tr>";
+            }
+            else{
+                echo "<tr><td>" . $this->stu_score['0'] . "</td></tr>";
+            }
+            ?>
+        </table>
+    </div>
+</div>

@@ -2,13 +2,18 @@
     提示：点击此按钮会将数据库置于初始状态
 </h4>
 <br/>
-<?php
-$form = $this->form;
-$form->setAttribute('action', $this->url('manage/default',array('controller'=>'Setting','action'=>'deleteAllData')));
-$form->prepare();
-echo $this->form()->openTag($form);?>
-<div class="row">
-    <?php echo $this->formElement($form->get('submit')); ?>
-</div>
-
+<button onclick="delAllData()">清空数据库</button>
+<br/>
+<h4>
+    提示：请从以下选择你要备份的数据
+</h4>
+<br/>
+<button><a style="" href="<?php echo $this->basePath($this->data_addr1)?>" download="<?php echo $this->file_name1;?>">备份数据库数据</button>
+<br/>
+<button><a style="" href="<?php echo $this->basePath($this->data_addr2)?>" download="<?php echo $this->file_name2;?>">备份用户上传资料</button>
+<script type="application/javascript">
+    function delAllData() {
+        <?php echo $this->basePath($this->data_addr) ?>
+    }
+</script>
 
