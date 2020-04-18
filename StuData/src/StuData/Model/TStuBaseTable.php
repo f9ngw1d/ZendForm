@@ -317,4 +317,38 @@ class TStuBaseTable
         $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
         return $rowSet;
     }
+    public function getGender()
+    {
+        $sql_query = "SELECT gender FROM stu_base";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
+    public function getAll()
+    {
+        $sql_query = "SELECT uid FROM stu_base";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
+    public function getUni()
+    {
+        $sql_query = "SELECT stu_base.uid FROM stu_base,db_university_free
+                      WHERE (db_university_free.is985 = '1' OR db_university_free.is211 = '1') AND 
+                      db_university_free.university_id = stu_base.graduate_university";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
+    public function getUniRank()
+    {
+        $sql_query = "SELECT db_university_free.university_name,COUNT(stu_base.graduate_university) as sum
+                      FROM stu_base,db_university_free
+                      WHERE db_university_free.university_id = stu_base.graduate_university
+                      GROUP BY stu_base.graduate_university
+					  ORDER BY sum DESC";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
 }

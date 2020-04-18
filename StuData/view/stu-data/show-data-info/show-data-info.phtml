@@ -1,0 +1,53 @@
+<?php
+    $female = 0;
+    $male = 0;
+    foreach($gender as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            if($value == '1')
+                $female++;
+            else
+                $male++;
+        }
+    }
+    echo "<p>研究生院女性人数".$female."，研究生院男性人数".$male."。</p>";
+    ?><br>
+<?php
+    $good = 0;
+    $total = 0;
+    foreach($isTwo as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            $good++;
+        }
+    }
+    foreach($allResult as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            $total++;
+        }
+    }
+    echo "<p>研究院学生总人数".$total."，其中985/211总人数".$good."。</p>";
+    ?><br>
+<h4>研究生院生源来源大学排序</h4>
+<table class="table table-striped">
+    <thead>
+    <?php
+    foreach ($column as $key => $value) {
+        echo "<th/>".$value."</th>";
+    }
+    ?>
+    </thead>
+    <?php
+    foreach ($UniRank as $key_name => $row) {
+        ?><tr><?php
+        foreach ($row as $key => $value) {
+            echo "<td>".$row[$key]."</td>";
+        }
+        ?></tr><?php
+    }
+    ?>
+</table>
+
+
+
