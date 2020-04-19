@@ -1,4 +1,14 @@
+<style>
+    h4{
+        margin:0 auto;
+    }
+    p{
+        font-size: 20px;
+    }
+</style>
+
 <?php
+//研究生院
     $female = 0;
     $male = 0;
     foreach($gender as $x=>$x_value)
@@ -40,6 +50,113 @@
     </thead>
     <?php
     foreach ($UniRank as $key_name => $row) {
+        ?><tr><?php
+        foreach ($row as $key => $value) {
+            echo "<td>".$row[$key]."</td>";
+        }
+        ?></tr><?php
+    }
+    ?>
+</table>
+
+
+
+<?php
+//各个学院
+    $female = 0;
+    $male = 0;
+    foreach($genderCollege as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            if($value == '1')
+                $female++;
+            else
+                $male++;
+        }
+    }
+    echo "<p>信息学院女性人数".$female."，信息学院男性人数".$male."。</p>";
+    ?><br>
+<?php
+    $good = 0;
+    $total = 0;
+    foreach($isTwoCollege as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            $good++;
+        }
+    }
+    foreach($allResultCollege as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            $total++;
+        }
+    }
+    echo "<p>信息学院学生总人数".$total."，其中985/211总人数".$good."。</p>";
+    ?><br>
+<h4>信息学院生源来源大学排序</h4>
+<table class="table table-striped">
+    <thead>
+    <?php
+    foreach ($column as $key => $value) {
+        echo "<th/>".$value."</th>";
+    }
+    ?>
+    </thead>
+    <?php
+    foreach ($UniRankCollege as $key_name => $row) {
+        ?><tr><?php
+        foreach ($row as $key => $value) {
+            echo "<td>".$row[$key]."</td>";
+        }
+        ?></tr><?php
+    }
+    ?>
+</table>
+
+
+<?php
+//各个组
+    $female = 0;
+    $male = 0;
+    foreach($genderTeam as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            if($value == '1')
+                $female++;
+            else
+                $male++;
+        }
+    }
+    echo "<p>025200组女性人数".$female."，025200组男性人数".$male."。</p>";
+    ?><br>
+<?php
+    $good = 0;
+    $total = 0;
+    foreach($isTwoTeam as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            $good++;
+        }
+    }
+    foreach($allResultTeam as $x=>$x_value)
+    {
+        foreach ($x_value as $key => $value) {
+            $total++;
+        }
+    }
+    echo "<p>025200组学生总人数".$total."，其中985/211总人数".$good."。</p>";
+    ?><br>
+<h4>025200组生源来源大学排序</h4>
+<table class="table table-striped">
+    <thead>
+    <?php
+    foreach ($column as $key => $value) {
+        echo "<th/>".$value."</th>";
+    }
+    ?>
+    </thead>
+    <?php
+    foreach ($UniRankTeam as $key_name => $row) {
         ?><tr><?php
         foreach ($row as $key => $value) {
             echo "<td>".$row[$key]."</td>";

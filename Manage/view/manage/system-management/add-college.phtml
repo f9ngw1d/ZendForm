@@ -127,96 +127,142 @@ function object_to_array($obj) {
     return $obj;
 }
 
-//if(isset($this->time)){
-//    echo "<table class='table table-hover'>";
-//    echo "<tr>";
-//    foreach ($this->column as $key => $value){
-//        echo "<th>$value</th>";
-//    }
-//    echo "</tr>";
-//    foreach ($this->time as $timer){
-//        //var_dump($univer);
-//        $uniarr = object_to_array($timer);
-//        $aaa=json_encode($uniarr);
-//        $str = 'editform('.$aaa.')';
-//        //echo $str;
-//        foreach ($this->column as $key => $value){
-//
-//            if ($key == 'id')
-//                echo "<td id='id'>".$uniarr[$key]."</td>";
-//            else if($key == 'status')
-//            {
-//                if ($uniarr[$key] == -1) {
-//                    echo "<td>关</td>";
-//                }
-//                else {
-//                    echo "<td>开</td>";
-//                }
-//            }
-//            else if ($key == 'sta') {
-//                if ($uniarr[$key] == 0) {
-//                    echo "<td>已截止</td>";
-//                }
-//                else {
-//                    echo "<td>进行中</td>";
-//                }
-//            }
-//            else if ($key == 'oprat')
-//            {
-//                //$id = $uniarr['id'];
-//                //echo "id---------------------->".$id;
-//                echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
-//            }
-//            else
-//                echo "<td>".$uniarr[$key]."</td>";
-//        }
-//        echo "</tr>";
-//    }
-//    echo "</table>";
-//}
-//$url_arr = '/manage/systemManagement/addTime/param1/';
-//if(isset($url_arr)){
-//    $get_param = "";
-//    for($i=1;$i<=5;$i++){
-//        if(isset($url_arr['param'.$i])){
-//            $get_param .= "/param".$i."/".$url_arr['param'.$i];//$url_arr['param'.$i];
-//        }
-//    }
-//}
-//$url = '/manage/systemManagement/addTime/param1/';
-//if ($this->pageCount):
-//    ?>
-<!---->
-<!--    <div class="paginationControl">-->
-<!--        <!-- Previous page link -->-->
-<!--        共计--><?php //echo $this->total_num?$this->total_num:0 ;?><!--条数据-->
-<!--        --><?php //if (isset($this->previous)): ?>
-<!--            <a href="--><?php //echo $url. $this->previous .$get_param; ?><!--">-->
-<!--                < 上一页-->
-<!--            </a> |-->
-<!--        --><?php //else: ?>
-<!--            <span class="disabled">< 上一页</span> |-->
-<!--        --><?php //endif; ?>
-<!---->
-<!--        <!-- Numbered page links -->-->
-<!--        --><?php //foreach ($this->pagesInRange as $page): ?>
-<!--            --><?php //if ($page != $this->current): ?>
-<!--                <a href="--><?php //echo $url. $page .$get_param;?><!--">-->
-<!---->
-<!--                    --><?php //echo $page; ?>
-<!--                </a> |-->
-<!--            --><?php //else: ?>
-<!--                --><?php //echo $page; ?><!-- |-->
-<!--            --><?php //endif; ?>
-<!--        --><?php //endforeach; ?>
-<!---->
-<!--        <!-- Next page link -->-->
-<!--        --><?php //if (isset($this->next)): ?>
-<!--            <a href="--><?php //echo $url. $this->next; ?><!--">-->
-<!--                下一页 >-->
-<!--            </a>-->
-<!--        --><?php //else: ?>
-<!--            <span class="disabled">下一页 ></span>-->
-<!--        --><?php //endif; ?>
-<!--    </div>-->
-<?php //endif; ?>
+if(isset($this->college)){
+    echo "<table class='table table-hover'>";
+    echo "<tr>";
+    foreach ($column as $key => $value) {
+        echo "<th/>".$value."</th>";
+    }
+    echo "</tr>";
+    foreach ($this->college as $colleger){
+        $uniarr = object_to_array($colleger);
+        foreach ($this->column as $key => $value){
+            if ($key == 'oprat')
+            {
+                echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick=''>删除</button>&nbsp;&nbsp;&nbsp;&nbsp;";
+                echo "<button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick=''>编辑</button></td>";
+            }
+            else
+                echo "<td>".$uniarr[$key]."</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
+$url_arr = '/manage/systemManagement/addCollege/param1/';
+if(isset($url_arr)){
+    $get_param = "";
+    for($i=1;$i<=5;$i++){
+        if(isset($url_arr['param'.$i])){
+            $get_param .= "/param".$i."/".$url_arr['param'.$i];//$url_arr['param'.$i];
+        }
+    }
+}
+$url = '/manage/systemManagement/addCollege/param1/';
+if ($this->pageCount):
+    ?>
+
+    <div class="paginationControl">
+        <!-- Previous page link -->
+        共计<?php echo $this->total_num?$this->total_num:0 ;?>条数据
+        <?php if (isset($this->previous)): ?>
+            <a href="<?php echo $url. $this->previous .$get_param; ?>">
+                < 上一页
+            </a> |
+        <?php else: ?>
+            <span class="disabled">< 上一页</span> |
+        <?php endif; ?>
+
+        <!-- Numbered page links -->
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+                <a href="<?php echo $url. $page .$get_param;?>">
+
+                    <?php echo $page; ?>
+                </a> |
+            <?php else: ?>
+                <?php echo $page; ?> |
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <!-- Next page link -->
+        <?php if (isset($this->next)): ?>
+            <a href="<?php echo $url. $this->next; ?>">
+                下一页 >
+            </a>
+        <?php else: ?>
+            <span class="disabled">下一页 ></span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+<div class="modal fade" id="myEditModal" tabindex=-1  aria-lablledby="myEditModalLabel" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="myEditModalLabel">修改时间设置</h3>
+            </div>
+            <div class="modal-body">
+                <?php
+                $form1 = $this->form1;
+                $form1->setAttribute('action',$this->url('manage/default',array('controller'=>'systemManagement','action'=>'addCollege')));
+                $form1->setAttribute('method','POST');
+                $form1->prepare();
+
+                echo $this->form()->openTag($form1);?>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('college_id')); ?></div>
+                    <div class="span7" readonly="true" disabled="true"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('college_id')); ?><span class = 'message1'>（不可更改）</span></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('college_name')); ?></div>
+                    <div class="span7" readonly="true" disabled="true"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('college_name')); ?><span class = 'message1'>（不可更改）</span></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('phone')); ?></div>
+                    <div class="span7"><?php echo $this->formElement($form1->get('phone')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('ip_address')); ?></div>
+                    <div class="span7"><?php echo $this->formElement($form1->get('ip_address')); ?></div>
+                </div>
+                <div class="row">
+                    <div class="span2"><?php echo $this->formLabel($form1->get('address')); ?></div>
+                    <div class="span7"><?php echo $this->formElement($form1->get('address')); ?></div>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer" >
+                <button type="submit" class="btn btn-primary" id="confirmEdit" >确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <?php
+                $this->form()->closeTag();
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript">
+    //编辑学生成绩
+    function editform(item) {
+        //去掉名字中间的空格
+        //var item=JSON.stringify(items);
+        //alert(item.name);
+        $("#names").attr('value',item.name);
+        $("#start_times").attr('value',item.start_time);
+        $("#end_times").val(item.end_time);
+        $("#statuss").val(item.status);
+        $("#descriptions").val(item.description);
+        $("#confirmEdit").click(function()
+        {
+            $.post('manage/systemManagement/addTime',function()
+            {
+                //location.reload();
+            });
+        });
+        //s$("#myEditModal").modal('toggle');
+    }
+</script>

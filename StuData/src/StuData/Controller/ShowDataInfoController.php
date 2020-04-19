@@ -43,6 +43,14 @@ class ShowDataInfoController extends AbstractActionController
         $isTwo = $this->getTStuBaseTable()->getUni();
         $allResult = $this->getTStuBaseTable()->getAll();
         $UniRank = $this->getTStuBaseTable()->getUniRank();
+        $genderCollege = $this->getTStuBaseTable()->getCollegeGender('004');
+        $isTwoCollege = $this->getTStuBaseTable()->getCollegeUni('004');
+        $allResultCollege = $this->getTStuBaseTable()->getCollegeAll('004');
+        $UniRankCollege = $this->getTStuBaseTable()->getCollegeUniRank('004');
+        $genderTeam = $this->getTStuBaseTable()->getTeamGender('025200');
+        $isTwoTeam = $this->getTStuBaseTable()->getTeamUni('025200');
+        $allResultTeam = $this->getTStuBaseTable()->getTeamAll('025200');
+        $UniRankTeam = $this->getTStuBaseTable()->getTeamUniRank('025200');
         $column = array(
             '1' => '学校名称',
             '2' => '人数',
@@ -53,6 +61,14 @@ class ShowDataInfoController extends AbstractActionController
             'allResult' => $allResult,
             'UniRank' => $UniRank,
             'column' => $column,
+            'genderCollege'=>$genderCollege,
+            'isTwoCollege'=>$isTwoCollege,
+            'allResultCollege'=>$allResultCollege,
+            'UniRankCollege'=>$UniRankCollege,
+            'genderTeam'=>$genderTeam,
+            'isTwoTeam'=>$isTwoTeam,
+            'allResultTeam'=>$allResultTeam,
+            'UniRankTeam'=>$UniRankTeam,
         );
     }
 }

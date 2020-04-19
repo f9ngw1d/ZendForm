@@ -65,27 +65,15 @@ class SystemManagementController extends AbstractActionController
 //        if (!in_array(10, $rid_arr)) {//url中取得用户角色不属于该用户的话
 //            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
 //        }
-//        $current_page = $this->params()->fromRoute('param1');
-//        if (empty($current_page)) {
-//            $current_page = 1;
-//        }
-        //var_dump($current_page);
-
-        //var_dump($uni_list);
-//        $per_page = 2;
-//        $offset = ($current_page - 1) * $per_page;
-//        echo $per_page."-----------------".$offset;
+        $current_page = $this->params()->fromRoute('param1');
+        if (empty($current_page)) {
+            $current_page = 1;
+        }
+        $per_page = 2;
+        $offset = ($current_page - 1) * $per_page;
         $form = new CollegeAddForm();
-
-        //$form->get('submit')->setValue('Add');
-        // echo "request<br><br>";
         $request = $this->getRequest();
         if ($request->isPost()) {
-            //echo "post<br><br>";
-            //$postData = $this->getRequest()->getPost()->toArray();
-            //if (strcmp($postData['submit'], '确定') == 0) {
-
-            /// }
             $uni = new TBaseCollege();
             $formdata  = array(
                 'college_id' => $_POST['college_id'],
@@ -94,63 +82,38 @@ class SystemManagementController extends AbstractActionController
                 'ip_address' => $_POST['ip_address'],
                 'address' => $_POST['address']
             );
-            //var_dump($form->getData());
             $uni->exchangeArray($formdata);
-            //var_dump($uni);
             if($this->getTBaseCollegeTable()->saveCollege($uni))
-                echo "<script>alert('设置成功')</script>";
+                echo "<script>alert('保存成功')</script>";
         }
-        $college = $this->getTBaseCollegeTable()->fetchAll();
-//        $time = $this->getTBaseCollegeTable()->findAll($per_page, $offset);
-        //var_dump($time);
-//        $timesta = array();
-//        foreach ($time as $tt)
-//        {
-//            foreach ($tt as $key => $value)
-//            {
-//                if($key == 'id')
-//                    array_push($timesta, $this->getTBaseCollegeTable()->getTimeSta($value));
-//            }
-//        }
-        //var_dump($timesta);
-//        $i=0;
-//        foreach ($time as &$tt)
-//        {
-//            $a['sta']=$timesta[$i];
-//            array_merge($tt,$a);
-//            $tt['sta'] = $timesta[$i];
-//            $i++;
-            //echo $tt['sta'];
-            //var_dump($tt);
-//        }
-        //echo "times:";
-        //var_dump($time);
+        $college= $this->getTBaseCollegeTable()->findAll($per_page, $offset);
+        $total_num = $this->getTBaseCollegeTable()->getTotalnum();
+        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($college));
+        $paginator->setCurrentPageNumber($current_page);
+        $total_page = ceil($total_num / $per_page);
 
-//        $total_num = $this->getManagetimeTable()->getTotalnum();
-//        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
-//        $paginator->setCurrentPageNumber($current_page);
-//        $total_page = ceil($total_num / $per_page);
-//
-//        $pagesInRange = array();
-//        for ($i = 1; $i <= $total_page; $i++) {
-//            $pagesInRange[] = $i;
-//        }
-
-
-        //return array('form' => $form);
-
-
+        $pagesInRange = array();
+        for ($i = 1; $i <= $total_page; $i++) {
+            $pagesInRange[] = $i;
+        }
         $column = array(
             'college_id' =>'学院编号',
             'college_name'=>'学院名称',
             'phone'=>'电话',
             'ip_address'=>'网址',
             'address'=>'办公楼地址',
+            'oprat'=>'操作'
         );
-
         $view = new ViewModel(array(
             'column' => $column,
             'college' => $college,
+            'paginator' => $paginator,
+            'pageCount' => $total_page,
+            'pagesInRange' => $pagesInRange,
+            'previous' => $current_page > 1 ? $current_page - 1 : null,
+            'next' => $current_page < $total_page ? $current_page + 1 : null,
+            'total_num' => $total_num,
+            'current' => $current_page,
             'form' => $form,
         ));
         return $view;

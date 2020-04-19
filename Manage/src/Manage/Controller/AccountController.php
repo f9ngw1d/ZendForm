@@ -61,7 +61,7 @@ class AccountController extends AbstractActionController{
 
     //教师登陆尝试
     public function TryLoginTec($user,$password) {
-        $staffid = $user->staffid;
+        $staffid = $user->staff_id;
         $email = $user->email;
         $tablename = "usr_teacher";
         $identityColumn = "email";
@@ -218,7 +218,7 @@ class AccountController extends AbstractActionController{
     public function getUserroleTable() {
         if (! $this->userroleTable) {
             $sm = $this->getServiceLocator ();
-            $this->userroleTable = $sm->get ( 'Manage\Model\UserRoleTable' );
+            $this->userroleTable = $sm->get ( 'User\Model\UserRoleTable' );
         }
         return $this->userroleTable;
     }

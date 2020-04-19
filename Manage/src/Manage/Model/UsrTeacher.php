@@ -18,7 +18,7 @@ class UsrTeacher implements InputFilterAwareInterface{
 
     //数组转换成对象里的属性，插入新用户的时候用
     public function exchangeArray($data){
-        $this->uid = (!empty($data['staff_id'])) ? $data['staff_id'] : null;
+        $this->staff_id = (!empty($data['staff_id'])) ? $data['staff_id'] : null;
         $this->user_name = (!empty($data['user_name'])) ? $data['user_name'] : null;
         $this->email = (!empty($data['email']))?$data['email']:null;
         $this->salt = (!empty($data['salt']))?$data['salt']:null;

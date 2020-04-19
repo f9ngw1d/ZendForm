@@ -11,7 +11,7 @@
     <?php
     foreach ($setting as $key_name => $row) {
         ?><tr><?php
-        foreach ($column as $key => $value) {
+        foreach ($row as $key => $value) {
             if($key == 'key_value'){
                 echo "<td id=".$row['id'].">".$row[$key]."</td>";
                 continue;

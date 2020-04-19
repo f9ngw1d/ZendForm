@@ -3,7 +3,12 @@ namespace Manage\Model;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Tablegateway\TableGateway;
-
+use Zend\Db\Adapter\Driver\ResultInterface;
+use Zend\Db\Sql\Insert;
+use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Update;
+use Zend\Stdlib\Hydrator;
 
 class TBaseCollegeTable
 {
@@ -12,6 +17,7 @@ class TBaseCollegeTable
     public function __construct(TableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
+        $this->table = 'base_college';
     }
     //检索数据库中 base_college 表所有的记录，然后将结果返回 ResultSet
     public function fetchAll()
@@ -79,5 +85,39 @@ class TBaseCollegeTable
             echo "insert<br><br>";
             $this->tableGateway->insert($data);
         }
+    }
+    public function findAll($limit = 0, $offset = 0)
+    {
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from(array('base_college' => $this->table));
+
+        if ($limit != 0) {
+            $sl->limit($limit);
+        }
+        if ($offset != 0) {
+            $sl->offset($offset);
+        }
+
+        $stmt = $sql->prepareStatementForSqlObject($sl);
+        $result = $stmt->execute();
+
+
+        $resultArr = iterator_to_array($result);
+        return $resultArr;
+    }
+    public function getTotalnum()
+    {
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $select = $sql->select('base_college');
+        $select->columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(*)')));;
+
+        $stmt = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+        $row = $result->current();
+        $rowCount = $row['count'];
+        return $rowCount;
     }
 }
