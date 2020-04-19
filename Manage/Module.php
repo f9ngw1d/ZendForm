@@ -87,15 +87,15 @@ class Module{
                     $resultSetPrototype->setArrayObjectPrototype(new ManageTime());
                     return new TableGateway('manage_time',$dbAdapter,null,$resultSetPrototype);
                 },
-                'Manage\Model\RolePermissionTable' => function($sm){
-                    $tableGateway = $sm->get('RolePermissionTableGateway');
-                    $table = new RolePermissionTable($tableGateway);
+                'Manage\Model\RolepermissionTable' => function($sm){
+                    $tableGateway = $sm->get('RolepermissionTableGateway');
+                    $table = new RolepermissionTable($tableGateway);
                     return $table;
                 },
-                'RolePermissionTableGateway' => function($sm){
+                'RolepermissionTableGateway' => function($sm){
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new RolePermission());
+                    $resultSetPrototype->setArrayObjectPrototype(new Rolepermission());
                     return new TableGateway('usr_role_permission',$dbAdapter,null,$resultSetPrototype);
                 },
                 'Manage\Model\TBaseCollegeTable' => function($sm){
@@ -174,17 +174,6 @@ class Module{
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new UsrTeacher());
                     return new TableGateway('usr_teacher',$dbAdapter,null,$resultSetPrototype);
-                },
-                'Manage\Model\MTBaseTeamTable' => function($sm){
-                    $tableGateway = $sm->get('MTBaseTeamTableGateway');
-                    $table = new MTBaseTeamTable($tableGateway);
-                    return $table;
-                },
-                'MTBaseTeamTableGateway' => function($sm){
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new MTBaseTeam());
-                    return new TableGateway('base_team',$dbAdapter,null,$resultSetPrototype);
                 },
             )
         );

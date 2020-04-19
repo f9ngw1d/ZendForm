@@ -1,0 +1,83 @@
+<!DOCTYPE PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<?php
+
+$title = '新增用户';
+$this->headTitle($title);
+?>
+<p style='color:red'>创建用户时，用户名请填写老师的邮箱，并将老师的工号作为密码</p>
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#add" data-toggle="tab" id="add" style="background-color: #fff">
+            新增用户
+        </a>
+    </li>
+    <li>
+        <a href="#other" data-toggle="tab" id="other">
+            管理其他用户
+        </a>
+    </li>
+</ul>
+<div id="mtTabContent" class="tab-content" style="margin-top: 20px">
+    <?php
+    $form = $this->form;
+    $form->setAttribute('action', $this->url('manage/default',array('controller'=>'systemManagement','action'=>'addUser')));
+    $form->setAttribute('method','POST');
+    $form->prepare();
+
+    echo $this->form()->openTag($form);
+    echo $this->formHidden($form->get('Uid'));
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">用户名</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Uname'))."</div>";
+    echo "<span class=\"help-block\">请使用邮箱账号</span>";
+    echo "<div><p color=\"color:red\"><span id=\"warning\"> </span></p></div>";
+    echo "</div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">密码</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Password'))."</div>";
+    echo "<span class=\"help-block\">6-24个数字或字符</span>";
+    echo "</div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">确认密码</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Password2'))."</div></div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">真实姓名</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Realname'))."</div></div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">移动电话</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Mobile'))."</div></div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">电子邮箱</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Email'))."</div></div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">角色</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('Rid'))."</div></div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">院系所</label>";
+    echo "<div class=\"col-sm-4\">".$this->formRow($form->get('YXSM'))."</div></div>";
+
+    echo "<div class=\"form-group\">";
+    echo "<div class=\"col-sm-offset-2 col-sm-5\">";
+    echo $this->formSubmit($form->get('submit'))."</div></div>";
+
+    echo $this->form()->closeTag();
+    ?>
+    <?php
+    if($this->msg)
+        echo "<script>alert('".$this->msg."');</script>";
+    ?>
+</div>
+</body>
+</html>

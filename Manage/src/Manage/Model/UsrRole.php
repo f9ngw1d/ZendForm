@@ -12,7 +12,7 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 
-class Usrrole implements InputFilterAwareInterface
+class UsrRole implements InputFilterAwareInterface
 {
     public $uid;
     public $rid;

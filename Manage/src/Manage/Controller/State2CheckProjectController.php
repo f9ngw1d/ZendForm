@@ -25,7 +25,7 @@ class State2CheckProjectController extends AbstractActionController
     {
         if (!$this->team_table) {
             $sm = $this->getServiceLocator();
-            $this->team_table = $sm->get('Manage\Model\MTBaseTeamTable');
+            $this->team_table = $sm->get('Leader\Model\TBaseTeamTable');
         }
         return $this->team_table;
     }

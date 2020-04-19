@@ -42,6 +42,24 @@ class AccountController extends AbstractActionController{
             }
             else{
                 if ($this->TryLoginTec($user, $_POST['password'])) {
+                    $session = new Container('pids');
+                    var_dump($session->item);
+                    $session = new Container('pidArr');
+                    var_dump($session->item);
+                    $session = new Container('purlArr');
+                    var_dump($session->item);
+                    $session = new Container('purlArr2');
+                    var_dump($session->item);
+                    $session = new Container('college_id');
+                    var_dump($session->item);
+                    $session = new Container('user_name');
+                    var_dump($session->item);
+                    $session = new Container('staff_id');
+                    var_dump($session->item);
+                    $session = new Container('uid');
+                    var_dump($session->item);
+                    $session = new Container('rid');
+                    var_dump($session->item);
                     echo "登录成功<br/>";
 
 //                    $sso_info = $this->generteUrlParams();
@@ -125,23 +143,20 @@ class AccountController extends AbstractActionController{
             $containerPidArr->item = $purlArr2;
 
             //设置session
-            $staff = $this->getStaffTable()->getStaff($user->staffid);
+            $staff = $this->getStaffTable()->getStaff($user->staff_id);
             $containerCol = new Container('college_id');
             $containerCol->item = $staff->college_id;
             $containerUname = new Container('username');
             $containerUname->item = $user->username;
 
-            $containerStaffid = new Container('staffid');
-            $containerStaffid->item = $user->staffid;
+            $containerStaffid = new Container('staff_id');
+            $containerStaffid->item = $user->staff_id;
 
             $containerUid = new Container('uid');
-            $containerUid->item = $user->staffid;
+            $containerUid->item = $user->staff_id;
 
             $containerRid = new Container('rid');
             $containerRid->item = $ridArr;
-
-            $sso_info = $this->generteUrlParams();
-            setcookie('sign', $sso_info, 0, '/');
 
             return true;
         }
@@ -218,7 +233,7 @@ class AccountController extends AbstractActionController{
     public function getUserroleTable() {
         if (! $this->userroleTable) {
             $sm = $this->getServiceLocator ();
-            $this->userroleTable = $sm->get ( 'User\Model\UserRoleTable' );
+            $this->userroleTable = $sm->get ( 'Manage\Model\UsrRoleTable' );
         }
         return $this->userroleTable;
     }
@@ -234,7 +249,7 @@ class AccountController extends AbstractActionController{
     public function getStaffTable() {
         if (! $this->staffTable) {
             $sm = $this->getServiceLocator ();
-            $this->staffTable = $sm->get ( 'Basicinfo\Model\StaffTable' );
+            $this->staffTable = $sm->get ( 'User\Model\StaffTable' );
         }
         return $this->staffTable;
     }

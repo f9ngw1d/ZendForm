@@ -13,7 +13,7 @@ use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 
-class UsrroleTable{//userrole表 只能增删查，不能修改
+class UsrRoleTable{//usrRole表 只能增删查，不能修改
     protected $tableGateway;
 
     public function __construct(TableGateway $tg)
