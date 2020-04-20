@@ -25,6 +25,11 @@ use Manage\Model\UsrTeacher;
 use Manage\Model\UsrTeacherTable;
 use Manage\Model\MTBaseTeam;
 use Manage\Model\MTBaseTeamTable;
+use Manage\Model\Permission;
+use Manage\Model\PermissionTable;
+use Manage\Model\Staff;
+use Manage\Model\StaffTable;
+
 use Zend\Mvc\MvcEvent;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Mvc\ModuleRouteListener;
@@ -174,6 +179,28 @@ class Module{
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new UsrTeacher());
                     return new TableGateway('usr_teacher',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\PermissionTable' => function($sm){
+                    $tableGateway = $sm->get('PermissionTableGateway');
+                    $table = new PermissionTable($tableGateway);
+                    return $table;
+                },
+                'PermissionTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Permission());
+                    return new TableGateway('usr_permission',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\StaffTable' => function($sm){
+                    $tableGateway = $sm->get('StaffTableGateway');
+                    $table = new StaffTable($tableGateway);
+                    return $table;
+                },
+                'StaffTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Staff());
+                    return new TableGateway('base_staff',$dbAdapter,null,$resultSetPrototype);
                 },
             )
         );

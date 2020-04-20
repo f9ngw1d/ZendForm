@@ -10,6 +10,8 @@ use Manage\Controller\ImageCode;
 use Manage\Model\MyAuth;
 use Manage\Form\ImgCaptchaValidator;
 use Manage\Model\UsrTeacher;
+use Leader\Model\TBaseTeam;
+use Leader\Model\TBaseTeamTable;
 
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
@@ -21,6 +23,7 @@ class AccountController extends AbstractActionController{
     private $permissionTable;
     private $rolepermissionTable;
     private $staffTable;
+    private $teamTable;
 
     /**
      * @author  ly
@@ -42,31 +45,8 @@ class AccountController extends AbstractActionController{
             }
             else{
                 if ($this->TryLoginTec($user, $_POST['password'])) {
-                    $session = new Container('pids');
-                    var_dump($session->item);
-                    $session = new Container('pidArr');
-                    var_dump($session->item);
-                    $session = new Container('purlArr');
-                    var_dump($session->item);
-                    $session = new Container('purlArr2');
-                    var_dump($session->item);
-                    $session = new Container('college_id');
-                    var_dump($session->item);
-                    $session = new Container('user_name');
-                    var_dump($session->item);
-                    $session = new Container('staff_id');
-                    var_dump($session->item);
-                    $session = new Container('uid');
-                    var_dump($session->item);
-                    $session = new Container('rid');
-                    var_dump($session->item);
-                    echo "登录成功<br/>";
-
-//                    $sso_info = $this->generteUrlParams();
-//                    setcookie('sign', $sso_info, 0, '/');
-
                     $this->deleteCaprchaImg();
-                    exit;
+                    return $this->redirect()->toRoute('info/default',array('controller'=>'Article','action'=>'ArticleList'));
                 }
                 else echo "<script>alert('密码错误，请重新输入');</script>";
             }
@@ -130,24 +110,28 @@ class AccountController extends AbstractActionController{
 //
 //             print_r(array_unique($pidArr));
 
+            $team_id = $this->getTeamTable()->getTeamByLeaderID($user->staff_id)->toArray();
+            $team_id = array_column($team_id,'team_id');
+            $containerteamid = new Container('team_id');
+            $containerteamid->item = $team_id;
+
             $containerPidArr = new Container('pidArr');
             $containerPidArr->item = $pidArr;
 
-            $purlArr = $this->getPermissionTable()->getPermissionStringArrByPidArr($pidArr);
-//            var_dump($purlArr);
+//            $purlArr = $this->getPermissionTable()->getPermissionStringArrByPidArr($pidArr);
+//            $containerPidArr = new Container('purlArr');
+//            $containerPidArr->item = $purlArr;
+
+            $purlArr = $this->getPermissionTable()->getPermissionArr($pidArr);
             $containerPidArr = new Container('purlArr');
             $containerPidArr->item = $purlArr;
-
-            $purlArr2 = $this->getPermissionTable()->getPermissionArr($pidArr);
-            $containerPidArr = new Container('purlArr2');
-            $containerPidArr->item = $purlArr2;
 
             //设置session
             $staff = $this->getStaffTable()->getStaff($user->staff_id);
             $containerCol = new Container('college_id');
             $containerCol->item = $staff->college_id;
             $containerUname = new Container('username');
-            $containerUname->item = $user->username;
+            $containerUname->item = $user->user_name;
 
             $containerStaffid = new Container('staff_id');
             $containerStaffid->item = $user->staff_id;
@@ -249,7 +233,7 @@ class AccountController extends AbstractActionController{
     public function getStaffTable() {
         if (! $this->staffTable) {
             $sm = $this->getServiceLocator ();
-            $this->staffTable = $sm->get ( 'User\Model\StaffTable' );
+            $this->staffTable = $sm->get ( 'Manage\Model\StaffTable' );
         }
         return $this->staffTable;
     }
@@ -257,9 +241,19 @@ class AccountController extends AbstractActionController{
     public function getPermissionTable(){
         if (! $this->permissionTable) {
             $sm = $this->getServiceLocator ();
-            $this->permissionTable = $sm->get ( 'User\Model\PermissionTable' );
+            $this->permissionTable = $sm->get ( 'Manage\Model\PermissionTable' );
         }
         return $this->permissionTable;
+    }
+
+    //team表
+    public function getTeamTable()
+    {
+        if(!$this->teamTable){
+            $sm = $sm = $this->getServiceLocator();
+            $this->teamTable = $sm->get('Leader\Model\TBaseTeamTable');
+        }
+        return $this->teamTable;
     }
 
 }

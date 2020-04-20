@@ -6,6 +6,8 @@ return array(
             'Manage\Controller\SystemManagement' => 'Manage\Controller\SystemManagementController',
             'Manage\Controller\State2CheckProject' => 'Manage\Controller\State2CheckProjectController',
             'Manage\Controller\Account' => 'Manage\Controller\AccountController',
+            'Manage\Controller\SuperCharge' => 'Manage\Controller\SuperChargeController',
+
         ),
     ),
     'router' => array(
@@ -25,15 +27,13 @@ return array(
                     'default' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/[:controller[/:action][/param2/:param2][/param3/:param3][/param4/:param4]]',
+                            'route'    => '/[:controller[/:action][/uid/:uid][/param3/:param3][/param4/:param4]]',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'param1'     => '[a-zA-Z0-9]*',
-                                'param2'    => '[a-zA-Z0-9]*',
+                                'uid'    => '[a-zA-Z0-9]*',
                                 'param3'    => '[a-zA-Z0-9]*',
                                 'param4'    => '[a-zA-Z0-9]*',
-                                'param5'    => '[a-zA-Z0-9]*',
                             ),
                             'defaults' => array(
                             ),

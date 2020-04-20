@@ -16,8 +16,8 @@ class ChangeStatusForm extends Form implements InputFilterProviderInterface{
 
     protected $inputFilter;
 
-    public function __construct($targetcollege){
-        parent::__construct('changevolunteer');
+    public function __construct($targetstatus,$name){
+        parent::__construct('changestatus');
 
         $this->add(array(
             'name' => 'user_name',
@@ -27,6 +27,7 @@ class ChangeStatusForm extends Form implements InputFilterProviderInterface{
             ),
             'attributes'=>array(
                 'id'=>'user_name',
+                'value'=>$name,
             ),
         ));
         $this->add(array(
