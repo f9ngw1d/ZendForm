@@ -15,8 +15,10 @@ use Manage\Model\TDbDivision;
 use Manage\Model\TDbDivisionTable;
 use Manage\Model\TDbUniversity;
 use Manage\Model\TDbUniversityTable;
+
 use Manage\Model\TDbUnderSubject;
-use Manage\Model\TDBUnderSubjectTable;
+use Manage\Model\TDbUnderSubjectTable;
+
 use Manage\Model\UsrPermission;
 use Manage\Model\UsrPermissionTable;
 use Manage\Model\UsrRole;
@@ -130,11 +132,11 @@ class Module{
                     $table = new TDbUnderSubjectTable($tableGateway);
                     return $table;
                 },
-                'TDbUnderSubjectTableGateway' => function($sm){
+                'TDbUnderSubjectGateway' => function($sm){
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new TDbUnderSubject());
-                    return new TableGateway('manage_subject_map',$dbAdapter,null,$resultSetPrototype);
+                    return new TableGateway('db_under_subject',$dbAdapter,null,$resultSetPrototype);
                 },
                 'Manage\Model\TDbUniversityTable' => function($sm){
                     $tableGateway = $sm->get('TDbUniversityTableGateway');

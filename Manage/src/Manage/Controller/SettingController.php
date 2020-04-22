@@ -68,7 +68,37 @@ class SettingController extends AbstractActionController
             'column'=>$column,
         );
     }
-
+    //lrn 上传logo
+    public function uploadLogoAction(){
+        $request = $this->getRequest();
+        $public_root = __DIR__ . "/../../../../../public";
+        $photo_upload_root = "/img/system_logo/";
+        $new_addr = $public_root.$photo_upload_root."sys_logo.".pathinfo($_FILES['upload']['name'])['extension'];
+        $logo_addr = $photo_upload_root = "/img/system_logo/"."sys_logo.".pathinfo($_FILES['upload']['name'])['extension'];
+        if ($request->isPost()) {
+//            var_dump($_FILES['upload']);
+//            var_dump(pathinfo($_FILES['upload']['name']));
+//            var_dump($new_addr);
+            if (strcmp($_FILES['upload']['name'], "") != 0) {//修改了图片
+                //echo "save修改了图片<br>";
+                if (move_uploaded_file($_FILES['upload']['tmp_name'],$new_addr)) {
+                    $result = $this->getConfigTable()->saveConfigKey(array('id'=> 21,'key_value'=>$logo_addr));
+                    if($result){
+                        echo "<script>alert('系统logo上传成功')</script>";
+                    }
+                    else{
+                        echo "<script>alert('系统logo上传失败，请重试')</script>";
+                    }
+                } else {
+                    echo "<script>alert('系统logo上传失败')</script>";
+                }
+            }
+        }
+        else{
+            echo "not post";
+        }
+    }
+    //lrn
     public function saveConfigAction(){
         $post_data = $this->getRequest()->getPost()->toArray();
         $id = (int)$post_data['id'];
@@ -158,7 +188,7 @@ class SettingController extends AbstractActionController
 
         );
     }
-
+//lrn
     protected function getConfigTable()
     {
         if (!$this->config_table) {
@@ -167,7 +197,7 @@ class SettingController extends AbstractActionController
         }
         return $this->config_table;
     }
-
+//lrn
     public function getTStuBaseTable()//获取数据库Article
     {
         if (!$this->TStuBaseTable) {

@@ -12,6 +12,7 @@ use Manage\Form\ImgCaptchaValidator;
 use Manage\Model\UsrTeacher;
 use Leader\Model\TBaseTeam;
 use Leader\Model\TBaseTeamTable;
+use Manage\Form\PasswordForm;
 
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
@@ -57,7 +58,13 @@ class AccountController extends AbstractActionController{
         return array('imgSrc'=>$this->createCaptcha());
     }
 
-    //教师登陆尝试
+    /**
+     * @author  ly
+     * @brief   教师登录验证
+     * @param   $user       用户信息
+     * @param   $password   密码
+     * @return  NULL
+     */
     public function TryLoginTec($user,$password) {
         $staffid = $user->staff_id;
         $email = $user->email;
@@ -68,63 +75,22 @@ class AccountController extends AbstractActionController{
             $staffids = array("uid"=>$staffid);//定义一个数组，键名为uid，值为staffid
             $userroles = $this->getUserroleTable()->getUserrole($staffids);
             $ridArr = array();
-            $purlArr = array();
-            $pidArr = array();
+
             foreach ($userroles as $key => $urrow) {
                 if(!$urrow){
                     //throw new \Exception("could not find row");
                 }
                 else{
-                    //echo "&nbsp;rid = ".$urrow->rid."<br/>";
                     $ridArr[] = $urrow->rid;
-                    $pids="";
-                    //3.用每个rid查所有的pid rolepermission表
-                    $rpids = array("rid"=>$urrow->rid);
-                    $rolepermissions = $this->getRolepermissionTable()
-                        ->getRolepermission($rpids);
-
-                    foreach ($rolepermissions as $key => $rprow) {
-                        $pidArr1 = array();
-                        if(!$rprow){
-                            //throw new \Exception("could not find row");
-                        }
-                        else{
-                            $pidArr1[] = $rprow->pid;
-                            $pidArr = array_merge($pidArr,$pidArr1);
-                            //echo "&nbsp;&nbsp;pid = ".$rprow->pid."<br/>";
-                            if($pids=="")
-                                $pids = $rprow->pid;
-                            else
-                                $pids.=",".$rprow->pid;
-//                            echo $rprow->pid."<br/>";
-                        }
-                    }
-                    $containerPids = new Container('pids');
-                    $containerPids->item = $pids;
-//                     echo "<br/>pid Arr =";
-//                     var_dump($pidArr);
-//                     echo "<br/>pid = ".$pids."<br/><br/>";
                 }
             }
-//             print_r($pidArr);
-//
-//             print_r(array_unique($pidArr));
 
-            $team_id = $this->getTeamTable()->getTeamByLeaderID($user->staff_id)->toArray();
+
+            $team_id = $this->getTeamTable()->getTeamsByLeaderID($user->staff_id)->toArray();
             $team_id = array_column($team_id,'team_id');
             $containerteamid = new Container('team_id');
             $containerteamid->item = $team_id;
 
-            $containerPidArr = new Container('pidArr');
-            $containerPidArr->item = $pidArr;
-
-//            $purlArr = $this->getPermissionTable()->getPermissionStringArrByPidArr($pidArr);
-//            $containerPidArr = new Container('purlArr');
-//            $containerPidArr->item = $purlArr;
-
-            $purlArr = $this->getPermissionTable()->getPermissionArr($pidArr);
-            $containerPidArr = new Container('purlArr');
-            $containerPidArr->item = $purlArr;
 
             //设置session
             $staff = $this->getStaffTable()->getStaff($user->staff_id);
@@ -132,19 +98,106 @@ class AccountController extends AbstractActionController{
             $containerCol->item = $staff->college_id;
             $containerUname = new Container('username');
             $containerUname->item = $user->user_name;
-
-            $containerStaffid = new Container('staff_id');
-            $containerStaffid->item = $user->staff_id;
-
             $containerUid = new Container('uid');
             $containerUid->item = $user->staff_id;
-
             $containerRid = new Container('rid');
             $containerRid->item = $ridArr;
 
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * @author  ly
+     * @brief   退出登录，删除session
+     * @param   NULL
+     * @return  NULL
+     */
+    public function logoutAction(){
+        $container = new Container('team_id');
+        unset($container->item);
+        $container = new Container('pidArr');
+        unset($container->item);
+        $container = new Container('college_id');
+        unset($container->item);
+        $container = new Container('username');
+        unset($container->item);
+        $container = new Container('uid');
+        unset($container->item);
+        $container = new Container('rid');
+        unset($container->item);
+        return $this->redirect()->toRoute('manage/default',array('controller'=>'Account','action'=>'loginTeacher'));
+    }
+
+    /**
+     * @author  ly
+     * @brief   打印出session内容，为测试函数，上线时需要删除
+     * @param   NULL
+     * @return  NULL
+     */
+    public function printsessionAction(){
+        $container = new Container('team_id');
+        echo 'team_id:';
+        var_dump($container->item);
+        $container = new Container('college_id');
+        echo '<br><br>college_id:';
+        var_dump($container->item);
+        $container = new Container('username');
+        echo '<br><br>username:';
+        var_dump($container->item);
+        $container = new Container('uid');
+        echo '<br><br>uid:';
+        var_dump($container->item);
+        $container = new Container('rid');
+        echo '<br><br>rid:';
+        var_dump($container->item);
+        exit;
+    }
+
+    /**
+     * @author  ly
+     * @brief   修改密码
+     * @param   NULL
+     * @return  NULL
+     */
+    public function alterPasswordAction(){
+        $ridContainer = new Container('rid');
+        $ridArr = $ridContainer->item;
+        if(!in_array('2',$ridArr) && !in_array('9',$ridArr) && !in_array('10',$ridArr) && !in_array('11',$ridArr) && !in_array('14',$ridArr) && !in_array('99',$ridArr)) {
+            return $this->redirect()->toRoute("manage/default", array("controller" => "Account", "action" => "loginTeacher"));
+        }
+
+        $form = new PasswordForm();
+        $request = $this->getRequest();
+
+        if($request->isPost()){
+            $form->setData($request->getPost());   //数据从post里面取
+            //echo "request->getPost();<br/>";
+            if($form->isValid()){              //如果数据是有效的
+                $data = $form->getInputFilter()->getValues();
+                $check = $this->getUsrteacherTable()->getUserById($data['uid']);
+                $user = new UsrTeacher();
+                if(!$check) $this->redirect()->toRoute("manage/default",array("controller"=>"Account","action"=>"loginTeacher"));
+                $password=$check->password;
+                if($data['password2']==$data['password3']){
+                    if ($password==md5($data['password1'])){
+                        $arr = (array)$check;
+                        $arr["password"]=md5($data['password2']);
+                        $user->exchangeArray($arr);
+                        if($this->getUsrteacherTable()->saveUser($user))
+                            echo "<script>alert('修改成功');</script>";
+                        else echo "<script>alert('修改失败请重试');</script>";
+                    }
+                    else echo "<script>alert('旧密码错误，请重试');</script>";
+                }
+                else echo "<script>alert('新密码两次不相同，请重新输入');</script>";
+            }
+        }
+        $uid = new Container('uid');
+        $form->setData(array('uid'=>$uid->item));
+        return array('form'=>$form);
     }
 
     /** TOOLS **/

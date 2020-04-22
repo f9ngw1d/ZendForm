@@ -4,10 +4,6 @@
 namespace Manage\Controller;
 
 use Info\Model\Mailqueue;
-use Stu\Form\ChangeProfessorForm;
-use Stu\Form\ChangeVolunteerForm;
-use Stu\Model\Check;
-use Stu\Model\StuBase;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -16,14 +12,18 @@ use Zend\ProgressBar\Upload\SessionProgress;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-use Manage\Model\ConfigKey;
-use Manage\Model\ConfigValue;
+use Manage\Model\ConfigKeyTable;
+use Manage\Form\ChangeStatusForm;
+use College\Model\StuStatus;
 
 
 class SuperChargeController extends AbstractActionController
 {
     protected $check_table;
     protected $config_table;
+    protected $stubase_table;
+    protected $college_table;
+    protected $team_table;
     public function __construct()
     {
     }
@@ -153,6 +153,7 @@ class SuperChargeController extends AbstractActionController
             return false;
         }
     }
+    //lrn 超级管理员和研究生院均可随意修改学生状态
     public function changeStuStatusAction(){
         $uid = $this->params()->fromRoute('uid'); //从路由取uid
         if (is_null($uid)) {
@@ -160,137 +161,59 @@ class SuperChargeController extends AbstractActionController
         }
         $container_rid = new Container('rid');
         $rid_arr = $container_rid->item;
+        if(is_null($rid_arr)){
+            $rid_arr=array('9','99');
+        }
         $status = $this->getCheckTable()->getCheck($uid);
         if($status==false){
             echo "<script> alert('未查询到该生状态，非法访问！');window.location.href='/info/Article/ArticleList';</script>";
         }
         $now_status=$status->status;
-        $all_status_arr = $this->getConfigTable()->getConfigValueByKey("stu_status");
+        $stu_status = $this->getConfigTable()->getConfigValueByKey("stu_status",$now_status);
+        $all_status_arr = $this->getConfigTable()->getConfigValueByKey('stu_status',array(),false,true);
         $user = $this->getStuBaseTable()->getStu($uid);
-        $form = new ChangeStatusForm($all_status_arr,$user->user_name);
-//            $prof_id_unique = $user->target_college . $user->target_subject . $user->target_profession . '1';
-//            $staff_info = $this->getProfessionStaffTable()->getStaffByPid($prof_id_unique);
-//            $staff_arr = array();
-//            foreach ($staff_info as $key => $row) {
-//                if (!empty($row)) {
-//                    $sid = $row->staff_id;//学院id
-//                    $staff_name = $this->getStaffTable()->getStaff($sid)->staff_name;
-//                    $staff_arr[$sid] = $staff_name;
-//                }
-//            }//转化
-            //var_dump($staff_arr);
-            //empty($this->getStaffTable()->getStaff($stu_info->target_professor)->staff_name) ? '无' : $this->getStaffTable()->getStaff($stu_info->target_professor)->staff_name,
-            //echo "staff<br><br>";
+        $form = new ChangeStatusForm($all_status_arr,$user->user_name,$stu_status[$now_status]['value_cn']);
 
             //涉及表单提交
             $request = $this->getRequest();
-//            if ($request->isPost()) {
-//                $arrayData = $request->getPost()->toArray();
-//                if (isset($_POST['submit'])) {//strcmp($arrayData['submit'], '保存')
-//                    $postData = array_merge_recursive(
-//                        $this->getRequest()->getPost()->toArray()
-//                    );
-//                    $form->setData($postData);
-//                    if ($form->isValid()) {
-//                        //var_dump($postData);
-//                        //可修改  ，将这些信息填入stu_base的相应地方，然后状态置为3
-//                        // if()//学院在进入学生进入复试审核时可改   录取审核  可改  都可改学生的志愿
-//                        // if (((in_array(9, $rid_arr) || in_array(11, $rid_arr)) && (($now_status == 4) || ($now_status == 8)))) {
-//                        //if (((in_array(9, $rid_arr) || in_array(11, $rid_arr)) && (($now_status >=3) && ($now_status <=5)))) {
-//                        if (((in_array(9, $rid_arr) || in_array(11, $rid_arr)) && (($now_status >=3) && ($now_status <10)&&$now_status!=6))) {
-//                            $data = array(
-//                                'uid' => $uid,
-//                                'target_college' => $postData['target_college'],
-//                                'target_subject' => $postData['target_subject'],
-//                                'target_profession' => $postData['target_profession'],
-//                            );
-//                            $stu_base_table = new StuBase();
-//                            $stu_base_table->exchangeArray($data);
-//                            $result = $this->getStuBaseTable()->updateStuVolunteer($stu_base_table);
-//                            $data_change = array(
-//                                'uid' => $uid,
-//                                'target_professor' => null,
-//                                'target_professor2' => null,
-//                                'target_professor3' => null,
-//                            );
-//                            $stu_base_table->exchangeArray($data_change);
-//                            $result3 = $this->getStuBaseTable()->updateTargetProfessor($stu_base_table);
-//                            if($now_status>=3 && $now_status<=5){
-//                                $status_data = array(
-//                                    'uid' => $uid,
-//                                    'status' => 3,
-//                                );
-//                                $check_table = new Check();
-//                                $check_table->exchangeArray($status_data);
-//                                $result2 = $this->getCheckTable()->updateStatus($check_table);
-//                            }
-//                            else{
-//                                $status_data = array(
-//                                    'uid' => $uid,
-//                                    'status' => 7,
-//                                );
-//                                $check_table = new Check();
-//                                $check_table->exchangeArray($status_data);
-//                                $result2 = $this->getCheckTable()->updateStatus($check_table);
-//                            }
-//                            /* $status_data = array(
-//                                 'uid' => $uid,
-//                                 'status' => 3,
-//                             );
-//                             $check_table = new Check();
-//                             $check_table->exchangeArray($status_data);
-//                             $result2 = $this->getCheckTable()->updateStatus($check_table);*/
-//                            echo "<script>alert('返回查看结果');window.location.href=''/stu/stu/changeVolunteer/uid/".$uid."';</script>";
-//                            //return $this->redirect()->toRoute("stu/default", array("Controller" => "Stu", "action" => "changeVolunteer"));
-//                        }//if  有权操作
-//                        else {
-//                            echo "<script>alert('无权操作');window.location.href='/info';</script>";
-//                        }
-//                    } else {
-//                        echo "<script>alert('the form is not valid！');window.location.href='/stu/stu/changeVolunteer/uid/".$uid."';</script>";
-//                    }
-//                }//if   点击的是submit，提交志愿
-//                else {
-//                    //学科在录取之前都能改学生的导师
-//                    //修改导师，在4以前都可以
-//                    $postData = $this->getRequest()->getPost()->toArray();
-//                    $change_tutor_form->setData($postData);
-//                    if ($change_tutor_form->isValid()) {
-//                        //if (((in_array(8, $rid_arr) || in_array(12, $rid_arr) || in_array(9,$rid_arr) || in_array(11,$rid_arr)) && ($now_status < 10) && ($now_status > 0))) {//可改导师
-//                        if (((in_array(9,$rid_arr) || in_array(11,$rid_arr)) && ($now_status < 10) && ($now_status > 0))) {//可改导师
-//                            $data2 = array(
-//                                'uid' => $uid,
-//                                'target_professor' => $postData['target_professor'],
-//                                'target_professor2' => $postData['target_professor2'],
-//                                'target_professor3' => $postData['target_professor3'],
-//                            );
-//                            $stu_base_table = new StuBase();
-//                            $stu_base_table->exchangeArray($data2);
-//                            $result3 = $this->getStuBaseTable()->updateTargetProfessor($stu_base_table);
-//                            //var_dump($result3);
-//                            echo "<script>alert('已更改，返回查看');window.location.href='/stu/stu/changeVolunteer/uid/".$uid."';</script>";
-//                        } else {
-//                            echo "<script>alert('该生已不可更改导师！');window.location.href='/check/check/stulist/rid/".$rid."/now_stage/".$now_stage."';</script>";
-//                        }
-//                        //return $this->redirect()->toRoute("/stu/stu/changeVolunteer");//"stu/default", array("Controller" => "Stu", "action" => "changeVolunteer"));
-//
-//                    }//valid
-//                    else {
-//                        echo "<script>alert('the form is not valid！');window.location.href='/stu/stu/changeVolunteer/uid/".$uid."';</script>";
-//                    }//not valid
-//                    //return $this->redirect()->toRoute("stu/default", array("Controller" => "Stu", "action" => "changeVolunteer"));
-//                }//else  点击的是submit2,修改导师
-//            }//if    ispost
+            if ($request->isPost()) {
+                $arrayData = $request->getPost()->toArray();
+                if (isset($_POST['submit'])) {//strcmp($arrayData['submit'], '保存')
+                    $postData = array_merge_recursive(
+                        $this->getRequest()->getPost()->toArray()
+                    );
+                    $form->setData($postData);
+//                    var_dump($postData);
+                    if ($form->isValid()){
+                        if(in_array(99,$rid_arr)||in_array(10,$rid_arr)){
+                            $status_data = array(
+                                    'uid' => $uid,
+                                    'status' => $postData['target_status'],
+                                );
+                                $check_table = new StuStatus();
+                                $check_table->exchangeArray($status_data);
+                                $result2 = $this->getCheckTable()->updateStatus($check_table);
+                                echo "<script>alert('返回查看结果');window.location.href=''/manage/SuperCharge/changeStuStatus/uid/'.$this->uid';</script>";
+                        }
+                    }
+                    else{
+                        echo "<script> alert('表单数据有误！');window.location.href='/manage/SuperCharge/changeStuStatus/uid/'.$uid';</script>";
+                    }
+                }
+            }
+        $college_info = $this->getCollegeTable()->getCollege($user->target_college);
+        $team_info = $this->getTeamTable()->getTeam($user->target_team);
             return array(
                 'form' => $form,
                 'uid' => $uid,
                 'username' => $user->user_name,
-                'status' => $now_status,
+                'status' => $stu_status[$now_status]['value_cn'],
+                'target_college' => isset($college_info->college_name)?$college_info->college_name:"未填写",
+                'target_team' => isset($team_info->team_name)?$team_info->team_name:"未填写",
             );
 
     }
     public function exportDbfAction(){
-
     }
 
 
@@ -306,18 +229,36 @@ class SuperChargeController extends AbstractActionController
     //lrn
     protected function getStuBaseTable()
     {
-        if (!$this->stubaseTable) {
+        if (!$this->stubase_table) {
             $sm = $this->getServiceLocator();
-            $this->stubaseTable = $sm->get('StuData\Model\TStuBaseTable');
+            $this->stubase_table = $sm->get('StuData\Model\TStuBaseTable');
         }
-        return $this->stubaseTable;
+        return $this->stubase_table;
     }
     //lrn
-    public function  getConfigTable() {
-        if($this->config_table){
+    public function getConfigTable() {
+        if(!$this->config_table){
             $sm = $this->getServiceLocator();
             $this->config_table = $sm->get('Manage\Model\ConfigKeyTable');
         }
         return $this->config_table;
+    }
+    //lrn
+    protected function getCollegeTable()
+    {
+        if (!$this->college_table) {
+            $sm = $this->getServiceLocator();
+            $this->college_table = $sm->get('Manage\Model\TBaseCollegeTable');
+        }
+        return $this->college_table;
+    }
+    //lrn
+    protected function  getTeamTable()
+    {
+        if(!$this->team_table){
+            $sm = $this->getServiceLocator();
+            $this->team_table = $sm->get('Leader\Model\TBaseTeamTable');
+        }
+        return $this->team_table;
     }
 }

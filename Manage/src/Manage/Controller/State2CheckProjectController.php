@@ -31,17 +31,16 @@ class State2CheckProjectController extends AbstractActionController
     }
     public  function showAllProjectAction(){
         $column = array(
-            'team_id'=>'编号',
             'team_name'=>'名称',
-            'college_id'=>'申报学院编号',
-            'leader_id'=>'组长',
             'start_time'=>'起始日期',
             'end_time'=>'结束日期',
             'stu_num'=>'计划人数',
+            'leader_id'=>'组长',
             'introduction'=>'活动简介',
             'college_link'=>'链接',
+            'college_id'=>'申报学院编号',
         );
-        $team_data = $this->getTeamTable()->getTeamKey(array('team_name','start_time','end_time','stu_num','leader_id','introduction','college_link','college_id'),false,true);
+        $team_data = $this->getTeamTable()->getTeamKey();
         return array(
             'setting'=>$team_data,
             'column'=>$column,

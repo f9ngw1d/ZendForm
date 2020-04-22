@@ -16,35 +16,35 @@ class ChangeStatusForm extends Form implements InputFilterProviderInterface{
 
     protected $inputFilter;
 
-    public function __construct($targetstatus,$name){
+    public function __construct($targetstatus,$name,$now_status){
         parent::__construct('changestatus');
 
         $this->add(array(
             'name' => 'user_name',
             'type' => 'Text',
             'options' => array(
-                'label' => '姓名',
             ),
             'attributes'=>array(
                 'id'=>'user_name',
                 'value'=>$name,
+                'readonly' => true,
             ),
         ));
         $this->add(array(
             'name' => 'now_status',
             'type' => 'Text',
             'options' => array(
-                'label' => '当前状态',
             ),
             'attributes'=>array(
                 'id'=>'now_status',
+                'value'=>$now_status,
+                'readonly' => true,
             ),
         ));
         $this->add(array(//target_college Select
             'name' => 'target_status',
             'type' => 'Select',
             'options' => array(
-                'label' => '变更后状态',
                 'empty_option' => '请选择',
                 'value_options' => $targetstatus,
             ),

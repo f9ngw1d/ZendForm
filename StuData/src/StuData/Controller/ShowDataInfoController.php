@@ -47,10 +47,10 @@ class ShowDataInfoController extends AbstractActionController
         $isTwoCollege = $this->getTStuBaseTable()->getCollegeUni('004');
         $allResultCollege = $this->getTStuBaseTable()->getCollegeAll('004');
         $UniRankCollege = $this->getTStuBaseTable()->getCollegeUniRank('004');
-        $genderTeam = $this->getTStuBaseTable()->getTeamGender('025200');
-        $isTwoTeam = $this->getTStuBaseTable()->getTeamUni('025200');
-        $allResultTeam = $this->getTStuBaseTable()->getTeamAll('025200');
-        $UniRankTeam = $this->getTStuBaseTable()->getTeamUniRank('025200');
+        $genderTeam = $this->getTStuBaseTable()->getTeamGender(25200);
+        $isTwoTeam = $this->getTStuBaseTable()->getTeamUni(25200);
+        $allResultTeam = $this->getTStuBaseTable()->getTeamAll(25200);
+        $UniRankTeam = $this->getTStuBaseTable()->getTeamUniRank(25200);
         $column = array(
             '1' => '学校名称',
             '2' => '人数',

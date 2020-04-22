@@ -136,11 +136,13 @@ if(isset($this->college)){
     echo "</tr>";
     foreach ($this->college as $colleger){
         $uniarr = object_to_array($colleger);
+        $aaa=json_encode($uniarr);
+        $str = 'editform('.$aaa.')';
         foreach ($this->column as $key => $value){
             if ($key == 'oprat')
             {
                 echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick=''>删除</button>&nbsp;&nbsp;&nbsp;&nbsp;";
-                echo "<button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick=''>编辑</button></td>";
+                echo "<button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
             }
             else
                 echo "<td>".$uniarr[$key]."</td>";
@@ -199,7 +201,7 @@ if ($this->pageCount):
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="myEditModalLabel">修改时间设置</h3>
+                <h3 class="modal-title" id="myEditModalLabel">修改学校设置</h3>
             </div>
             <div class="modal-body">
                 <?php
@@ -251,14 +253,14 @@ if ($this->pageCount):
         //去掉名字中间的空格
         //var item=JSON.stringify(items);
         //alert(item.name);
-        $("#names").attr('value',item.name);
-        $("#start_times").attr('value',item.start_time);
-        $("#end_times").val(item.end_time);
-        $("#statuss").val(item.status);
-        $("#descriptions").val(item.description);
+        $("#college_ids").attr('value',item.college_id);
+        $("#college_names").attr('value',item.college_name);
+        $("#phones").val(item.phone);
+        $("#ip_addresss").val(item.ip_address);
+        $("#addresss").val(item.address);
         $("#confirmEdit").click(function()
         {
-            $.post('manage/systemManagement/addTime',function()
+            $.post('manage/systemManagement/addCollege',function()
             {
                 //location.reload();
             });

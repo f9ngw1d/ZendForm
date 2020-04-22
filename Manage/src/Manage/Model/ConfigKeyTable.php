@@ -53,7 +53,6 @@ class ConfigKeyTable
             return array();
         }
         $key_id = $key_result[0]['id'];
-
         $sql = new Sql($this->adapter);
         $sl = new Select();
         $sl->from(array('val' => $this->value_table));

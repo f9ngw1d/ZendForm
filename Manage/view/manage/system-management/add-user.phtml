@@ -79,5 +79,10 @@ $this->headTitle($title);
         echo "<script>alert('".$this->msg."');</script>";
     ?>
 </div>
+<script type="application/javascript">
+    $("#other").click(function () {
+        window.location.replace("<?php echo $this->url('manage/default',array('controller'=>'systemmanagement','action' => 'others')); ?>");
+    });
+</script>
 </body>
 </html>

@@ -9,6 +9,7 @@ use Zend\InputFilter\InputFilterInterface;
 class TStuBase implements InputFilterAwareInterface
 {
     public $uid;
+    public $bmbh;
     public $gender;
     public $political_status;
     public $nationality;
@@ -21,11 +22,7 @@ class TStuBase implements InputFilterAwareInterface
 
     public $target_university;
     public $target_college;
-    public $target_subject;
-    public $target_profession;
-    public $target_professor;
-    public $target_professor2;
-    public $target_professor3;
+    public $target_team;
 
     public $value_cet4;
     public $value_cet6;
@@ -62,13 +59,8 @@ class TStuBase implements InputFilterAwareInterface
 
         $this->target_university = (!empty($data['target_university'])) ? $data['target_university'] : null;
         $this->target_college = (!empty($data['target_college'])) ? $data['target_college'] : null;
-        $this->target_subject = (!empty($data['target_subject'])) ? $data['target_subject'] : null;
-        $this->target_profession = (!empty($data['target_profession'])) ? $data['target_profession'] : null;
-
-        $this->target_professor = (!empty($data['target_professor'])) ? $data['target_professor'] : null;
-        $this->target_professor2 = (!empty($data['target_professor2'])) ? $data['target_professor2'] : null;
-        $this->target_professor3 = (!empty($data['target_professor3'])) ? $data['target_professor3'] : null;
-
+        $this->target_team = (!empty($data['target_team'])) ? $data['target_team'] : null;
+        $this->bmbh = (!empty($data['bmbh'])) ? $data['bmbh'] : null;
         $this->value_cet4 = (isset($data['value_cet4'])) ? $data['value_cet4'] : -1;
         $this->value_cet6 = (!empty($data['value_cet6'])) ? $data['value_cet6'] : null;
 

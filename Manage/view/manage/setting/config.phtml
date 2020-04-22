@@ -1,6 +1,6 @@
 <h2>系统配置</h2>
 
-<span style='color: red; font-size: medium;'>1.本界面为设置系统的基本配置信息，可不做更改。<br></b></span>
+<span style='color: red; font-size: medium;'>提示:本界面为设置系统的基本配置信息，可不做更改。<br></b></span>
 <table class="table table-striped">
     <thead>
     <?php
@@ -29,5 +29,11 @@
     }
     ?>
 </table>
+<div>
+    <form id="upload-form" action="/manage/setting/uploadLogo" method="post" enctype="multipart/form-data" >
+        上传学校校徽图片：  　　　<input type="file" id="upload" name="upload" />
+        　　　<input type="submit" value="上传图片"  class="btn-primary" />
+    </form>
+</div>
 
 <script src="/js/manage/config.js"></script>

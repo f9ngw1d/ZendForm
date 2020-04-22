@@ -103,6 +103,12 @@ class SystemManagementController extends AbstractActionController
         ));
         return $view;
     }//sm
+
+    public function othersAction(){
+
+    }//sm
+
+
     public function addCollegeAction(){
 //        $login_id_container = new Container('uid');
 //        $login_id = $login_id_container->item;
@@ -286,6 +292,96 @@ class SystemManagementController extends AbstractActionController
 
         ));
         return $view;
+    }
+    public function  editCollegeAction(){
+        $current_page = $this->params()->fromRoute('param2');
+        $current_id =  $this->params()->fromRoute('param1');
+        //echo $current_page;
+        if(empty($current_page)){
+            $current_page = 1;
+        }
+
+        $per_page = 2;
+        $offset = ($current_page-1)*$per_page;
+        $time = $this->getManagetimeTable()->findAll($per_page, $offset);
+        $timesta = array();
+        foreach ($time as $tt)
+        {
+            foreach ($tt as $key => $value)
+            {
+                if($key == 'name')
+                    array_push($timesta, $this->getManagetimeTable()->getTimeSta($value));
+            }
+        }
+        $i=0;
+        foreach ($time as &$tt)
+        {
+            $a['sta']=$timesta[$i];
+            array_merge($tt,$a);
+            $tt['sta'] = $timesta[$i];
+            $i++;
+        }
+
+        $total_num = $this->getManagetimeTable()->getTotalnum();
+        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
+        $paginator->setCurrentPageNumber($current_page);
+        $total_page = ceil($total_num/$per_page);
+        $pagesInRange = array();
+        for($i=1;$i<=$total_page;$i++){
+            $pagesInRange[] = $i;
+        }
+        $flag = 0;
+        $request = $this->getRequest();
+
+        $form = new TimesetForm();
+        $form1 = new TimesetForm();
+
+        $post = $this->getManagetimeTable()->findid($this->params('param1'));
+        $form->bind($post);
+        if ($request->isPost()) {
+            $uni = new Managetime();
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                try {
+                    //$uni->exchangeArray($form->getData());
+                    $this->getManagetimeTable()->saveTime($post);
+
+                    //$this->setService->savePost($post);
+                    $flag = 1;
+                    //echo "<script>alert('修改成功')</script>";
+                    return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addTime'));
+                } catch (\Exception $e) {
+                    die($e->getMessage());
+                }
+            }
+        }
+
+        $column = array(
+            'id' =>'编号',
+            'name'=>'名称',
+            'start_time'=>'开始',
+            'end_time'=>'结束',
+            'status'=>'开关',
+            'description'=>'备注',
+            'sta'=>'状态',
+            'oprat'=>' ',
+        );
+
+        return new ViewModel(array(
+            'column'=>$column,
+            'paginator'=>$paginator,
+            'pageCount' =>$total_page,
+            'pagesInRange' => $pagesInRange,
+            'previous'=>$current_page>1?$current_page-1:null,
+            'next'=>$current_page<$total_page?$current_page+1:null,
+            'total_num'=>$total_num,
+            'current'=>$current_page,
+            'form' => $form,
+            'time' => $time,
+            'flag' =>$flag,
+            'current_id' => $current_id,
+        ));
     }
     public function  editTimeAction(){
         $current_page = $this->params()->fromRoute('param2');
