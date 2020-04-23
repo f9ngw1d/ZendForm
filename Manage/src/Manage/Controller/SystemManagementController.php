@@ -2,6 +2,7 @@
 
 namespace Manage\Controller;
 
+use Manage\Form\CollegeEditForm;
 use Manage\Form\PersonalForm;
 use Manage\Form\TimeeditForm;
 use Manage\Form\TimesetForm;
@@ -130,6 +131,7 @@ class SystemManagementController extends AbstractActionController
         $per_page = 2;
         $offset = ($current_page - 1) * $per_page;
         $form = new CollegeAddForm();
+        $form1 = new CollegeEditForm();
         $request = $this->getRequest();
         if ($request->isPost()) {
             $uni = new TBaseCollege();
@@ -173,6 +175,7 @@ class SystemManagementController extends AbstractActionController
             'total_num' => $total_num,
             'current' => $current_page,
             'form' => $form,
+            'form1'=>$form1,
         ));
         return $view;
     }
@@ -303,27 +306,9 @@ class SystemManagementController extends AbstractActionController
 
         $per_page = 2;
         $offset = ($current_page-1)*$per_page;
-        $time = $this->getManagetimeTable()->findAll($per_page, $offset);
-        $timesta = array();
-        foreach ($time as $tt)
-        {
-            foreach ($tt as $key => $value)
-            {
-                if($key == 'name')
-                    array_push($timesta, $this->getManagetimeTable()->getTimeSta($value));
-            }
-        }
-        $i=0;
-        foreach ($time as &$tt)
-        {
-            $a['sta']=$timesta[$i];
-            array_merge($tt,$a);
-            $tt['sta'] = $timesta[$i];
-            $i++;
-        }
-
-        $total_num = $this->getManagetimeTable()->getTotalnum();
-        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
+        $college= $this->getTBaseCollegeTable()->findAll($per_page, $offset);
+        $total_num = $this->getTBaseCollegeTable()->getTotalnum();
+        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($college));
         $paginator->setCurrentPageNumber($current_page);
         $total_page = ceil($total_num/$per_page);
         $pagesInRange = array();
@@ -333,24 +318,24 @@ class SystemManagementController extends AbstractActionController
         $flag = 0;
         $request = $this->getRequest();
 
-        $form = new TimesetForm();
-        $form1 = new TimesetForm();
+        $form = new CollegeAddForm();
+        $form1 = new CollegeEditForm();
 
-        $post = $this->getManagetimeTable()->findid($this->params('param1'));
+        $post = $this->getTBaseCollegeTable()->getCollege($this->params('param1'));
         $form->bind($post);
         if ($request->isPost()) {
-            $uni = new Managetime();
+            $uni = new TBaseCollege();
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 try {
                     //$uni->exchangeArray($form->getData());
-                    $this->getManagetimeTable()->saveTime($post);
+                    $this->getTBaseCollegeTable()->saveCollege($post);
 
                     //$this->setService->savePost($post);
                     $flag = 1;
                     //echo "<script>alert('修改成功')</script>";
-                    return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addTime'));
+                    return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addCollege'));
                 } catch (\Exception $e) {
                     die($e->getMessage());
                 }
@@ -358,29 +343,25 @@ class SystemManagementController extends AbstractActionController
         }
 
         $column = array(
-            'id' =>'编号',
-            'name'=>'名称',
-            'start_time'=>'开始',
-            'end_time'=>'结束',
-            'status'=>'开关',
-            'description'=>'备注',
-            'sta'=>'状态',
-            'oprat'=>' ',
+            'college_id' =>'学院编号',
+            'college_name'=>'学院名称',
+            'phone'=>'电话',
+            'ip_address'=>'网址',
+            'address'=>'办公楼地址',
+            'oprat'=>'操作'
         );
-
         return new ViewModel(array(
-            'column'=>$column,
-            'paginator'=>$paginator,
-            'pageCount' =>$total_page,
+            'column' => $column,
+            'college' => $college,
+            'paginator' => $paginator,
+            'pageCount' => $total_page,
             'pagesInRange' => $pagesInRange,
-            'previous'=>$current_page>1?$current_page-1:null,
-            'next'=>$current_page<$total_page?$current_page+1:null,
-            'total_num'=>$total_num,
-            'current'=>$current_page,
+            'previous' => $current_page > 1 ? $current_page - 1 : null,
+            'next' => $current_page < $total_page ? $current_page + 1 : null,
+            'total_num' => $total_num,
+            'current' => $current_page,
             'form' => $form,
-            'time' => $time,
-            'flag' =>$flag,
-            'current_id' => $current_id,
+            'form1'=>$form1,
         ));
     }
     public function  editTimeAction(){
