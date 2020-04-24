@@ -254,14 +254,11 @@ class SettingController extends AbstractActionController
             'data_addr2'=>"./".$dir2.$filename2,
             'file_name2' => $filename2,
         );
-        $sql_query = "
-        SELECT DISTINCT * FROM stu_base
-        JOIN stu_check ON stu_base.uid=stu_check.uid";
-
-        if ($status != "all")
-            $sql_query .= " WHERE stu_check.status=".$status;
-
+    }
+    public function delete()
+    {
+        $sql_query = "Delete From base_team";
         $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
-        return $rowSet;
+        return $this->redirect()->toRoute('manage/default');
     }
 }

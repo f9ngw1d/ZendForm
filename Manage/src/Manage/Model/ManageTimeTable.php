@@ -96,7 +96,7 @@ class ManageTimeTable
         $name = $time->name;
 
         if ($this->find($name)) {
-            echo "unpdate<br><br>";
+            echo "update<br><br>";
             $this->tableGateway->update($data, array('name' => $name));
         } else
         {

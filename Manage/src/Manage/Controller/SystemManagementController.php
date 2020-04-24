@@ -11,6 +11,9 @@ use Manage\Form\UnisetForm;
 use Manage\Form\CollegeAddForm;
 use Manage\Model\TBaseCollege;
 use Manage\Model\TDbUniversity;
+use Manage\Model\ManageTime;
+use Manage\Model\UsrTeacher;
+use Manage\Model\UsrRole;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -19,6 +22,7 @@ use Zend\ProgressBar\Upload\SessionProgress;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 
+
 //use Check\Form\SearchCondForm;
 
 class SystemManagementController extends AbstractActionController
@@ -26,7 +30,8 @@ class SystemManagementController extends AbstractActionController
     protected $TDbUniversityTable;
     protected $ManageTimeTable;
     protected $TBaseCollegeTable;
-    protected $UserTeacherTable;
+    protected $UsrTeacherTable;
+    protected $UsrRoleTable;
     public function getManageTimeTable()
     {
         if (!$this->ManageTimeTable) {
@@ -43,6 +48,7 @@ class SystemManagementController extends AbstractActionController
         }
         return $this->TDbUniversityTable;
     }
+
     public function getTBaseCollegeTable()
     {
         if (!$this->TBaseCollegeTable) {
@@ -51,51 +57,114 @@ class SystemManagementController extends AbstractActionController
         }
         return $this->TBaseCollegeTable;
     }
-    public function getUerTeacherTable()
+    public function getUsrTeacherTable()
     {
-        if (!$this->UserTeacherTable) {
+        if (!$this->UsrTeacherTable) {
             $sm = $this->getServiceLocator();
-            $this->TBaseCollegeTable = $sm->get('Manage\Model\UserTeacherTable');
+            $this->UsrTeacherTable = $sm->get('Manage\Model\UsrTeacherTable');
         }
-        return $this->UserTeacherTable;
+        return $this->UsrTeacherTable;
     }//sm
+    public function getUsrRole()
+    {
+        if (!$this->UsrRoleTable) {
+            $sm = $this->getServiceLocator();
+            $this->UsrRoleTable = $sm->get('Manage\Model\UsrRoleTable');
+        }
+        return $this->UsrRoleTable;
+    }//sm
+
     public function addUserAction(){
         $view = new ViewModel(array());
         $form = new PersonalForm();
 
-        //角色选择
-//        $roles = array(
-//            '' => ''
-//        );
+        /*从session中获取——————————————————————————————————————未完成*/
+        $role = "99";//测试用例
+        if($role == "99"){//角色select
+            $roles = array(
+                '0'=>'请选择角色',
+                '9'=>'学院负责人',
+                '10'=>'研究生院',
+                '11'=>'院科研秘书',
+                '14'=>'组长',
+                '99'=>'超级管理员',
+            );
+        }elseif($role == "10"){
+            $roles = array(
+                '0'=>'请选择角色',
+                '9'=>'学院负责人',
+                '10'=>'研究生院',
+                '11'=>'院科研秘书',
+                '14'=>'组长',
+            );
+        }elseif($role == "14"){
+            $roles = array(
+                '14'=>'组长',
+            );
+        }else{
+            $message = "您无权访问该页面";
+            $view->setVariables(array('form'=>$form, 'msg'=>$message));
+            return $view;
+        }
+        $message = '';
+
+        //set rid option
+        $form->get('Rid')->setValueOptions($roles);
+        //set YXSM option
+        /*
+         */
+
+
+        echo "222    \n";
         $request = $this->getRequest();
         if($request->isPost()){
             $account = new UsrTeacher();
-            $form->setInputFilter($account->getInputFilter());
+            //$form->setInputFilter($account->getInputFilter());
             $form->setData($request->getPost());
             if($form->isValid()){
                 $data = $form->getData();
                 if($data['Password'] == $data['Password2']){
                     $account->exchangeArray($data);
+                    //生成salt
+                    $psw = md5($data['Password']);
+                    $salt = substr($psw,-1,5);
+                    print_r($data['Rid']);
+                    $LastUid = $this->getUsrTeacherTable()->getLastUID();
                     $insert_data = array(
-                        'staff_id' => $data['Uid'],
-                        'user_name'=> $data['Uname'],
+                        'staff_id' => $LastUid+1,
+                        'user_name'=> $data['Realname'],
                         'email'=> $data['Email'],
-                        //'salt'=> 'csafarfkj',
-                        'password'=> md5($data['Password']),
-                        'create_at'=> date('Y-m-d H:i:s'),
-                        'update_at'=> date('Y-m-d H:i:s'),
+                        'salt'=> $salt,
+                        'password'=> md5($salt.$data['Password'].$salt),
+                        'create_time'=> date('Y-m-d H:i:s'),
+                        'update_at'=> null,
+                        'rid'=>$data['Rid'],
                     );
+                    print_r($insert_data);
                     //用户已存在
-                    if($this->getUerTeacherTable()->getUserById($insert_data['staff_id'])){
-                        $view->setVariables(array('form'=>$form, 'msg'=>'用户已存在'));
+                    if($this->getUsrTeacherTable()->registercheck($insert_data['email'])){
+                        $view->setVariables(array('form'=>$form, 'msg'=>'用户已存在,插入失败'));
                         return $view;
                     }
-                    //save data
-                    $res = $this->getUerTeacherTable()->saveUser2($insert_data);
-
-
-
-
+                    echo "aaaaaaaa";
+                    //save
+                    $res1 = $this->getUsrTeacherTable()->saveUser2($insert_data);
+                    $insert_rid = new UsrRole();
+                    $insert_rid->uid = $insert_data['staff_id'];
+                    $insert_rid->rid = $insert_data['rid'];
+                    $res2 = $this->getUsrRole()->saveUserrole($insert_rid);
+                    //判断是否插入成功否则回滚
+                    if($res1 && $res2){
+                        echo "<script type=\"text/javascript\" >alert('新增用户成功!');window.location.href='/manage/systemmanagement/adduser';</script>";
+                    }else{
+                        echo "<script type=\"text/javascript\" >alert('新增用户失败!');</script>";
+                        if(!$res1) {//usr_teacher insert failed,删掉一行usr_user_role
+                            $this->getUsrRole()->deleteLastInsert();
+                        } elseif(!$res2){//usr_user_role插入失败则删掉一行usr_teacher
+                            $last_insert = $this->getUsrTeacherTable()->getLastUID();
+                            $this->getUsrTeacherTable()->deleteUser($last_insert);
+                        }
+                    }
                 }
             }
         }
@@ -215,7 +284,7 @@ class SystemManagementController extends AbstractActionController
             //if (strcmp($postData['submit'], '确定') == 0) {
 
             /// }
-            $uni = new Managetime();
+            $uni = new ManageTime();
             $formdata  = array(
                 'name' => $_POST['name'],
                 'start_time' => $_POST['start_time'],
@@ -226,10 +295,10 @@ class SystemManagementController extends AbstractActionController
             //var_dump($form->getData());
             $uni->exchangeArray($formdata);
             //var_dump($uni);
-            if($this->getManagetimeTable()->saveTime($uni))
+            if($this->getManageTimeTable()->saveTime($uni))
                 echo "<script>alert('设置成功')</script>";
         }
-        $time = $this->getManagetimeTable()->findAll($per_page, $offset);
+        $time = $this->getManageTimeTable()->findAll($per_page, $offset);
         //var_dump($time);
         $timesta = array();
         foreach ($time as $tt)
@@ -237,7 +306,7 @@ class SystemManagementController extends AbstractActionController
             foreach ($tt as $key => $value)
             {
                 if($key == 'id')
-                    array_push($timesta, $this->getManagetimeTable()->getTimeSta($value));
+                    array_push($timesta, $this->getManageTimeTable()->getTimeSta($value));
             }
         }
         //var_dump($timesta);
@@ -254,7 +323,7 @@ class SystemManagementController extends AbstractActionController
         //echo "times:";
         //var_dump($time);
 
-        $total_num = $this->getManagetimeTable()->getTotalnum();
+        $total_num = $this->getManageTimeTable()->getTotalnum();
         $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
         $paginator->setCurrentPageNumber($current_page);
         $total_page = ceil($total_num / $per_page);
@@ -374,14 +443,14 @@ class SystemManagementController extends AbstractActionController
 
         $per_page = 2;
         $offset = ($current_page-1)*$per_page;
-        $time = $this->getManagetimeTable()->findAll($per_page, $offset);
+        $time = $this->getManageTimeTable()->findAll($per_page, $offset);
         $timesta = array();
         foreach ($time as $tt)
         {
             foreach ($tt as $key => $value)
             {
                 if($key == 'name')
-                    array_push($timesta, $this->getManagetimeTable()->getTimeSta($value));
+                    array_push($timesta, $this->getManageTimeTable()->getTimeSta($value));
             }
         }
         $i=0;
@@ -393,7 +462,7 @@ class SystemManagementController extends AbstractActionController
             $i++;
         }
 
-        $total_num = $this->getManagetimeTable()->getTotalnum();
+        $total_num = $this->getManageTimeTable()->getTotalnum();
         $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
         $paginator->setCurrentPageNumber($current_page);
         $total_page = ceil($total_num/$per_page);
@@ -407,7 +476,7 @@ class SystemManagementController extends AbstractActionController
         $form = new TimesetForm();
         $form1 = new TimesetForm();
 
-        $post = $this->getManagetimeTable()->findid($this->params('param1'));
+        $post = $this->getManageTimeTable()->findid($this->params('param1'));
         $form->bind($post);
         if ($request->isPost()) {
             $uni = new Managetime();
@@ -416,7 +485,7 @@ class SystemManagementController extends AbstractActionController
             if ($form->isValid()) {
                 try {
                     //$uni->exchangeArray($form->getData());
-                    $this->getManagetimeTable()->saveTime($post);
+                    $this->getManageTimeTable()->saveTime($post);
 
                     //$this->setService->savePost($post);
                     $flag = 1;
@@ -674,8 +743,6 @@ class SystemManagementController extends AbstractActionController
 //        exit();
 
 
-
-
         $view = new ViewModel(array(
             'form'=>$form,
         ));
@@ -683,5 +750,15 @@ class SystemManagementController extends AbstractActionController
 //        $view->setTerminal(true);
         //$view->addChild($tutor_cond_view,'tutor_cond_view');
         return $view;
+    }
+
+    public function deleteCollege()
+    {
+        $this->getServiceLocator()->get('Manage\Model\TBaseCollegeTable')
+            ->deleteCollege(
+                $this->params()->fromRoute('id') //从url中读取id
+            );
+        //路由名 参数
+        return $this->redirect()->toRoute('manage/default');
     }
 }

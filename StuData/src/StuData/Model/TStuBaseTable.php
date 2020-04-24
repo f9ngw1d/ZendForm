@@ -141,7 +141,7 @@ class TStuBaseTable
     /*
      * lrn   change volunteer
      */
-    public function updateStuVolunteer(StuBase $Tstu)
+    public function updateStuVolunteer(TStuBase $Tstu)
     {//增加 和 修改
         $data = array(
             'uid' => $Tstu->uid,
@@ -175,11 +175,11 @@ class TStuBaseTable
 
     /**
      * @author cry
-     * @param StuBase $Tstu
+     * @param TStuBase $Tstu
      * @return int
      * @throws \Exception
      */
-    public function saveStu(StuBase $Tstu)
+    public function saveStu(TStuBase $Tstu)
     {//增加 和 修改
         $data = array(
             'uid' => $Tstu->uid,
@@ -194,9 +194,6 @@ class TStuBaseTable
             'graduate_profession' => $Tstu->graduate_profession,
             'target_university' => $Tstu->target_university,
             'target_college' => $Tstu->target_college,
-            'target_profession' => $Tstu->target_profession,
-            'target_subject' => $Tstu->target_subject,
-            'target_professor' => $Tstu->target_professor,
             'apply_type' => $Tstu->apply_type,
             'examid' => $Tstu->examid,
             'value_cet4' => $Tstu->value_cet4,

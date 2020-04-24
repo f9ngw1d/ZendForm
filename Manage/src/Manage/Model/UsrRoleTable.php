@@ -41,7 +41,16 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
 
 
     }
-    public function saveUserrole(Userrole $Userrole){//增加
+
+    public function getLastInsert(){
+        $dbadapter = $this->tableGateway->getAdapter();
+        $sql = "select * from user where staff_id=last_insert_id()";
+        $result = $dbadapter->query($sql)->execute();
+        $resultArr = iterator_to_array($result);
+        return $resultArr;
+    }//sm
+
+    public function saveUserrole(UsrRole $Userrole){//增加
         $data = array(
             'rid' => $Userrole->rid,
             'uid' => $Userrole->uid
@@ -55,7 +64,7 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
         }
         elseif($row){
             //echo "数据库中有这对uid rid<br/>";
-            return true;
+            return false;
         }
         else{
             //echo "数组中uid rid有错<br/>";
@@ -109,6 +118,16 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
         }
 
     }
+
+    public function deleteLastInsert(){
+        $select = new Select();
+        $select ->from('usr_user_role')
+            ->order('uid desc')
+            ->limit(1);
+        $result = $this->tableGateway->selectWith($select);
+        $uid = ($row = $result->toArray()) ? $row[0]['uid'] : 0;
+        $this->tableGateway->delete(array('uid'=>$uid));
+    }//sm
 
 
 }

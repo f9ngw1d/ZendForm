@@ -1,24 +1,55 @@
 <h2>所有申请的夏令营项目</h2>
+<?php
+$i = 1;
+$new_college_flag = 0;
+if(isset($this->college_list))
+{
+    if (isset($this->team_list)) {
+        foreach ($this->college_list as $college){
+            $first = 1;
+            foreach ($this->team_list as $team) {
+                $target_college = $team['college_id'];
+                if ($target_college != $college['college_id']) {
+                    continue;
+                }
+                else{
+                    if($first)
+                    {
+                        echo "<a href='#collapse" . $i . "' data-toggle='collapse' class='subjectstyle'><div class='college' id='college-1' style='float:left; font-size: 18px;'>" . $team['college_id'].$team['college'] . "</div></a><br>";
+                        $first = 0;
+                        echo "<div class='collapse' id='collapse" . $i . "'><!----beforetable<div class='collapse in' id='collapse'>---><table class='table table-hover' id='collapse" . $i . "'>";
+                        echo "<tr>";
+                        foreach ($this->column as $key => $value) {
+                            echo "<th>$value</th>";
+                        }
+                        echo "</tr><!------一行数据------>";
+                        echo "<tbody>";
+                        echo "<tr>";
+                        foreach ($this->column as $key => $value) {
+                            echo "<td>" . $team[$key] . "</td>";
+                        }
+                        echo "</tr><!----项目信息一行---->";
+                    }
+                    else
+                    {
+                        echo "<tr>";
+                        foreach ($this->column as $key => $value) {
+                            echo "<td>" . $team[$key] . "</td>";
+                        }
+                        echo "</tr><!----项目信息一行---->";
+                    }
 
-<table class="table table-striped">
-    <thead>
-    <?php
-    foreach ($column as $key => $value) {
-        echo "<th/>".$value."</th>";
-    }
-    ?>
-    </thead>
-    <?php
-    foreach ($setting as $key_name => $row) {
-        ?><tr><?php
-        foreach ($row as $key => $value) {
-            if($key == 'key_value'){
-                echo "<td id=".$row['id'].">".$row[$key]."</td>";
-                continue;
+                }
+                $i++;
             }
-            echo "<td>".$row[$key]."</td>";
+            echo "<!----换了学院---></tbody></table></div><!-----/div---->";//</table></div>
         }
-        ?></tr><?php
+        echo "</tbody>";
+        echo "</table></div>";
     }
-    ?>
-</table>
+}
+
+
+?>
+</table><!------form   table1----->
+</div>

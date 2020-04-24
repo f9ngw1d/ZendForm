@@ -112,11 +112,11 @@ class PersonalForm extends Form
             ),
             'options'=>array(
                 'value_options'=>array(
-                    '学院负责人',
-                    '研究生院',
-                    '院科研秘书',
-                    '组长',
-                    '超级管理员',
+//                    '学院负责人',
+//                    '研究生院',
+//                    '院科研秘书',
+//                    '组长',
+//                    '超级管理员',
                 ),
             ),
         ));

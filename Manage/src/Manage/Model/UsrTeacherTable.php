@@ -64,14 +64,14 @@ class UsrTeacherTable{
             if($res){
                 return $res;
             }else{
-                throw new \Exception("insert usr_stu fail");
+                throw new \Exception("insert usr_teacher fail");
             }
         } else {
             $res = $this->tableGateway->update($data, array('staff_id' => $user->staff_id));
             if($res){
                 return $res;
             }else{
-                throw new \Exception("update usr_stu fail");
+                throw new \Exception("update usr_teacher fail");
             }
         }
     }
@@ -82,18 +82,19 @@ class UsrTeacherTable{
      * @return int
      * @throws \Exception
      */
-    public function saveUser2(UsrTeacher $user){//增加 和 修改
+    public function saveUser2($user){//增加 和 修改
+        print_r($user);
         $data = array(
-            'staff_id' => $user->staff_id,
-            'user_name' => $user->user_name,
-            'email' => $user->email,
-            'salt' => $user->salt,
-            'password' => $user->password,
-            'create_time' => $user->create_time,
-            'update_at' => $user->update_at,
+            'staff_id' => $user['staff_id'],
+            'user_name' => $user['user_name'],
+            'email' => $user['email'],
+            'salt' => $user['salt'],
+            'password' => $user['password'],
+            'create_time' => $user['create_time'],
+            'update_at' => $user['update_at'],
         );
 
-        if (!$this->getUserById($user->staff_id)) {
+        if (!$this->getUserById($user['staff_id'])) {
             //echo "insert";
             $res = $this->tableGateway->insert($data);
             if($res){
@@ -133,11 +134,11 @@ class UsrTeacherTable{
     }
     public function getLastInsert(){
         $dbadapter = $this->tableGateway->getAdapter();
-        $sql = "select * from user where staff_id=last_insert_id()";
+        $sql = "select * from usr_teacher where staff_id=last_insert_id()";
         $result = $dbadapter->query($sql)->execute();
         $resultArr = iterator_to_array($result);
         return $resultArr;
-    }
+    }//sm
     public function registercheck($email){
         $rowset = $this->tableGateway->select(array('email' => $email));
         $row = $rowset->current();
@@ -169,4 +170,15 @@ class UsrTeacherTable{
         }
     }
 
-}
+    public function getLastUID(){
+        $select = new Select();
+        $select ->from('usr_teacher')
+            ->order('staff_id desc')
+            ->limit(1);
+        $result = $this->tableGateway->selectWith($select);
+        $uid = ($row = $result->toArray()) ? $row[0]['staff_id'] : 0;
+        return $uid;
+    }
+}//sm
+
+

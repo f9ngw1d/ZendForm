@@ -65,6 +65,15 @@ class TBaseCollegeTable
         }
         return $row;
     }
+    public function find($college_id)
+    {
+        $rowset = $this->tableGateway->select(array('college_id' => $college_id));
+        $row = $rowset->current();
+        if (!$row) {
+            return 0;
+        }
+        return 1;
+    }
     public function saveCollege(TBaseCollege $college)
     {
         $data = array(
@@ -77,10 +86,11 @@ class TBaseCollegeTable
         //var_dump($data);
         $id = $college->college_id;
 
-        if ($this->getCollegebyStaffid($id)) {
+        if ($this->find($id)) {
             echo "update<br><br>";
             $this->tableGateway->update($data, array('college_id' => $id));
-        } else
+        }
+        else
         {
             echo "insert<br><br>";
             $this->tableGateway->insert($data);
@@ -119,5 +129,16 @@ class TBaseCollegeTable
         $row = $result->current();
         $rowCount = $row['count'];
         return $rowCount;
+    }
+    public function deleteCollege($college_id)
+    {
+        $res = $this->tableGateway->delete(array('college_id' => $college_id));
+        if($res){
+            echo "delete successful.";
+            return $res;
+        }else{//失败则抛出异常，for事务
+            echo "fail";
+            throw new \Exception("del base_college uid:". $college_id. " fail");
+        }
     }
 }
