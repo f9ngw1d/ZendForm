@@ -1,5 +1,6 @@
 <?php
 namespace Manage\Model;
+use Manage\Model\TBaseCollege;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Tablegateway\TableGateway;
@@ -14,9 +15,9 @@ class TBaseCollegeTable
 {
     protected $tableGateway;
 
-    public function __construct(TableGateway $tableGateway)
+    public function __construct(TableGateway $tg)
     {
-        $this->tableGateway = $tableGateway;
+        $this->tableGateway = $tg;
         $this->table = 'base_college';
     }
     //检索数据库中 base_college 表所有的记录，然后将结果返回 ResultSet

@@ -27,7 +27,8 @@ $this->headTitle($title);
     <div class="row">
         <?php
         $searchForm = $this->searchForm;
-        $searchForm->setAttribute('action', $this->url('manage/default', array('controller' => 'systemmanagement','action' => 'others')));
+        $searchForm->setAttribute('action', $this->url('manage/default', array('controller' => 'systemManagement','action' => 'others')));
+        $searchForm->setAttribute('method','POST');
         $searchForm->prepare();
         echo $this->form()->openTag($searchForm);
         ?>
@@ -283,7 +284,7 @@ $this->headTitle($title);
         'Sliding',
         'pagination/othersPaginator',
         array(
-            'route' => 'account/manage/others',
+            'route' => 'manage/systemManagement/others',
             'column' => $this->column,
             'parame' => $this->parame,
         ));
@@ -345,11 +346,11 @@ $this->headTitle($title);
         if (r != null) return decodeURI(r[2]); return null; //返回参数值
     }
     $("#add").click(function () {
-        window.location.replace("<?php echo $this->url('account/default',array('controller'=>'manage','action' => 'add')); ?>");
+        window.location.replace("<?php echo $this->url('manage/default',array('controller'=>'systemManagement','action' => 'addUser')); ?>");
     });
     function change() {
         var $key = $("#roles option:selected").val();
-        window.location.replace("<?php echo $this->url('account/default',array('controller'=>'manage','action' => 'others')); ?>"+"?x=1&key="+$key);
+        window.location.replace("<?php echo $this->url('manage/default',array('controller'=>'systemManagement','action' => 'others')); ?>"+"?x=1&key="+$key);
     }
     function edit(uid, name, mobile, email, rid) {
         $("#Uid").attr('value', uid);

@@ -11,7 +11,7 @@
 //研究生院
     $female = 0;
     $male = 0;
-    foreach($gender as $x=>$x_value)
+    foreach($this->gender as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             if($value == '1')
@@ -25,13 +25,13 @@
 <?php
     $good = 0;
     $total = 0;
-    foreach($isTwo as $x=>$x_value)
+    foreach($this->isTwo as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             $good++;
         }
     }
-    foreach($allResult as $x=>$x_value)
+    foreach($this->allResult as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             $total++;
@@ -43,13 +43,13 @@
 <table class="table table-striped">
     <thead>
     <?php
-    foreach ($column as $key => $value) {
+    foreach ($this->column as $key => $value) {
         echo "<th/>".$value."</th>";
     }
     ?>
     </thead>
     <?php
-    foreach ($UniRank as $key_name => $row) {
+    foreach ($this->UniRank as $key_name => $row) {
         ?><tr><?php
         foreach ($row as $key => $value) {
             echo "<td>".$row[$key]."</td>";
@@ -65,7 +65,7 @@
 //各个学院
     $female = 0;
     $male = 0;
-    foreach($genderCollege as $x=>$x_value)
+    foreach($this->genderCollege as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             if($value == '1')
@@ -79,13 +79,13 @@
 <?php
     $good = 0;
     $total = 0;
-    foreach($isTwoCollege as $x=>$x_value)
+    foreach($this->isTwoCollege as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             $good++;
         }
     }
-    foreach($allResultCollege as $x=>$x_value)
+    foreach($this->allResultCollege as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             $total++;
@@ -97,13 +97,13 @@
 <table class="table table-striped">
     <thead>
     <?php
-    foreach ($column as $key => $value) {
+    foreach ($this->column as $key => $value) {
         echo "<th/>".$value."</th>";
     }
     ?>
     </thead>
     <?php
-    foreach ($UniRankCollege as $key_name => $row) {
+    foreach ($this->UniRankCollege as $key_name => $row) {
         ?><tr><?php
         foreach ($row as $key => $value) {
             echo "<td>".$row[$key]."</td>";
@@ -118,7 +118,7 @@
 //各个组
     $female = 0;
     $male = 0;
-    foreach($genderTeam as $x=>$x_value)
+    foreach($this->genderTeam as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             if($value == '1')
@@ -132,13 +132,13 @@
 <?php
     $good = 0;
     $total = 0;
-    foreach($isTwoTeam as $x=>$x_value)
+    foreach($this->isTwoTeam as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             $good++;
         }
     }
-    foreach($allResultTeam as $x=>$x_value)
+    foreach($this->allResultTeam as $x=>$x_value)
     {
         foreach ($x_value as $key => $value) {
             $total++;
@@ -150,13 +150,13 @@
 <table class="table table-striped">
     <thead>
     <?php
-    foreach ($column as $key => $value) {
+    foreach ($this->column as $key => $value) {
         echo "<th/>".$value."</th>";
     }
     ?>
     </thead>
     <?php
-    foreach ($UniRankTeam as $key_name => $row) {
+    foreach ($this->UniRankTeam as $key_name => $row) {
         ?><tr><?php
         foreach ($row as $key => $value) {
             echo "<td>".$row[$key]."</td>";

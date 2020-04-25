@@ -14,7 +14,7 @@ return array(
                     'defaults' => array(
                         '__NAMESPACE__' => 'StuData\Controller',
                         'controller'    => 'ShowDataInfo',
-                        'action'        => 'index',
+                        'action'        => 'showDataInfo',
                     ),
                 ),
                 'may_terminate' => true,

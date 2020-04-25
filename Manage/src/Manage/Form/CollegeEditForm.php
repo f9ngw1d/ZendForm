@@ -66,14 +66,5 @@ class CollegeEditForm extends Form
                 'id' => 'addresss',
             )
         ));
-
-        $this->add(array(
-            'type' => 'submit',
-            'name' => 'submit',
-            'attributes' => array(
-                'value' => '确认添加学院',
-                'class' => 'btn btn-primary',
-            )
-        ));
     }
 }

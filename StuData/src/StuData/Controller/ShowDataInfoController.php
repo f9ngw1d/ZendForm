@@ -19,13 +19,7 @@ class ShowDataInfoController extends AbstractActionController
     protected $TStuBaseTable;
 
     public function __construct(){
-        $rid_arr_container = new Container('rid');
-        $rid_arr = $rid_arr_container->item;
-        $redirect_url = "/info";
-//        if(!$rid_arr || !in_array(10,$rid_arr)){
-//            echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
-//            exit();
-//        }
+
     }
 
     public function getTStuBaseTable()//获取数据库Article
@@ -39,6 +33,13 @@ class ShowDataInfoController extends AbstractActionController
 
     public  function showDataInfoAction()
     {
+        $rid_arr_container = new Container('rid');
+        $rid_arr = $rid_arr_container->item;
+        $redirect_url = "/stuData";
+        if(!$rid_arr || !in_array(10,$rid_arr)||!in_array(9,$rid_arr)||!in_array(14,$rid_arr)){
+            echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
+            exit();
+        }
         $gender = $this->getTStuBaseTable()->getGender();
         $isTwo = $this->getTStuBaseTable()->getUni();
         $allResult = $this->getTStuBaseTable()->getAll();

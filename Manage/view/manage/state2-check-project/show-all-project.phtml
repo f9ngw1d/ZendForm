@@ -1,5 +1,8 @@
 <h2>所有申请的夏令营项目</h2>
 <?php
+$url2 = '/check/check/check/rid/' . $this->rid . '/now_stage/' . $this->now_stage . '/param/' . $this->stu_should_be_status;
+$str = "<form action = '" . $url2 . "' method = 'post'>";
+echo $str;
 $i = 1;
 $new_college_flag = 0;
 if(isset($this->college_list))
@@ -48,8 +51,11 @@ if(isset($this->college_list))
         echo "</table></div>";
     }
 }
-
-
 ?>
 </table><!------form   table1----->
 </div>
+<div>
+    <input type="submit" class = "btn btn-primary">审核通过
+    <input type="submit" class = "btn btn-primary">退回
+</div>
+</form>

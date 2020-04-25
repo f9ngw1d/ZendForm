@@ -255,7 +255,7 @@ class SettingController extends AbstractActionController
             'file_name2' => $filename2,
         );
     }
-    public function delete()
+    public function deleteAction()
     {
         $sql_query = "Delete From base_team";
         $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();

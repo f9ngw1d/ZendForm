@@ -6,7 +6,7 @@ use Manage\Model\SystemManagement;
 use Zend\Form\Form;
 use Zend\Stdlib\Hydrator\ClassMethods;
 
-class timeEditForm extends Form
+class TimeeditForm extends Form
 {
     public function __construct($name = null, $options = array())
     {

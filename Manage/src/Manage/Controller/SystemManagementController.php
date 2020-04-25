@@ -3,6 +3,7 @@
 namespace Manage\Controller;
 
 use Manage\Form\CollegeEditForm;
+use Manage\Form\UserSearchForm;
 use Manage\Form\PersonalForm;
 use Manage\Form\TimeeditForm;
 use Manage\Form\TimesetForm;
@@ -114,8 +115,6 @@ class SystemManagementController extends AbstractActionController
         /*
          */
 
-
-        echo "222    \n";
         $request = $this->getRequest();
         if($request->isPost()){
             $account = new UsrTeacher();
@@ -146,7 +145,6 @@ class SystemManagementController extends AbstractActionController
                         $view->setVariables(array('form'=>$form, 'msg'=>'用户已存在,插入失败'));
                         return $view;
                     }
-                    echo "aaaaaaaa";
                     //save
                     $res1 = $this->getUsrTeacherTable()->saveUser2($insert_data);
                     $insert_rid = new UsrRole();
@@ -155,7 +153,7 @@ class SystemManagementController extends AbstractActionController
                     $res2 = $this->getUsrRole()->saveUserrole($insert_rid);
                     //判断是否插入成功否则回滚
                     if($res1 && $res2){
-                        echo "<script type=\"text/javascript\" >alert('新增用户成功!');window.location.href='/manage/systemmanagement/adduser';</script>";
+                        echo "<script type=\"text/javascript\" >alert('新增用户成功!');</script>";
                     }else{
                         echo "<script type=\"text/javascript\" >alert('新增用户失败!');</script>";
                         if(!$res1) {//usr_teacher insert failed,删掉一行usr_user_role
@@ -175,7 +173,21 @@ class SystemManagementController extends AbstractActionController
     }//sm
 
     public function othersAction(){
+        $view = new ViewModel(array());
+        $form = new PersonalForm();
+        $searchForm = new UserSearchForm();
 
+        $request = $this->getRequest();
+        if($request->isPost()){
+            $postdata = $request->getPost();
+            if($request->getPost('del','no') == 'del'){
+
+            }
+        }
+        $view = new ViewModel(array(
+            'form' => $form,
+        ));
+        return $view;
     }//sm
 
 
@@ -752,11 +764,11 @@ class SystemManagementController extends AbstractActionController
         return $view;
     }
 
-    public function deleteCollege()
+    public function deleteCollegeAction()
     {
         $this->getServiceLocator()->get('Manage\Model\TBaseCollegeTable')
             ->deleteCollege(
-                $this->params()->fromRoute('id') //从url中读取id
+                $this->params()->fromRoute('uid') //从url中读取id
             );
         //路由名 参数
         return $this->redirect()->toRoute('manage/default');
