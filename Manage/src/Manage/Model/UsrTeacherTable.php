@@ -179,6 +179,23 @@ class UsrTeacherTable{
         $uid = ($row = $result->toArray()) ? $row[0]['staff_id'] : 0;
         return $uid;
     }
+
+	/**
+	 * Method getUserName
+	 * user:QDS
+	 * time:2020/4/24 23:38
+	 * @function:根据staff_id获取教师姓名
+	 * TODO
+	 */
+    public function getUserNameById($staff_id)
+	{
+		$rowSet  = $this->tableGateway->select(array('staff_id'=>$staff_id));
+		$row = $rowSet->current();
+		if(!$row){
+			return false;
+		}
+		return $row;
+	}
 }//sm
 
 

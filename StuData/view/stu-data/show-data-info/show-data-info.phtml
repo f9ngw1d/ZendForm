@@ -8,7 +8,8 @@
 </style>
 
 <?php
-//研究生院
+if($this->flag == 1)
+{
     $female = 0;
     $male = 0;
     foreach($this->gender as $x=>$x_value)
@@ -20,9 +21,7 @@
                 $male++;
         }
     }
-    echo "<p>研究生院女性人数".$female."，研究生院男性人数".$male."。</p>";
-    ?><br>
-<?php
+    echo "<p>".$this->range."女性人数".$female."，".$this->range."男性人数".$male."。</p><br>";
     $good = 0;
     $total = 0;
     foreach($this->isTwo as $x=>$x_value)
@@ -37,134 +36,68 @@
             $total++;
         }
     }
-    echo "<p>研究院学生总人数".$total."，其中985/211总人数".$good."。</p>";
-    ?><br>
-<h4>研究生院生源来源大学排序</h4>
-<table class="table table-striped">
-    <thead>
-    <?php
+    echo "<p>".$this->range."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+    echo "<h4>".$this->range."生源大学排序</h4>";
+    echo "<table class='table table-striped'><thead>";
     foreach ($this->column as $key => $value) {
         echo "<th/>".$value."</th>";
     }
-    ?>
-    </thead>
-    <?php
+    echo "</thead>";
     foreach ($this->UniRank as $key_name => $row) {
-        ?><tr><?php
+        echo "<tr>";
         foreach ($row as $key => $value) {
-            echo "<td>".$row[$key]."</td>";
+            echo "<td>".$row[$key]."</td></tr>";
         }
-        ?></tr><?php
     }
-    ?>
-</table>
+    echo "</table>";
+}
+else if($this->flag == 2)
+{
+    for($i = 0;$i < $this->num; $i++)
+    {
+        $female = 0;
+        $male = 0;
+        foreach($this->gender[$i] as $x=>$x_value)
+        {
+            foreach ($x_value as $key => $value) {
+                if($value == '1')
+                    $female++;
+                else
+                    $male++;
+            }
+        }
+        echo "<p>".$this->range[$i]."女性人数".$female."，".$this->range[$i]."男性人数".$male."。</p><br>";
+        $good = 0;
+        $total = 0;
+        foreach($this->isTwo[$i] as $x=>$x_value)
+        {
+            foreach ($x_value as $key => $value) {
+                $good++;
+            }
+        }
+        foreach($this->allResult[$i] as $x=>$x_value)
+        {
+            foreach ($x_value as $key => $value) {
+                $total++;
+            }
+        }
+        echo "<p>".$this->range[$i]."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+        echo "<h4>".$this->range[$i]."生源大学排序</h4>";
+        echo "<table class='table table-striped'><thead>";
+        foreach ($this->column as $key => $value) {
+            echo "<th/>".$value."</th>";
+        }
+        echo "</thead>";
+        foreach ($this->UniRank[$i] as $key_name => $row) {
+            echo "<tr>";
+            foreach ($row as $key => $value) {
+                echo "<td>".$row[$key]."</td></tr>";
+            }
+        }
+        echo "</table>";
+    }
+}
 
-
-
-<?php
-//各个学院
-    $female = 0;
-    $male = 0;
-    foreach($this->genderCollege as $x=>$x_value)
-    {
-        foreach ($x_value as $key => $value) {
-            if($value == '1')
-                $female++;
-            else
-                $male++;
-        }
-    }
-    echo "<p>信息学院女性人数".$female."，信息学院男性人数".$male."。</p>";
-    ?><br>
-<?php
-    $good = 0;
-    $total = 0;
-    foreach($this->isTwoCollege as $x=>$x_value)
-    {
-        foreach ($x_value as $key => $value) {
-            $good++;
-        }
-    }
-    foreach($this->allResultCollege as $x=>$x_value)
-    {
-        foreach ($x_value as $key => $value) {
-            $total++;
-        }
-    }
-    echo "<p>信息学院学生总人数".$total."，其中985/211总人数".$good."。</p>";
-    ?><br>
-<h4>信息学院生源来源大学排序</h4>
-<table class="table table-striped">
-    <thead>
-    <?php
-    foreach ($this->column as $key => $value) {
-        echo "<th/>".$value."</th>";
-    }
-    ?>
-    </thead>
-    <?php
-    foreach ($this->UniRankCollege as $key_name => $row) {
-        ?><tr><?php
-        foreach ($row as $key => $value) {
-            echo "<td>".$row[$key]."</td>";
-        }
-        ?></tr><?php
-    }
-    ?>
-</table>
-
-
-<?php
-//各个组
-    $female = 0;
-    $male = 0;
-    foreach($this->genderTeam as $x=>$x_value)
-    {
-        foreach ($x_value as $key => $value) {
-            if($value == '1')
-                $female++;
-            else
-                $male++;
-        }
-    }
-    echo "<p>025200组女性人数".$female."，025200组男性人数".$male."。</p>";
-    ?><br>
-<?php
-    $good = 0;
-    $total = 0;
-    foreach($this->isTwoTeam as $x=>$x_value)
-    {
-        foreach ($x_value as $key => $value) {
-            $good++;
-        }
-    }
-    foreach($this->allResultTeam as $x=>$x_value)
-    {
-        foreach ($x_value as $key => $value) {
-            $total++;
-        }
-    }
-    echo "<p>025200组学生总人数".$total."，其中985/211总人数".$good."。</p>";
-    ?><br>
-<h4>025200组生源来源大学排序</h4>
-<table class="table table-striped">
-    <thead>
-    <?php
-    foreach ($this->column as $key => $value) {
-        echo "<th/>".$value."</th>";
-    }
-    ?>
-    </thead>
-    <?php
-    foreach ($this->UniRankTeam as $key_name => $row) {
-        ?><tr><?php
-        foreach ($row as $key => $value) {
-            echo "<td>".$row[$key]."</td>";
-        }
-        ?></tr><?php
-    }
-    ?>
-</table>
 
 
 

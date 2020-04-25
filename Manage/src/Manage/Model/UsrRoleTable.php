@@ -12,11 +12,13 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Select;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
+use Zend\Session\Container;
 
 class UsrRoleTable{//usrRole表 只能增删查，不能修改
     protected $tableGateway;
+	protected $userroleTable;
 
-    public function __construct(TableGateway $tg)
+	public function __construct(TableGateway $tg)
     {
         $this->tableGateway = $tg;
     }
@@ -129,5 +131,78 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
         $this->tableGateway->delete(array('uid'=>$uid));
     }//sm
 
+	/**qds
+	 *getRole 获取一个教师的角色数组
+	 * @param string $staff_id
+	 * @return array|bool|mixed
+	 */
+	public function getRole($staff_id = ""){
+		if(empty($staff_id)){
+			if(isset($this->rid_arr)) {
+				echo "已经存在rid_arr";
+				return $this->rid_arr;
+			}
+		}
+		//如果角色数组已经存在了，则直接返回
+
+		//如果session里有rid则从session里取出放入成员变量中
+		$containerRidArr = new Container('rid');
+		$this->rid_arr = $containerRidArr->item;
+
+		//如果session中没有，则从数据库中取
+		if(empty($this->rid_arr)){
+			//先从session里取uid，如果有则直接用
+			$containerRidArr = new Container('uid');
+			$this->uid = $containerRidArr->item;
+
+			//session中有uid，则直接用这个uid来查询role_id
+			if(!empty($this->uid)) {
+				$user_roles = $this->getUserroleTable()->getUserrole(array('uid'=>$this->uid));
+				$rid_arr = $this->changeRoleToArr($user_roles);
+				$this->rid_arr = $rid_arr;
+			}
+			//session中没有则用传入的staff_id来查询roleid
+			elseif(!empty($staff_id)){
+				$user_roles = $this->getUserroleTable()->getUserrole(array('uid'=>$staff_id));
+				$rid_arr = $this->changeRoleToArr($user_roles);
+				$this->rid_arr = $rid_arr;//iterator_to_array($role_set);
+			}
+			//session中也没有，也没有传入staff_id则设置为空
+			else{
+				$this->rid_arr = array();
+			}
+		}
+		return $this->rid_arr;
+	}
+
+	/**
+	 * changeRoleToArr 把教师的角色result_set转换成数组
+	 * @param $user_roles
+	 * @return array
+	 */
+	public function changeRoleToArr($user_roles){
+		$rid_arr = array();
+		foreach ($user_roles as $key => $ur_row) {
+			if(!$ur_row){
+				continue;
+			}
+			else{
+				$rid_arr[] = $ur_row->rid;
+			}
+		}
+		return $rid_arr;
+	}
+	//qds
+	public function  getUserroleTable() {
+		if($this->userroleTable){
+			return $this->userroleTable;
+		}
+		$resultSetPrototype = new ResultSet();
+		$resultSetPrototype->setArrayObjectPrototype(new UsrRole());
+		$newTableGateway =  new TableGateway("usr_user_role", $this->adapter,null,$resultSetPrototype);
+		$table = new UsrRoleTable($newTableGateway);
+		$this->userroleTable = $table;
+		return $table;
+	}
 
 }
