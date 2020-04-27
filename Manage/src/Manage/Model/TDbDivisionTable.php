@@ -54,7 +54,20 @@ class TDbDivisionTable
             return $this->tableGateway->update($data, array('YQXDM' => $bxyjfx->YQXDM));
         }
     }
-
+    public function getUniCode()
+    {
+        $sql_query = "SELECT DISTINCT SSMC,SSDM FROM db_administrative_division";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
+    public function getUni()
+    {
+        $sql_query = "SELECT DISTINCT SSMC FROM db_administrative_division";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
     public function deleteDivision($id)
     {//删
         $this->tableGateway->delete(array('YQXDM' => $id));

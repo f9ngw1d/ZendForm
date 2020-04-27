@@ -419,4 +419,25 @@ class TStuBaseTable
         $result_arr = iterator_to_array($rowSet);
         return $result_arr;
     }
+
+    /**
+     * @author ly
+     * @param $team_id  array()
+     * @function 获取小组内学生信息
+     */
+    public function getStuinfoByTeamID($team_id){
+        $rowset = $this->tableGateway->select(array('target_team' => $team_id[0]));
+        if($rowset){
+            $stuArray = $rowset->toArray();
+            $stuinfo = array();
+            foreach ($stuArray as $key => $value) {
+                $stuinfo[$key]['uid'] = $value['uid'];
+                $stuinfo[$key]['gender'] = $value['gender'];
+                $stuinfo[$key]['user_name'] = $value['user_name'];
+            }
+            return $stuinfo;
+        }else{//失败则抛出异常，for事务
+            throw new \Exception("getStuinfoByTeamID fail");
+        }
+    }
 }

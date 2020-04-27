@@ -54,8 +54,8 @@ class ShowDataInfoController extends AbstractActionController
     {
         $rid_arr_container = new Container('rid');
         $rid_arr = $rid_arr_container->item;
-        $redirect_url = "/";
-        if(!$rid_arr || !in_array(10,$rid_arr)||!in_array(9,$rid_arr)||!in_array(14,$rid_arr)){
+        $redirect_url = "/info";
+        if(!$rid_arr && !in_array(10,$rid_arr)&&!in_array(9,$rid_arr)&&!in_array(14,$rid_arr)){
             echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
             exit();
         }
@@ -85,7 +85,9 @@ class ShowDataInfoController extends AbstractActionController
 
         $college_id_container = new Container('college_id');
         $college_id = $college_id_container->item;
+
         if (!is_null($college_id) && in_array(9,$rid_arr)) {
+            echo $college_id;
             $flag = 1;
             $res = $this->getCollegeTable()->getCollege($college_id);
             $range = $res['college_name'];

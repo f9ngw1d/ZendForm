@@ -27,13 +27,12 @@ return array(
                     'default' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/[:controller[/:action][/uid/:uid][/param3/:param3][/param4/:param4]]',
+                            'route'    => '/[:controller[/:action][/uid/:uid][/param/:param][/param1/:param1]]',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'uid'    => '[a-zA-Z0-9]*',
-                                'param3'    => '[a-zA-Z0-9]*',
-                                'param4'    => '[a-zA-Z0-9]*',
+                                'param'    => '[a-zA-Z0-9=]*',
                             ),
                             'defaults' => array(
                             ),

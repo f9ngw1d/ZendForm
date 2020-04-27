@@ -5,9 +5,19 @@ namespace Manage\Form;
 use Manage\Model\SystemManagement;
 use Zend\Form\Form;
 use Zend\Stdlib\Hydrator\ClassMethods;
+use Zend\Form\Element;
 
-class CollegeAddForm extends Form
+use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\InputFilterProviderInterface;
+
+use Zend\Validator\Identical\EmailAddress;
+use Zend\I18n\Validator;
+
+class CollegeAddForm extends Form implements InputFilterProviderInterface
 {
+    protected $inputFilter;
     public function __construct($name = null, $options = array())
     {
         parent::__construct($name, $options);
@@ -61,5 +71,46 @@ class CollegeAddForm extends Form
                 'class' => 'btn btn-primary',
             )
         ));
+    }
+
+    public function getInputFilter(){
+        if(!$this->inputFilter){
+            $inputFilter = new InputFilter();
+            $inputFilter->add(array(
+                'name'		=> 'college_id',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'college_name',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'ip_address',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+            $inputFilter->add(array(
+                'name'		=> 'address',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+            $this->inputFilter = $inputFilter;
+        }
+        return $this->inputFilter;
+    }
+
+    public function getInputFilterSpecification(){
     }
 }

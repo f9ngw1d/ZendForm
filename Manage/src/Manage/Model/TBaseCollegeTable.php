@@ -75,6 +75,7 @@ class TBaseCollegeTable
         }
         return 1;
     }
+
     public function saveCollege(TBaseCollege $college)
     {
         $data = array(
@@ -83,7 +84,6 @@ class TBaseCollegeTable
             'phone' => $college->phone,
             'ip_address' => $college->ip_address,
             'address' => $college->address,
-            'is_'
         );
         //var_dump($data);
         $id = $college->college_id;

@@ -2,8 +2,11 @@
     h4{
         margin:0 auto;
     }
-    p{
+    #sum{
         font-size: 20px;
+    }
+    .table-hover{
+        width: 50%;
     }
 </style>
 
@@ -21,7 +24,7 @@ if($this->flag == 1)
                 $male++;
         }
     }
-    echo "<p>".$this->range."女性人数".$female."，".$this->range."男性人数".$male."。</p><br>";
+    echo "<p id = 'sum'>".$this->range."女性人数".$female."，".$this->range."男性人数".$male."。</p><br>";
     $good = 0;
     $total = 0;
     foreach($this->isTwo as $x=>$x_value)
@@ -36,9 +39,9 @@ if($this->flag == 1)
             $total++;
         }
     }
-    echo "<p>".$this->range."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+    echo "<p id = 'sum'>".$this->range."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
     echo "<h4>".$this->range."生源大学排序</h4>";
-    echo "<table class='table table-striped'><thead>";
+    echo "<table class='table table-hover'><thead>";
     foreach ($this->column as $key => $value) {
         echo "<th/>".$value."</th>";
     }
@@ -46,8 +49,9 @@ if($this->flag == 1)
     foreach ($this->UniRank as $key_name => $row) {
         echo "<tr>";
         foreach ($row as $key => $value) {
-            echo "<td>".$row[$key]."</td></tr>";
+            echo "<td>".$row[$key]."</td>";
         }
+        echo "</tr>";
     }
     echo "</table>";
 }
@@ -66,7 +70,7 @@ else if($this->flag == 2)
                     $male++;
             }
         }
-        echo "<p>".$this->range[$i]."女性人数".$female."，".$this->range[$i]."男性人数".$male."。</p><br>";
+        echo "<p id = 'sum'>".$this->range[$i]."女性人数".$female."，".$this->range[$i]."男性人数".$male."。</p><br>";
         $good = 0;
         $total = 0;
         foreach($this->isTwo[$i] as $x=>$x_value)
@@ -81,9 +85,9 @@ else if($this->flag == 2)
                 $total++;
             }
         }
-        echo "<p>".$this->range[$i]."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+        echo "<p id = 'sum'>".$this->range[$i]."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
         echo "<h4>".$this->range[$i]."生源大学排序</h4>";
-        echo "<table class='table table-striped'><thead>";
+        echo "<table class='table table-hover'><thead>";
         foreach ($this->column as $key => $value) {
             echo "<th/>".$value."</th>";
         }
@@ -91,8 +95,9 @@ else if($this->flag == 2)
         foreach ($this->UniRank[$i] as $key_name => $row) {
             echo "<tr>";
             foreach ($row as $key => $value) {
-                echo "<td>".$row[$key]."</td></tr>";
+                echo "<td>".$row[$key]."</td>";
             }
+            echo "</tr>";
         }
         echo "</table>";
     }

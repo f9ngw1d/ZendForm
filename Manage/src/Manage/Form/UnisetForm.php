@@ -14,10 +14,10 @@ use Zend\Session\Container;
 class uniSetForm extends Form implements InputFilterProviderInterface
 {
     protected $inputFilter;
-    public function __construct($name = null, $options = array())
+    public function __construct($UniCode,$Uni)
     {
         // we want to ignore the name passed
-        parent::__construct($name , $options);
+        parent::__construct('uniset');
 
         $levelop = array('本科'=>'本科','专科'=>'专科');
         $remarkop = array('null'=>'否','民办'=>'是');
@@ -46,9 +46,11 @@ class uniSetForm extends Form implements InputFilterProviderInterface
         ));
         $this->add(array(
             'name' => 'SSDM',
-            'type' => 'text',
+            'type' => 'select',
             'options' => array(
                 'label' => '所在省代码(必填)',
+                'empty_option' => '请选择',
+                'value_options' => $UniCode,
             ),
             'attributes'=>array(
                 'id'=>'SSDMs',
@@ -56,9 +58,11 @@ class uniSetForm extends Form implements InputFilterProviderInterface
         ));
         $this->add(array(
             'name' => 'SSDMC',
-            'type' => 'text',
+            'type' => 'select',
             'options' => array(
                 'label' => '所在省(必填)',
+                'empty_option' => '请选择',
+                'value_options' => $Uni,
             ),
             'attributes'=>array(
                 'id'=>'SSDMCs',
@@ -70,6 +74,7 @@ class uniSetForm extends Form implements InputFilterProviderInterface
             'type' => 'select',
             'options' => array(
                 'label' => '是否985(必填)',
+                'empty_option' => '请选择',
                 'value_options' => $is985op,
             ),
             'attributes'=>array(
@@ -81,6 +86,7 @@ class uniSetForm extends Form implements InputFilterProviderInterface
             'type' => 'select',
             'options' => array(
                 'label' => '是否211(必填)',
+                'empty_option' => '请选择',
                 'value_options' => $is211op,
             ),
             'attributes'=>array(
@@ -92,6 +98,7 @@ class uniSetForm extends Form implements InputFilterProviderInterface
             'type' => 'select',
             'options' => array(
                 'label' => '是否有推免资格(必填)',
+                'empty_option' => '请选择',
                 'value_options' => $qualop,
             ),
             'attributes'=>array(

@@ -22,7 +22,11 @@ class State2CheckProjectController extends AbstractActionController
     public function __construct(){
         $rid_arr_container = new Container('rid');
         $rid_arr = $rid_arr_container->item;
-        $redirect_url = "/manage/default";
+        $redirect_url = "/info";
+        if(!$rid_arr || !in_array(10,$rid_arr)){
+            echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
+            exit();
+        }
     }
     public function getTeamTable()
     {

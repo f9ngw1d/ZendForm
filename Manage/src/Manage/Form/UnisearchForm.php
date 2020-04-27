@@ -14,10 +14,10 @@ use Zend\Session\Container;
 class UnisearchForm extends Form implements InputFilterProviderInterface
 {
     protected $inputFilter;
-    public function __construct($name = null, $options = array())
+    public function __construct($UniCode,$Uni)
     {
         // we want to ignore the name passed
-        parent::__construct($name , $options);
+        parent::__construct('unisearch');
 
         $is985op = array(''=>'否','1'=>'是');
         $is211op = array(''=>'否','1'=>'是');
@@ -44,9 +44,11 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
         ));
         $this->add(array(
             'name' => 'SSDM',
-            'type' => 'text',
+            'type' => 'select',
             'options' => array(
                 'label' => '所在省代码(选填)',
+                'empty_option' => '请选择',
+                'value_options' => $UniCode,
             ),
             'attributes'=>array(
                 'id'=>'SSDM',
@@ -54,9 +56,11 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
         ));
         $this->add(array(
             'name' => 'SSDMC',
-            'type' => 'text',
+            'type' => 'select',
             'options' => array(
                 'label' => '所在省(选填)',
+                'empty_option' => '请选择',
+                'value_options' => $Uni,
             ),
             'attributes'=>array(
                 'id'=>'SSDMC',
@@ -67,6 +71,7 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
             'type' => 'select',
             'options' => array(
                 'label' => '是否985(选填)',
+                'empty_option' => '请选择',
                 'value_options' => $is985op,
             ),
             'attributes'=>array(
@@ -78,6 +83,7 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
             'type' => 'select',
             'options' => array(
                 'label' => '是否211(选填)',
+                'empty_option' => '请选择',
                 'value_options' => $is211op,
             ),
             'attributes'=>array(
