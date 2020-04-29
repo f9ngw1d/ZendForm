@@ -192,19 +192,17 @@ class TDbUniversityTable
         return $resultArr;
     }
 
-    public function updateUni(UniversityFree $uni)
+    public function updateUni(TDbUniversity $uni)
     {
         //echo  ">>>>>>>>>>>>>>>>>>>>>>>>>>>>update";
         $data = array(
             'university_name' => $uni->university_name,
             'university_id'  => $uni->university_id,
-
+            'SSDM'  => $uni->SSDM,
+            'SSDMC' => $uni->SSDMC,
             'is985' => $uni->is985,
             'is211'  => $uni->is211,
             'freetest_qualified' => $uni->freetest_qualified,
-            'SSDM'  => $uni->SSDM,
-            'SSDMC' => $uni->SSDMC,
-
         );
 
         $id = (int) $uni->university_id;

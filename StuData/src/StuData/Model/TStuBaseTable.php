@@ -96,14 +96,14 @@ class TStuBaseTable
         foreach ($orderArr as $order){
             $sl->order($order);
         }
-//            ->quantifier('DISTINCT');
-//        echo $sql->getSqlStringForSqlObject($sl)."<br/>";
+
         $statement = $sql->prepareStatementForSqlObject($sl);
-        //var_dump($statement);
+       // var_dump($statement);
         $result_set = $statement->execute();
         $result_arr = iterator_to_array($result_set);
         return $result_arr;
     }
+
 
     public function getStubyId($idcard)
     {//查询
@@ -124,6 +124,23 @@ class TStuBaseTable
         }
         return $row;
     }
+
+    public function getStuByCol($target_college){
+        $rowSet = $this->tableGateway->select(array('target_college' => $target_college));
+        if(!$rowSet){
+            return false;
+        }
+        return $rowSet;
+    }//苏淼
+
+    public function getStuByTeam($target_team){
+        $rowSet = $this->tableGateway->select(array('target_team' => $target_team));
+        if(!$rowSet){
+            return false;
+        }
+        return $rowSet;
+    }//苏淼
+
     public function getStuisAllowAdd($id)
     {//查询
         $rowset = $this->tableGateway->select(array('uid' => $id));

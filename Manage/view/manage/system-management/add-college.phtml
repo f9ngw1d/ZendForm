@@ -35,9 +35,7 @@
     .message1{
         color: #EE0000;
     }
-
     .message2{
-
         color:  #A9A9A9;
     }
 </style>
@@ -83,27 +81,27 @@ if($this->flag == 1)
     echo $this->form()->openTag($form);?>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('college_id')); ?></div>
-        <div class="span7"><?php echo $this->formElement($form->get('college_id')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('college_id')); ?></div>
     </div>
     <br>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('college_name')); ?></div>
-        <div class="span7"><?php echo $this->formElement($form->get('college_name')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('college_name')); ?></div>
     </div>
     <br>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('phone')); ?></div>
-        <div class="span7"><?php echo $this->formElement($form->get('phone')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('phone')); ?></div>
     </div>
     <br>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('ip_address')); ?></div>
-        <div class="span7"><?php echo $this->formElement($form->get('ip_address')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('ip_address')); ?></div>
     </div>
     <br>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('address')); ?></div>
-        <div class="span7"><?php echo $this->formElement($form->get('address')); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->formElement($form->get('submit')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('address')); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->formElement($form->get('submit')); ?></div>
     </div>
     <br>
 
@@ -262,7 +260,7 @@ if ($this->pageCount):
         $("#addresss").val(item.address);
         $("#confirmEdit").click(function()
         {
-            $.post('manage/systemManagement/addCollege',function()
+            $.post('manage/SystemManagement/addCollege',function()
             {
                 //location.reload();
             });

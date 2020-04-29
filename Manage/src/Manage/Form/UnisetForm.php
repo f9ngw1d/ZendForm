@@ -21,9 +21,9 @@ class uniSetForm extends Form implements InputFilterProviderInterface
 
         $levelop = array('本科'=>'本科','专科'=>'专科');
         $remarkop = array('null'=>'否','民办'=>'是');
-        $is985op = array(''=>'否','1'=>'是');
-        $is211op = array(''=>'否','1'=>'是');
-        $qualop = array(''=>'否','1'=>'是');
+        $is985op = array('0'=>'否','1'=>'是');
+        $is211op = array('0'=>'否','1'=>'是');
+        $qualop = array('0'=>'否','1'=>'是');
         $this->add(array(
             'name' => 'university_id',
             'type' => 'text',

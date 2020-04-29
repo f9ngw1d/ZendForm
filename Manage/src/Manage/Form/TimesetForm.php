@@ -106,14 +106,6 @@ class TimesetForm extends Form implements InputFilterProviderInterface
                     array('name' => 'NotEmpty'),		//不允许为空
                 ),
             ));
-
-            $inputFilter->add(array(
-                'name'		=> 'description',
-                'required'	=> true,		//必需的
-                'validators' => array(
-                    array('name' => 'NotEmpty'),		//不允许为空
-                ),
-            ));
             $this->inputFilter = $inputFilter;
         }
         return $this->inputFilter;

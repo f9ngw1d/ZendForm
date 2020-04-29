@@ -218,18 +218,30 @@ class SystemManagementController extends AbstractActionController
         $form1 = new CollegeEditForm();
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $uni = new TBaseCollege();
-            $formdata  = array(
-                'college_id' => $_POST['college_id'],
-                'college_name' => $_POST['college_name'],
-                'phone' => $_POST['phone'],
-                'ip_address' => $_POST['ip_address'],
-                'address' => $_POST['address']
-            );
-            $uni->exchangeArray($formdata);
-            if($this->getTBaseCollegeTable()->saveCollege($uni))
-                echo "<script>alert('保存成功')</script>";
+                $postData = array_merge_recursive(
+                    $this->getRequest()->getPost()->toArray()
+                );
+                $form->setData($postData);
+                if ($form->isValid()) {
+                    $uni = new TBaseCollege();
+                    $formdata = array(
+                        'college_id' => $_POST['college_id'],
+                        'college_name' => $_POST['college_name'],
+                        'phone' => $_POST['phone'],
+                        'ip_address' => $_POST['ip_address'],
+                        'address' => $_POST['address']
+                    );
+                    $uni->exchangeArray($formdata);
+                    if ($this->getTBaseCollegeTable()->saveCollege($uni))
+                        echo "<script>alert('保存成功')</script>";
+
+                }
+                else{
+                    echo "<script>alert('保存失败，请检查所有数据是否填写完全')</script>";
+                }
+
         }
+
         $res= $this->getTBaseCollegeTable()->fetchAll();
         $college = iterator_to_array($res);
 
@@ -273,17 +285,27 @@ class SystemManagementController extends AbstractActionController
         $form1 = new TimeeditForm();
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $uni = new ManageTime();
-            $formdata  = array(
-                'name' => $_POST['name'],
-                'start_time' => $_POST['start_time'],
-                'end_time' => $_POST['end_time'],
-                'description' => $_POST['description'],
-                'status' => $_POST['status'],
-            );
-            $uni->exchangeArray($formdata);
-            if($this->getManageTimeTable()->saveTime($uni))
-                echo "<script>alert('设置成功')</script>";
+                $postData = array_merge_recursive(
+                    $this->getRequest()->getPost()->toArray()
+                );
+//                var_dump($_POST['start_time']);
+//                var_dump($_POST['end_time']);
+                $form->setData($postData);
+                if ($form->isValid()) {
+                    $uni = new ManageTime();
+                    $formdata = array(
+                        'name' => $_POST['name'],
+                        'start_time' => $_POST['start_time']['year']."-".$_POST['start_time']['month']."-".$_POST['start_time']['day']." 00:00:00",
+                        'end_time' => $_POST['end_time']['year']."-".$_POST['end_time']['month']."-".$_POST['end_time']['day']." 00:00:00",
+                        'description' => $_POST['description'],
+                        'status' => $_POST['status'],
+                    );
+                    $uni->exchangeArray($formdata);
+                    if ($this->getManageTimeTable()->saveTime($uni))
+                        echo "<script>alert('设置成功')</script>";
+                }
+                else
+                    echo "<script>alert('设置失败，请检查是否填写正确')</script>";
         }
         $time = $this->getManageTimeTable()->findAll($per_page, $offset);
         $timesta = array();
@@ -340,140 +362,144 @@ class SystemManagementController extends AbstractActionController
         ));
         return $view;
     }
-    public function  editCollegeAction(){
-        $res= $this->getTBaseCollegeTable()->fetchAll();
-        $college = iterator_to_array($res);
-        $request = $this->getRequest();
-
-        $form = new CollegeAddForm();
-        $form1 = new CollegeEditForm();
-
-        $post = $this->getTBaseCollegeTable()->getCollege($this->params('param1'));
-        $form->bind($post);
-        if ($request->isPost()) {
-            $uni = new TBaseCollege();
-            $form->setData($request->getPost());
-
-            if ($form->isValid()) {
-                try {
-                    //$uni->exchangeArray($form->getData());
-                    $this->getTBaseCollegeTable()->saveCollege($post);
-
-                    //$this->setService->savePost($post);
-                    $flag = 1;
-                    //echo "<script>alert('修改成功')</script>";
-                    return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addCollege'));
-                } catch (\Exception $e) {
-                    die($e->getMessage());
-                }
-            }
-        }
-
-        $column = array(
-            'college_id' =>'学院编号',
-            'college_name'=>'学院名称',
-            'phone'=>'电话',
-            'ip_address'=>'网址',
-            'address'=>'办公楼地址',
-            'oprat'=>'操作'
-        );
-        return new ViewModel(array(
-            'column' => $column,
-            'college' => $college,
-            'form' => $form,
-            'form1'=>$form1,
-        ));
-    }
-    public function  editTimeAction(){
-        $current_page = $this->params()->fromRoute('param2');
-        $current_id =  $this->params()->fromRoute('param1');
-        //echo $current_page;
-        if(empty($current_page)){
-            $current_page = 1;
-        }
-
-        $per_page = 2;
-        $offset = ($current_page-1)*$per_page;
-        $time = $this->getManageTimeTable()->findAll($per_page, $offset);
-        $timesta = array();
-        foreach ($time as $tt)
-        {
-            foreach ($tt as $key => $value)
-            {
-                if($key == 'name')
-                    array_push($timesta, $this->getManageTimeTable()->getTimeSta($value));
-            }
-        }
-        $i=0;
-        foreach ($time as &$tt)
-        {
-            $a['sta']=$timesta[$i];
-            array_merge($tt,$a);
-            $tt['sta'] = $timesta[$i];
-            $i++;
-        }
-
-        $total_num = $this->getManageTimeTable()->getTotalnum();
-        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
-        $paginator->setCurrentPageNumber($current_page);
-        $total_page = ceil($total_num/$per_page);
-        $pagesInRange = array();
-        for($i=1;$i<=$total_page;$i++){
-            $pagesInRange[] = $i;
-        }
-        $flag = 0;
-        $request = $this->getRequest();
-
-        $form = new TimesetForm();
-        $form1 = new TimesetForm();
-
-        $post = $this->getManageTimeTable()->findid($this->params('param1'));
-        $form->bind($post);
-        if ($request->isPost()) {
-            $uni = new Managetime();
-            $form->setData($request->getPost());
-
-            if ($form->isValid()) {
-                try {
-                    //$uni->exchangeArray($form->getData());
-                    $this->getManageTimeTable()->saveTime($post);
-
-                    //$this->setService->savePost($post);
-                    $flag = 1;
-                    //echo "<script>alert('修改成功')</script>";
-                    return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addTime'));
-                } catch (\Exception $e) {
-                    die($e->getMessage());
-                }
-            }
-        }
-
-        $column = array(
-            'id' =>'编号',
-            'name'=>'名称',
-            'start_time'=>'开始',
-            'end_time'=>'结束',
-            'status'=>'开关',
-            'description'=>'备注',
-            'sta'=>'状态',
-            'oprat'=>' ',
-        );
-
-        return new ViewModel(array(
-            'column'=>$column,
-            'paginator'=>$paginator,
-            'pageCount' =>$total_page,
-            'pagesInRange' => $pagesInRange,
-            'previous'=>$current_page>1?$current_page-1:null,
-            'next'=>$current_page<$total_page?$current_page+1:null,
-            'total_num'=>$total_num,
-            'current'=>$current_page,
-            'form' => $form,
-            'time' => $time,
-            'flag' =>$flag,
-            'current_id' => $current_id,
-        ));
-    }
+//    public function  editCollegeAction(){
+//        $res= $this->getTBaseCollegeTable()->fetchAll();
+//        $college = iterator_to_array($res);
+//        $request = $this->getRequest();
+//
+//        $form = new CollegeAddForm();
+//        $form1 = new CollegeEditForm();
+//
+//        $post = $this->getTBaseCollegeTable()->getCollege($this->params('param1'));
+//        var_dump($post);
+//        $form->bind($post);
+//        if ($request->isPost()) {
+//            if (isset($_POST['submit'])) {//strcmp($arrayData['submit'], '保存')
+//                $form->setData($post);
+//                if ($form->isValid()) {
+//                    try {
+////                    $uni->exchangeArray($form->getData());
+//                        if($this->getTBaseCollegeTable()->saveCollege($post))
+//                            echo "<script>alert('修改成功')</script>";
+//                        else{
+//                            echo "<script>alert('修改失败')</script>";
+//                        }
+//                        //$this->setService->savePost($post);
+//                        $flag = 1;
+//
+//                        return $this->redirect()->toRoute('manage/default', array('controller' => 'SystemManagement', 'action' => 'addCollege'));
+//                    } catch (\Exception $e) {
+//                        die($e->getMessage());
+//                    }
+//                }
+//            }
+//        }
+//
+//        $column = array(
+//            'college_id' =>'学院编号',
+//            'college_name'=>'学院名称',
+//            'phone'=>'电话',
+//            'ip_address'=>'网址',
+//            'address'=>'办公楼地址',
+//            'oprat'=>'操作'
+//        );
+//        return new ViewModel(array(
+//            'column' => $column,
+//            'college' => $college,
+//            'form' => $form,
+//            'form1'=>$form1,
+//        ));
+//    }
+//    public function  editTimeAction(){
+//        $current_page = $this->params()->fromRoute('param2');
+//        $current_id =  $this->params()->fromRoute('param1');
+//        //echo $current_page;
+//        if(empty($current_page)){
+//            $current_page = 1;
+//        }
+//
+//        $per_page = 2;
+//        $offset = ($current_page-1)*$per_page;
+//        $time = $this->getManageTimeTable()->findAll($per_page, $offset);
+//        $timesta = array();
+//        foreach ($time as $tt)
+//        {
+//            foreach ($tt as $key => $value)
+//            {
+//                if($key == 'name')
+//                    array_push($timesta, $this->getManageTimeTable()->getTimeSta($value));
+//            }
+//        }
+//        $i=0;
+//        foreach ($time as &$tt)
+//        {
+//            $a['sta']=$timesta[$i];
+//            array_merge($tt,$a);
+//            $tt['sta'] = $timesta[$i];
+//            $i++;
+//        }
+//
+//        $total_num = $this->getManageTimeTable()->getTotalnum();
+//        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
+//        $paginator->setCurrentPageNumber($current_page);
+//        $total_page = ceil($total_num/$per_page);
+//        $pagesInRange = array();
+//        for($i=1;$i<=$total_page;$i++){
+//            $pagesInRange[] = $i;
+//        }
+//        $flag = 0;
+//        $request = $this->getRequest();
+//
+//        $form = new TimesetForm();
+//        $form1 = new TimesetForm();
+//
+//        $post = $this->getManageTimeTable()->findid($this->params('param1'));
+//        $form->bind($post);
+//        if ($request->isPost()) {
+//            $uni = new Managetime();
+//            $form->setData($request->getPost());
+//
+//            if ($form->isValid()) {
+//                try {
+//                    //$uni->exchangeArray($form->getData());
+//                    $this->getManageTimeTable()->saveTime($post);
+//
+//                    //$this->setService->savePost($post);
+//                    $flag = 1;
+//                    //echo "<script>alert('修改成功')</script>";
+//                    return $this->redirect()->toRoute('manage/default',array('controller'=>'SystemManagement','action'=>'addTime'));
+//                } catch (\Exception $e) {
+//                    die($e->getMessage());
+//                }
+//            }
+//        }
+//
+//        $column = array(
+//            'id' =>'编号',
+//            'name'=>'名称',
+//            'start_time'=>'开始',
+//            'end_time'=>'结束',
+//            'status'=>'开关',
+//            'description'=>'备注',
+//            'sta'=>'状态',
+//            'oprat'=>' ',
+//        );
+//
+//        return new ViewModel(array(
+//            'column'=>$column,
+//            'paginator'=>$paginator,
+//            'pageCount' =>$total_page,
+//            'pagesInRange' => $pagesInRange,
+//            'previous'=>$current_page>1?$current_page-1:null,
+//            'next'=>$current_page<$total_page?$current_page+1:null,
+//            'total_num'=>$total_num,
+//            'current'=>$current_page,
+//            'form' => $form,
+//            'time' => $time,
+//            'flag' =>$flag,
+//            'current_id' => $current_id,
+//        ));
+//    }
     public function  uniSearchAction(){
         $login_id_container = new Container('uid');
         $login_id = $login_id_container->item;
@@ -510,8 +536,16 @@ class SystemManagementController extends AbstractActionController
             $pieces = explode('&', $condArr);
             foreach ($pieces as &$pp)
             {
-                $sub = explode('=', $pp);
-                $new_param = $sub[0].'="'.$sub[1].'"';
+//                var_dump($pp);
+                if(stripos($pp," is"))
+                {
+                    $new_param = $pp;
+                }
+                else
+                {
+                    $sub = explode('=', $pp);
+                    $new_param = $sub[0].'="'.$sub[1].'"';
+                }
                 array_push($new_params,$new_param);
             }
             //var_dump($new_params);
@@ -542,14 +576,16 @@ class SystemManagementController extends AbstractActionController
         $res1 = $this->getTDbDivisionTable()->getUni();
         $UniCode = Array();
         $Uni = Array();
-        foreach ($res as $x => $value)
+        foreach ($res as $x=>$value)
         {
             $result = '';
+            $content = '';
             foreach ($value as $i=>$i_value)
             {
                 $result .= " ".$value[$i];
+                $content = $i_value;
             }
-            array_push($UniCode,$result);
+            $UniCode[$content] = $result;
         }
         foreach ($res1 as $x1=>$value1)
         {
@@ -558,7 +594,7 @@ class SystemManagementController extends AbstractActionController
             {
                 $result1 .= $value1[$i1];
             }
-            array_push($Uni,$result1);
+            $Uni[$result1] = $result1;
         }
         $form1 = new UnisetForm($UniCode,$Uni);
         $form = new UnisearchForm($UniCode,$Uni);
@@ -582,6 +618,18 @@ class SystemManagementController extends AbstractActionController
             //var_dump($postData);
             //echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>".$postData['submit'];
             if (!isset($postData['submit'])) {
+                if($_POST['is985'] == 0)
+                {
+                    $_POST['is985'] = '';
+                }
+                if($_POST['is211'] == 0)
+                {
+                    $_POST['is211'] = '';
+                }
+                if($_POST['freetest_qualified'] == 0)
+                {
+                    $_POST['freetest_qualified'] = '';
+                }
                 // echo "->>>>>>>>>>>>>>>>>>>>>>>>>>>>>edit";
                 $formdata  = array(
                     'university_id' => $_POST['university_id'],
@@ -605,26 +653,49 @@ class SystemManagementController extends AbstractActionController
             }
             else if (isset($postData['submit'])) {
                 $form->setData($request->getPost());
-
-
                 //var_dump($form->getData());
                 //echo "post";
 
                 if ($form->isValid()) {
                     //echo "valid";
-                    //var_dump($form->getData());
+//                    var_dump($form->getData());
                     foreach ($form->getData() as $key => $value)
                     {
+                        $flag = 0;
+//                        echo "key = ".$key." value=".$value;
+                        if(($key == 'SSDM')&&($value != NULL))
+                            $value = $value;
+                        if(($key == 'SSDMC')&&($value != NULL))
+                            $value = $value;
+                        if(($key == 'is985')&&($value == "0"))
+                        {
+                            $flag = 1;
+                            $value = '';
+                        }
+                        if(($key == 'is211')&&($value == "0"))
+                        {
+                            $flag = 1;
+                            $value = '';
+                        }
+                        if(($key == 'freetest_qualified')&&($value == "0"))
+                        {
+                            $flag = 1;
+                            $value = '';
+                        }
                         if($value != null && $key != 'submit'){//echo $key."=".$value;
-                            array_push($conArr,$key.'="'.$value.'"');}
+                            array_push($conArr,$key.'="'.$value.'"');
+                        }
+                        else if($value == null && ($key == 'is985'||$key == 'is211'||$key == 'freetest_qualified')&&$flag == 1){
+                            array_push($conArr,$key.' is NULL');
+                        }
                     }
-                    //var_dump($conArr);
+//                    var_dump($conArr);
                     try {
                         //echo 'sear';
                         $uni_list = $this->TDbUniversityTable()->getUnibyCon($conArr,$per_page,$offset);
 
                         //echo "<br>unilist<br>";
-                        // var_dump($uni_list);
+//                         var_dump($uni_list);
                     } catch (\Exception $e) {
                         // 某些数据库错误发生了，记录并且让用户知道
                     }
@@ -684,11 +755,13 @@ class SystemManagementController extends AbstractActionController
         foreach ($res as $x=>$value)
         {
             $result = '';
+            $content = '';
             foreach ($value as $i=>$i_value)
             {
                 $result .= " ".$value[$i];
+                $content = $i_value;
             }
-            array_push($UniCode,$result);
+            $UniCode[$content] = $result;
         }
         foreach ($res1 as $x1=>$value1)
         {
@@ -697,13 +770,25 @@ class SystemManagementController extends AbstractActionController
             {
                 $result1 .= $value1[$i1];
             }
-            array_push($Uni,$result1);
+            $Uni[$result1] = $result1;
         }
         $form = new UnisetForm($UniCode,$Uni);
         $request = $this->getRequest();
         if ($request->isPost()) {
             $uni = new TDbUniversity();
             //$form->setInputFilter($uni->getInputFilter());
+            if($_POST['is985'] == 0)
+            {
+                $_POST['is985'] = '';
+            }
+            if($_POST['is211'] == 0)
+            {
+                $_POST['is211'] = '';
+            }
+            if($_POST['freetest_qualified'] == 0)
+            {
+                $_POST['freetest_qualified'] = '';
+            }
             $formdata  = array(
                 'university_id' => $_POST['university_id'],
                 'university_name' => $_POST['university_name'],
@@ -715,7 +800,7 @@ class SystemManagementController extends AbstractActionController
             );
 
             $uni->exchangeArray($formdata);
-            var_dump($uni->university_name);
+//            var_dump($uni->university_name);
 
             if($this->TDbUniversityTable()->getUnibyname($uni->university_name))
                 echo "<script>alert('请勿重复添加！')</script>";

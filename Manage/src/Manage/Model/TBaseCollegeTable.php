@@ -89,12 +89,12 @@ class TBaseCollegeTable
         $id = $college->college_id;
 
         if ($this->find($id)) {
-            echo "update<br><br>";
+//            echo "update<br><br>";
             $this->tableGateway->update($data, array('college_id' => $id));
         }
         else
         {
-            echo "insert<br><br>";
+//            echo "insert<br><br>";
             $this->tableGateway->insert($data);
         }
     }

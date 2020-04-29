@@ -125,8 +125,6 @@ if(isset($this->uni_list)){
         foreach ($this->column as $key => $value){
             if ($key == 'opra')
             {
-                //$id = $uniarr['id'];
-                //echo "id---------------------->".$id;
                 echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";}
             else if ($uniarr[$key] == 1)
                 echo "<td>是</td>";
@@ -141,8 +139,22 @@ if(isset($this->condArr)){
     $params = "/param1/";
     foreach ($this->condArr as $key=>$value)
     {
-        $pieces = explode('"', $value);
-        $params .= $pieces[0].$pieces[1].'&';
+//        var_dump($value);
+        $flag = 0;
+        if(stripos($value," is"))
+        {
+            $pieces = $value;
+            $flag = 1;
+        }
+        else
+        {
+            $pieces = explode('"', $value);
+        }
+//        var_dump($pieces);
+        if($flag == 1)
+            $params .=$pieces.'&';
+        else
+            $params .= $pieces[0].$pieces[1].'&';
     }
     $new_params = substr($params, 0, -1);
 //echo 'param-------------------------->'.$new_params;
@@ -269,7 +281,7 @@ if ($this->pageCount):
         // $("#freetest_qualifieds").attr('value',item.freetest_qualified);
         $("#confirmEdits").click(function()
         {
-            $.post('basicinfo/managetime/add',function()
+            $.post('manage/SystemManagement/uniSet',function()
             {
                 //location.reload();
             });

@@ -96,11 +96,11 @@ class ManageTimeTable
         $name = $time->name;
 
         if ($this->find($name)) {
-            echo "update<br><br>";
+//            echo "update<br><br>";
             $this->tableGateway->update($data, array('name' => $name));
         } else
         {
-            echo "insert<br><br>";
+//            echo "insert<br><br>";
             $this->tableGateway->insert($data);
         }
     }

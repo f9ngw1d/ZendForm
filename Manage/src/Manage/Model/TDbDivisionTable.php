@@ -68,6 +68,13 @@ class TDbDivisionTable
         $result_arr = iterator_to_array($rowSet);
         return $result_arr;
     }
+    public function getCode()
+    {
+        $sql_query = "SELECT DISTINCT SSDM FROM db_administrative_division";
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
     public function deleteDivision($id)
     {//删
         $this->tableGateway->delete(array('YQXDM' => $id));

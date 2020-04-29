@@ -19,9 +19,9 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
         // we want to ignore the name passed
         parent::__construct('unisearch');
 
-        $is985op = array(''=>'否','1'=>'是');
-        $is211op = array(''=>'否','1'=>'是');
-        $qualop = array(''=>'否','1'=>'是');
+        $is985op = array('0'=>'否','1'=>'是');
+        $is211op = array('0'=>'否','1'=>'是');
+        $qualop = array('0'=>'否','1'=>'是');
         $this->add(array(
             'name' => 'university_id',
             'type' => 'text',
@@ -95,6 +95,7 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
             'type' => 'select',
             'options' => array(
                 'label' => '是否具有推免资格(选填)',
+                'empty_option' => '请选择',
                 'value_options' => $qualop,
             ),
             'attributes'=>array(
@@ -109,33 +110,48 @@ class UnisearchForm extends Form implements InputFilterProviderInterface
                 'class'=>'btn btn-primary',
             )
         ));
-
     }
-    public function getInputFilterSpecification()
+    public function getInputFilter()
     {
-        return array(
-            'university_name' => array(
-                'required' => false,
-            ),
-            'university_id' => array(
-                'required' => false,
-            ),
-            'SSDM' => array(
-                'required' => false,
-            ),
-            'SSDMC' => array(
-                'required' => false,
+        if (!$this->inputFilter) {
+            $inputFilter = new InputFilter();
 
-            ),
-            'is985' => array(
+            $inputFilter->add(array(
+                'name'     => 'university_name',
                 'required' => false,
-            ),
-            'is211' => array(
+            ));
+            $inputFilter->add(array(
+                'name'     => 'university_id',
                 'required' => false,
-            ),
-            'freetest_qualified' => array(
-                'required' => false,
-            ),
-        );
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'SSDM',
+                'required'	=> false,		//必需的
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'SSDMC',
+                'required'	=> false,		//必需的
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'is985',
+                'required'	=> false,		//必需的
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'is211',
+                'required'	=> false,		//必需的
+            ));
+            $inputFilter->add(array(
+                'name'		=> 'freetest_qualified',
+                'required'	=> false,		//必需的
+            ));
+            $this->inputFilter = $inputFilter;
+        }
+        return $this->inputFilter;
+    }
+    public function getInputFilterSpecification(){
     }
 }

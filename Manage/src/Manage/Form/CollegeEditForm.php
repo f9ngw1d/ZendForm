@@ -59,7 +59,7 @@ class CollegeEditForm extends Form implements InputFilterProviderInterface
         ));
 
         $this->add(array(
-            'type' => 'text',
+            'type' => 'Zend\Form\Element\Url',
             'name' => 'ip_address',
             'options' => array(
                 'label' => '网址'
@@ -81,19 +81,48 @@ class CollegeEditForm extends Form implements InputFilterProviderInterface
         ));
     }
     public function getInputFilter(){
-        if(!$this->inputFilter){
+        if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
 
             $inputFilter->add(array(
-                'name'		=> 'college_id',
-                'required'	=> true,		//必需的
+                'name'     => 'college_name',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
                 'validators' => array(
-                    array('name' => 'NotEmpty'),		//不允许为空
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 100,
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                'name'     => 'phone',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 7,
+                            'max'      => 11,
+                        ),
+                    ),
                 ),
             ));
 
             $inputFilter->add(array(
-                'name'		=> 'college_name',
+                'name'		=> 'college_id',
                 'required'	=> true,		//必需的
                 'validators' => array(
                     array('name' => 'NotEmpty'),		//不允许为空
@@ -107,6 +136,7 @@ class CollegeEditForm extends Form implements InputFilterProviderInterface
                     array('name' => 'NotEmpty'),		//不允许为空
                 ),
             ));
+
             $inputFilter->add(array(
                 'name'		=> 'address',
                 'required'	=> true,		//必需的

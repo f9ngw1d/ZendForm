@@ -122,7 +122,7 @@ class ShowDataInfoController extends AbstractActionController
             $range = array();
             for($x = 0 ; $x < $num ; $x++)
             {
-                $range[$x] = $this->getTBaseTeamTable()->getTeam($team_id[$x]);
+                $range[$x] = $this->getTBaseTeamTable()->getTeamName($team_id[$x]);
                 $gender[$x] = $this->getTStuBaseTable()->getTeamGender($team_id[$x]);
                 $isTwo[$x] = $this->getTStuBaseTable()->getTeamUni($team_id[$x]);
                 $allResult[$x] = $this->getTStuBaseTable()->getTeamAll($team_id[$x]);

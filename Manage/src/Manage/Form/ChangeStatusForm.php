@@ -97,6 +97,4 @@ class ChangeStatusForm extends Form implements InputFilterProviderInterface{
     }
 
 
-    public function getInputFilterSpecification(){
-    }
 }
