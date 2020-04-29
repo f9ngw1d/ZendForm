@@ -143,4 +143,11 @@ class TBaseCollegeTable
             throw new \Exception("del base_college uid:". $college_id. " fail");
         }
     }
+    public function getCollegeName($id)
+    {
+        $sql_query = "SELECT college_name FROM base_college WHERE college_id =".$id;
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
 }

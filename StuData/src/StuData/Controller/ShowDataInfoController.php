@@ -89,8 +89,9 @@ class ShowDataInfoController extends AbstractActionController
         if (!is_null($college_id) && in_array(9,$rid_arr)) {
             echo $college_id;
             $flag = 1;
-            $res = $this->getCollegeTable()->getCollege($college_id);
-            $range = $res['college_name'];
+            $res = $this->getCollegeTable()->getCollegeName($college_id);
+//            var_dump($res);
+            $range = $res[0]['college_name'];
             $gender = $this->getTStuBaseTable()->getCollegeGender($college_id);
             $isTwo = $this->getTStuBaseTable()->getCollegeUni($college_id);
             $allResult = $this->getTStuBaseTable()->getCollegeAll($college_id);
