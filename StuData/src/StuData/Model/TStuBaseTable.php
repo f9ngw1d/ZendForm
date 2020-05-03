@@ -63,7 +63,7 @@ class TStuBaseTable
         $resultSet = $this->tableGateway->select();
         return $resultSet;
     }
-
+//lrn
     public function getStu($id)
     {//查询
         $rowset = $this->tableGateway->select(array('uid' => $id));
@@ -125,6 +125,11 @@ class TStuBaseTable
         return $row;
     }
 
+    /**
+     * @author sm
+     * @param $target_college
+     * @function 根据target_college获取学生信息
+     */
     public function getStuByCol($target_college){
         $rowSet = $this->tableGateway->select(array('target_college' => $target_college));
         if(!$rowSet){
@@ -132,7 +137,11 @@ class TStuBaseTable
         }
         return $rowSet;
     }//苏淼
-
+    /**
+     * @author sm
+     * @param $target_team
+     * @function 根据target_team获取学生信息
+     */
     public function getStuByTeam($target_team){
         $rowSet = $this->tableGateway->select(array('target_team' => $target_team));
         if(!$rowSet){
@@ -269,7 +278,7 @@ class TStuBaseTable
     }
 
     /**
-     * @author cry
+     * @author lrn
      * @param $uid
      * @return int
      * @throws \Exception

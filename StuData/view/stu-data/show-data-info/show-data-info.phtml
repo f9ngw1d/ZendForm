@@ -8,6 +8,10 @@
     .table-striped{
         width: 50%;
     }
+    #none{
+        font-size: 20px;
+        margin-top: 20px;
+    }
 </style>
 
 <?php
@@ -24,7 +28,6 @@ if($this->flag == 1)
                 $male++;
         }
     }
-    echo "<p id = 'sum'>".$this->range."女性人数".$female."，".$this->range."男性人数".$male."。</p><br>";
     $good = 0;
     $total = 0;
     foreach($this->isTwo as $x=>$x_value)
@@ -39,21 +42,29 @@ if($this->flag == 1)
             $total++;
         }
     }
-    echo "<p id = 'sum'>".$this->range."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
-    echo "<h4>".$this->range."生源大学排序</h4>";
-    echo "<table class='table table-striped'><thead>";
-    foreach ($this->column as $key => $value) {
-        echo "<th/>".$value."</th>";
+    if($total == 0)
+    {
+        echo "<p id = 'sum'>".$this->range."当前无人报考</p>";
     }
-    echo "</thead>";
-    foreach ($this->UniRank as $key_name => $row) {
-        echo "<tr>";
-        foreach ($row as $key => $value) {
-            echo "<td>".$row[$key]."</td>";
+    else{
+        echo "<p id = 'sum'>".$this->range."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+        echo "<p id = 'sum'>".$this->range."女性人数".$female."，".$this->range."男性人数".$male."。</p><br>";
+        echo "<h4>".$this->range."生源大学排序</h4>";
+        echo "<table class='table table-striped'><thead>";
+        foreach ($this->column as $key => $value) {
+            echo "<th/>".$value."</th>";
         }
-        echo "</tr>";
+        echo "</thead>";
+        foreach ($this->UniRank as $key_name => $row) {
+            echo "<tr>";
+            foreach ($row as $key => $value) {
+                echo "<td>".$row[$key]."</td>";
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
     }
-    echo "</table>";
+
 }
 else if($this->flag == 2)
 {
@@ -70,7 +81,6 @@ else if($this->flag == 2)
                     $male++;
             }
         }
-        echo "<p id = 'sum'>".$this->range[$i][0]["team_name"]."女性人数".$female."，".$this->range[$i][0] ["team_name"]."男性人数".$male."。</p><br>";
         $good = 0;
         $total = 0;
         foreach($this->isTwo[$i] as $x=>$x_value)
@@ -85,22 +95,34 @@ else if($this->flag == 2)
                 $total++;
             }
         }
-        echo "<p id = 'sum'>".$this->range[$i][0]["team_name"]."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
-        echo "<h4>".$this->range[$i][0]["team_name"]."生源大学排序</h4>";
-        echo "<table class='table table-striped'><thead>";
-        foreach ($this->column as $key => $value) {
-            echo "<th/>".$value."</th>";
+        echo "<p id = 'sum'>".$total."</p>";
+        if($total == 0)
+        {
+            echo "<p id = 'sum'>".$this->range[$i][0]["team_name"]."当前无人报考</p>";
         }
-        echo "</thead>";
-        foreach ($this->UniRank[$i] as $key_name => $row) {
-            echo "<tr>";
-            foreach ($row as $key => $value) {
-                echo "<td>".$row[$key]."</td>";
+        else{
+            echo "<p id = 'sum'>".$this->range[$i][0]["team_name"]."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+            echo "<p id = 'sum'>".$this->range[$i][0]["team_name"]."女性人数".$female."，".$this->range[$i][0] ["team_name"]."男性人数".$male."。</p><br>";
+            echo "<h4>".$this->range[$i][0]["team_name"]."生源大学排序</h4>";
+            echo "<table class='table table-striped'><thead>";
+            foreach ($this->column as $key => $value) {
+                echo "<th/>".$value."</th>";
             }
-            echo "</tr>";
+            echo "</thead>";
+            foreach ($this->UniRank[$i] as $key_name => $row) {
+                echo "<tr>";
+                foreach ($row as $key => $value) {
+                    echo "<td>".$row[$key]."</td>";
+                }
+                echo "</tr>";
+            }
+            echo "</table>";
         }
-        echo "</table>";
     }
+}
+else if($this->flag == 0)
+{
+    echo "<p id='none'>您目前尚未负责任何学院或小组，请确认后再次登陆!!!</p>";
 }
 
 

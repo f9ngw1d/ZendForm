@@ -7,7 +7,8 @@ return array(
             'Manage\Controller\State2CheckProject' => 'Manage\Controller\State2CheckProjectController',
             'Manage\Controller\Account' => 'Manage\Controller\AccountController',
             'Manage\Controller\SuperCharge' => 'Manage\Controller\SuperChargeController',
-
+            'Manage\Controller\UnderSubject' => 'Manage\Controller\UnderSubjectController',
+            'Manage\Controller\TStuInfo' => 'Manage\Controller\TStuInfoController',
         ),
     ),
     'router' => array(

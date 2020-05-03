@@ -15,6 +15,8 @@ use Manage\Model\TDbDivision;
 use Manage\Model\TDbDivisionTable;
 use Manage\Model\TDbUniversity;
 use Manage\Model\TDbUniversityTable;
+use Manage\Model\EinfoTable;
+use Manage\Model\Einfo;
 
 use Manage\Model\TDbUnderSubject;
 use Manage\Model\TDbUnderSubjectTable;
@@ -32,6 +34,16 @@ use Manage\Model\PermissionTable;
 use Manage\Model\Staff;
 use Manage\Model\StaffTable;
 
+use Manage\Model\Honour;
+use Manage\Model\HonourTable;
+use Manage\Model\Project;
+use Manage\Model\ProjectTable;
+use Manage\Model\Infovalidatemail;
+use Manage\Model\InfovalidatemailTable;
+use Manage\Model\UsrStu;
+use Manage\Model\UsrStuTable;
+use Manage\Model\Electronicinfo;
+use Manage\Model\ElectronicinfoTable;
 use Zend\Mvc\MvcEvent;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Mvc\ModuleRouteListener;
@@ -203,6 +215,72 @@ class Module{
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Staff());
                     return new TableGateway('base_staff',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\EinfoTable' => function($sm){
+                    $tableGateway = $sm->get('EinfoTableGateway');
+                    $table = new EinfoTable($tableGateway);
+                    return $table;
+                },
+                'EinfoTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Einfo());
+                    return new TableGateway('stu_einfo_map',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\HonourTable' => function($sm){
+                    $tableGateway = $sm->get('HonourTableGateway');
+                    $table = new HonourTable($tableGateway);
+                    return $table;
+                },
+                'HonourTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Honour());
+                    return new TableGateway('stu_honour',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\ProjectTable' =>  function($sm) {
+                    $tableGateway = $sm->get('ProjectTableGateway');
+                    $table = new ProjectTable($tableGateway);
+                    return $table;
+                },
+                'ProjectTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Project());
+                    return new TableGateway('stu_project', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Manage\Model\InfovalidatemailTable' => function($sm){
+                    $tableGateway = $sm->get('InfovalidatemailTableGateway');
+                    $table = new InfovalidatemailTable($tableGateway);
+                    return $table;
+                },
+                'InfovalidatemailTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Infovalidatemail());
+                    return new TableGateway('info_validatemail',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\UsrStuTable' => function($sm){
+                    $tableGateway = $sm->get('UsrStuTableGateway');
+                    $table = new UsrStuTable($tableGateway);
+                    return $table;
+                },
+                'UsrStuTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new UsrStu());
+                    return new TableGateway('usr_stu',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\ElectronicinfoTable' => function($sm){
+                    $tableGateway = $sm->get('ElectronicinfoTableGateway');
+                    $table = new ElectronicinfoTable($tableGateway);
+                    return $table;
+                },
+                'ElectronicinfoTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Electronicinfo());
+                    return new TableGateway('stu_electronic_info',$dbAdapter,null,$resultSetPrototype);
                 },
             )
         );

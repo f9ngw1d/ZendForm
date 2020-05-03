@@ -47,9 +47,9 @@ class SuperChargeController extends AbstractActionController
         $delstuid = $this->params()->fromRoute('uid');
         $stu_college_id = $this->getStuBaseTable()->getStu($delstuid)->target_college;//DB获取！！！！
 
-        if(!in_array(9, $rid_arr) && (!in_array(11, $rid_arr)) && (!in_array(10, $rid_arr))){
+        if(!in_array(9, $rid_arr) && (!in_array(11, $rid_arr)) && (!in_array(10, $rid_arr))&& (!in_array(99, $rid_arr))){
             //不是（10研究生院、院长、院秘书）
-            echo "<script> alert('您无该项角色权限，无权访问！您尚无权删除该学生！');window.location.href='/info';</script>";
+            echo "<script> alert('您尚无权删除该学生！');window.location.href='/info';</script>";
             return false;
         }
         else if( ( in_array(9, $rid_arr) || (in_array(11, $rid_arr)) ) && ($teach_college_id != $stu_college_id)){
@@ -57,7 +57,6 @@ class SuperChargeController extends AbstractActionController
             echo "<script> alert('您尚无权删除该学生！');window.location.href='/info';</script>";
             return false;
         }
-
 
         $url_last = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ''; //获取上一个url，方便跳转回去
 
@@ -76,21 +75,21 @@ class SuperChargeController extends AbstractActionController
             $this->getStuBaseTable()->deleteStu($delstuid);
 
             //2-stu_check
-            $this->getCheckTable()->deleteCheck($delstuid);
+            $this->getCheckTable()->deleteStuStatus($delstuid);
 
             //3-stu_project
-            $isexist_project = $this->getProjectTable()->getProjectBystuid($delstuid);
+            $isexist_project = $this->getStuProjectTable()->getProjectBystuid($delstuid);
             if($isexist_project){
-                $delprojectnum = $this->getProjectTable()->deleteProjectByUid($delstuid);
+                $delprojectnum = $this->getStuProjectTable()->deleteProjectByUid($delstuid);
                 // $delprojectnum = $this->getProjectTable()->deleteProject($delstuid);
 //                echo "<script> alert('delproject:".$delprojectnum."') </script>";
             }
 
 
             //4-stu_honour
-            $isexist_honour = $this->getHonourTable()->getHonourBystuid($delstuid);
+            $isexist_honour = $this->getStuHonorTable()->getHonourBystuid($delstuid);
             if($isexist_honour){
-                $delhonournum = $this->getHonourTable()->deleteStuAllHonour($delstuid);
+                $delhonournum = $this->getStuHonorTable()->deleteStuAllHonour($delstuid);
 //                echo "<script> alert('delhonour:".$delhonournum."') </script>";
             }
 
@@ -108,7 +107,7 @@ class SuperChargeController extends AbstractActionController
 
             /*  ******************** 删除学生上传的资料 ********************  */
 //            $delstuid_files = "public/img/stu/".(int)$delstuid;
-            $delstuid_files = "public/img/stu/".$delstuid;
+            $delstuid_files = "public/img/student/".$delstuid;
 
 //            if(is_dir($delstuid_files."/") && !($this->delDirAndFiles($delstuid_files))){
 //                echo "!!!!!!!!!!";//http://yzb.bjfu.edu.cn:8083/stu/addinfo/delStu/uid/239
@@ -260,5 +259,62 @@ class SuperChargeController extends AbstractActionController
             $this->team_table = $sm->get('Leader\Model\TBaseTeamTable');
         }
         return $this->team_table;
+    }
+    /*
+    * author:lrn
+    * function:
+    * attention:
+    */
+    public function getStuProjectTable()
+    {
+        if (!$this->stu_project_table) {
+            $sm = $this->getServiceLocator();
+            $this->stu_project_table = $sm->get('Manage\Model\ProjectTable');
+        }
+        return $this->stu_project_table;
+    }
+    //lrn
+    public function getStuHonorTable(){
+        if (!$this->stu_honor_table) {
+            $sm = $this->getServiceLocator();
+            $this->stu_honor_table = $sm->get('Manage\Model\HonourTable');
+        }
+        return $this->stu_honor_table;
+    }
+    //lrn
+    public function getEinfoTable()
+    {
+        if (!$this->einfo_table) {
+            $sm = $this->getServiceLocator();
+            $this->einfo_table = $sm->get('Manage\Model\EinfoTable');
+        }
+        return $this->einfo_table;
+    }
+    //lrn
+    public function getvalidatemailTable()//InfovalidatemailTable
+    {
+        if (!$this->validatemailTable) {
+            $sm = $this->getServiceLocator();
+            $this->validatemailTable = $sm->get('Manage\Model\InfovalidatemailTable');
+        }
+        return $this->validatemailTable;
+    }
+    //lrn
+    public function getUsrStuTable()
+    {
+        if (!$this->UsrStuTable) {
+            $sm = $this->getServiceLocator();
+            $this->UsrStuTable = $sm->get('Manage\Model\UsrStuTable');
+        }
+        return $this->UsrStuTable;
+    }
+    //lrn
+    public function getMailqueue()
+    {//获取发送邮件类
+        if (!$this->mailqueue) {
+            $um = $this->getServiceLocator();
+            $this->mailqueue = $um->get('Info\Model\MailqueueTable');
+        }
+        return $this->mailqueue;
     }
 }

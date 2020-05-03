@@ -41,7 +41,7 @@ class TDbUnderSubjectTable
                 }
             }
             $resultSetPrototype = new ResultSet();
-            $resultSetPrototype->setArrayObjectPrototype(new UnderSubject());
+            $resultSetPrototype->setArrayObjectPrototype(new TDbUnderSubject());
             // create a new pagination adapter object
             $paginatorAdapter = new DbSelect(
             // our configured select object

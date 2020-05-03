@@ -72,7 +72,7 @@ if($this->flag == 1)
     echo "<script>alert('设置成功！')</script>";
 ?>
 <div id="div2">
-    <h2>添加学院</h2>
+    <h3>添加学院</h3>
     <?php
     $form = $this->form;
     $form->setAttribute('action', $this->url('manage/default',array('controller'=>'systemManagement','action'=>'addCollege')));
@@ -141,7 +141,7 @@ if(isset($this->college)){
             if ($key == 'oprat')
             {
                 ?>
-                <td><button type='button'><a href="<?php echo $this->url('manage/default',array('controller'=>'SystemManagement','action'=>'deleteCollege','uid' => $uniarr[$id]));?>" onclick="return confirm('确认删除吗?')">删除</a></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <td><button type='button' class="btn btn-danger"><a href="<?php echo $this->url('manage/default',array('controller'=>'SystemManagement','action'=>'deleteCollege','uid' => $uniarr[$id]));?>" onclick="return confirm('确认删除吗?')">删除</a></button>&nbsp;&nbsp;&nbsp;&nbsp;
                 <?php   echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
             }
             else

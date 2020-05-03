@@ -50,7 +50,7 @@ class ShowDataInfoController extends AbstractActionController
         return $this->TBaseTeamTable;
     }
 
-    public  function showDataInfoAction()
+    public function showDataInfoAction()
     {
         $rid_arr_container = new Container('rid');
         $rid_arr = $rid_arr_container->item;
@@ -85,10 +85,10 @@ class ShowDataInfoController extends AbstractActionController
 
         $college_id_container = new Container('college_id');
         $college_id = $college_id_container->item;
-
-        if (!is_null($college_id) && in_array(9,$rid_arr)) {
+        $flag = 1;
+        if (!empty($college_id) && in_array(9,$rid_arr)) {
             echo $college_id;
-            $flag = 1;
+
             $res = $this->getCollegeTable()->getCollegeName($college_id);
 //            var_dump($res);
             $range = $res[0]['college_name'];
@@ -110,11 +110,19 @@ class ShowDataInfoController extends AbstractActionController
                 'column' => $column,
             );
         }
+        else if(empty($college_id) && in_array(9,$rid_arr))
+        {
+            $flag = 0;
+            return array(
+                'flag' => $flag,
+            );
+        }
 
         $team_id_container = new Container('team_id');
         $team_id = $team_id_container->item;
-        if(!is_null($team_id)&&in_array(14,$rid_arr)){
-            $flag = 2;
+//        var_dump($team_id);
+        $flag = 2;
+        if(!empty($team_id) && in_array(14,$rid_arr)){
             $num = count($team_id);
             $gender = array();
             $isTwo = array();
@@ -133,6 +141,13 @@ class ShowDataInfoController extends AbstractActionController
                 '1' => '学校名称',
                 '2' => '人数',
             );
+//            var_dump($gender);
+//            var_dump($num);
+//            var_dump($flag);
+//            var_dump($isTwo);
+//            var_dump($allResult);
+//            var_dump($UniRank);
+//            var_dump($range);
             return array(
                 'flag'=>$flag,
                 'num' => $num,
@@ -144,37 +159,11 @@ class ShowDataInfoController extends AbstractActionController
                 'column' => $column,
             );
         }
-
-//        $gender = $this->getTStuBaseTable()->getGender();
-//        $isTwo = $this->getTStuBaseTable()->getUni();
-//        $allResult = $this->getTStuBaseTable()->getAll();
-//        $UniRank = $this->getTStuBaseTable()->getUniRank();
-//        $genderCollege = $this->getTStuBaseTable()->getCollegeGender('004');
-//        $isTwoCollege = $this->getTStuBaseTable()->getCollegeUni('004');
-//        $allResultCollege = $this->getTStuBaseTable()->getCollegeAll('004');
-//        $UniRankCollege = $this->getTStuBaseTable()->getCollegeUniRank('004');
-//        $genderTeam = $this->getTStuBaseTable()->getTeamGender(25200);
-//        $isTwoTeam = $this->getTStuBaseTable()->getTeamUni(25200);
-//        $allResultTeam = $this->getTStuBaseTable()->getTeamAll(25200);
-//        $UniRankTeam = $this->getTStuBaseTable()->getTeamUniRank(25200);
-//        $column = array(
-//            '1' => '学校名称',
-//            '2' => '人数',
-//        );
-//        return array(
-//            'gender' => $gender,
-//            'isTwo' => $isTwo,
-//            'allResult' => $allResult,
-//            'UniRank' => $UniRank,
-//            'column' => $column,
-//            'genderCollege'=>$genderCollege,
-//            'isTwoCollege'=>$isTwoCollege,
-//            'allResultCollege'=>$allResultCollege,
-//            'UniRankCollege'=>$UniRankCollege,
-//            'genderTeam'=>$genderTeam,
-//            'isTwoTeam'=>$isTwoTeam,
-//            'allResultTeam'=>$allResultTeam,
-//            'UniRankTeam'=>$UniRankTeam,
-//        );
+        else if(empty($team_id) && in_array(14,$rid_arr)){
+            $flag = 0;
+            return array(
+                'flag' => $flag,
+            );
+        }
     }
 }

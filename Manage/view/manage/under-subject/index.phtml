@@ -1,0 +1,177 @@
+<?php
+$title = '本科专业目录';
+$this->headTitle($title);
+?>
+<h3>本科专业目录</h3>
+<div id="mtTabContent" class="tab-content" style="margin-top: 20px;">
+    <br/>
+    <div class="row">
+        <p style="color:red">*请先选择查询项再填写查询内容</p>
+        <?php
+        $form1 = $this->form1;
+        $form1->setAttribute('action', $this->url('manage/default', array('controller' => 'UnderSubject','action' => 'index')));
+        $form1->prepare();
+        echo $this->form()->openTag($form1);
+        ?>
+        <div class="col-md-2 col-xs-4">
+            <?php echo $this->formRow($form1->get('id'));?>
+            <?php echo $this->formRow($form1->get('column'));?>
+            <?php echo $this->formRow($form1->get('parame'));?>
+            <?php echo $this->formSubmit($form1->get('submit'));?>
+            <button class="btn" data-toggle="modal" data-target="#myModal">新增专业</button>
+        </div>
+        <?php echo $this->form()->closeTag();?>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex=-1  aria-lablledby="myModalLabel" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="myEditModalLabel">新增专业信息</h3>
+                    <p style="color:red">*请先选择专业类别再填写详细信息</p>
+                    <p style="color:red">如果是一级专业，请勿填写关联一级专业二级专业;</p>
+                    <p style="color:red">如果是二级专业，请填写关联的一级专业，勿填写关联的二级专业;</p>
+                    <p style="color:red">如果是三级专业，请填写关联的二级专业，勿填写关联的一级专业;</p>
+                </div>
+                <div class="modal-body">
+                    <?php
+                    $form2 = $this->form2;
+                    $form2->setAttribute('action',$this->url('manage/default',array('controller'=>'UnderSubject','action'=>'index')));
+                    $form2->setAttribute('method','POST');
+                    $form2->prepare();
+
+                    echo $this->form()->openTag($form2);
+                    //echo '<div>'.$this->formRow($form2->get('level')).'</div>';
+                    echo '<div><select id="level" class="active"><option value="0">请选择专业类别</option><option value="1">一级专业</option><option value="2">二级专业</option><option value="3">三级专业</option></select></div>';
+                    echo '<div>'.$this->formRow($form2->get('id')).'</div>';
+                    echo '<div>'.$this->formRow($form2->get('name')).'</div>';
+                    echo '<div>'.$this->formRow($form2->get('relation1')).'</div>';
+                    echo '<div>'.$this->formRow($form2->get('relation2')).'</div>';
+                    ?>
+                </div>
+                <div class="modal-footer" >
+                    <button type="submit" class="btn btn-primary" id="confirmEdit" onclick="return checkUnderSubject(document.getElementById('level').value,document.getElementById('id').value,document.getElementById('name').value,document.getElementById('relation1').value,document.getElementById('relation2').value);">确定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <?php
+                    $this->form()->closeTag();
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>一级学科</th>
+                <th>二级学科</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($this->paginator as $under_subject) : // <-- change here! ?>
+                <?php
+                $data=$this->data;
+                if($under_subject->relation1 == "-1"){  //该专业本身就是一级专业
+                    $under_subject->relation1="";
+                    $under_subject->relation2="";
+                }elseif ($under_subject->relation1 == NULL){ //该专业为三级专业
+                    if(isset($data[$under_subject->relation2])){
+                        $relation1=$data[$under_subject->relation2]['relation1'];
+                        if(isset($data[$relation1])){
+                            $under_subject->relation1=$data[$relation1]['name'].$relation1;
+                        }else{
+                            $under_subject->relation1="";
+                        }
+                    }else{
+                        $under_subject->relation1="";
+                    }
+                    if(isset($data[$under_subject->relation2])){
+                        $under_subject->relation2=$data[$under_subject->relation2]['name'].$under_subject->relation2;
+                    }else{
+                        $under_subject->relation2="";
+                    }
+
+                }else{  //该专业为二级专业
+                    if(isset($data[$under_subject->relation1])){
+                        $under_subject->relation1=$data[$under_subject->relation1]['name'].$under_subject->relation1;
+                    }else{
+                        $under_subject->relation1="";
+                    }
+                    $under_subject->relation2="";
+                }
+                ?>
+                <tr>
+                    <td><?php echo $this->escapeHtml($under_subject->id);?></td>
+                    <td><?php echo $this->escapeHtml($under_subject->name);?></td>
+                    <td><?php echo $this->escapeHtml($under_subject->relation1);?></td>
+                    <td><?php echo $this->escapeHtml($under_subject->relation2);?></td>
+                    <td>
+                        <a href="<?php echo $this->url('manage/default', array('controller' => 'UnderSubject','action' => 'delete', 'param' => $under_subject->id));?>" onclick="return confirm('确定要删除吗？');">删除</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+    echo $this->paginationControl(
+        $this->paginator,
+        'Sliding',
+        'partial/paginator',
+        array(
+            'route' => 'manage/UnderSubject/index',
+            'column' => $this->column,
+            'parame' => $this->parame,
+        ));
+    ?>
+</div>
+<script type="text/javascript">
+    $("#column").val("<?php echo isset($_GET['column'])?$_GET['column']:NULL ?>");
+    $("#parame").val("<?php echo isset($_GET['parame'])?$_GET['parame']:NULL ?>");
+
+    function checkUnderSubject(level,id,name,relation1,relation2) {
+        if(id==""){
+            alert('请输入专业编号');
+            return false;
+        }
+        if(name==""){
+            alert('请输入专业名称');
+            return false;
+        }
+        if(level==0) {
+            alert('请选择新增专业的类别');
+            return false;
+        }
+        if(level==1){
+            if(relation1!="" || relation2!=""){
+                alert('一级专业没有关联的一级专业和二级专业');
+                return false;
+            }
+        }
+        if(level==2){
+            if(relation1==""){
+                alert('请输入该专业关联的一级专业');
+                return false;
+            }
+            if(relation2!=""){
+                alert('二级专业没有关联的二级专业，请勿填写');
+                return false;
+            }
+        }
+        if(level==3){
+            if(relation2==""){
+                alert('三级专业需要填写关联的二级专业');
+                return false;
+            }
+            if(relation1!=""){
+                alert('三级专业不需要填写关联的一级学科');
+                return false;
+            }
+        }
+        return true;
+    }
+</script>

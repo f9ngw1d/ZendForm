@@ -1,0 +1,292 @@
+<?php
+$title = '个人信息表';
+$this->headTitle($title);//<h3><?php echo $this->escapeHtml($title); //</h3>
+?>
+<style>
+    .message2 {
+        color: red;
+    }
+
+    label {
+        font-size: 15px;
+        text-align: center;
+        width: 150px;
+        margin-right: 10px;
+    }
+
+    .maindiv {
+        margin: 0 auto;
+        width: 100%;
+        border: 1px solid #f0f0f0;
+    }
+
+    .name_img {
+        height: 30px;
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+    .details_t {
+        height: 200px;
+        border: 1px solid #f0f0f0;
+    }
+
+    .details_t_left {
+        float: left;
+        width: 150px;
+        height: 200px;
+        border: 1px solid #f0f0f0;
+    }
+
+    .details_t_right {
+        height: 200px;
+        border: 1px solid #f0f0f0;
+        margin-left: 150px;
+    }
+
+    .details_m {
+        width: 100%;
+        height: 400px;
+    }
+
+    .duty_left {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .science {
+        height: 100px;
+        border: 1px solid #f0f0f0;
+    }
+
+    .remark {
+        height: 100px;
+        border: 1px solid #f0f0f0;
+    }
+
+    .name {
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .duty1 {
+        background-color: #f8f8f8;
+        height: 50px;
+    }
+
+    .duty {
+        height: 50px;
+    }
+
+    .info {
+        height: 45px;
+    }
+
+    .img2 {
+        width: 140px;
+        height: 180px;
+        align: center;
+        text-align: center;
+    }
+
+    .table3 {
+    }
+
+    .table4 {
+    }
+
+    .table2 {
+    }
+
+    .tablestyle1 {
+        width: 70px;
+    }
+
+
+</style>
+<link href="/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+<?php
+if (isset($this->nav)) {
+    echo $this->nav;
+}
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+<?php
+if(in_array(1,$this->rid) ){
+    echo "<a class='btn btn-primary'  style='color: white;' href='/Student/info/stuPDF/uid/".$this->uid."' target='_blank'>导出复试登记表</a>";
+    if($this->stu_info['apply_type']=='直博')
+        echo "<a class='btn btn-primary'  style='color: white;' href='/Student/info/zhiboPDF/uid/".$this->uid."' target='_blank'>导出直博确认表</a>";
+    echo "<br>
+<span style='color: red; font-size: medium;'>1、请确认个人信息准确无误后再进行打印<br></b></span>
+<span style='color: red; font-size: medium;'>2、复式时请携带此复式单纸质版（双面打印）<br></b></span>";
+    if($this->stu_info['apply_type']=='直博'){
+        echo "<span style='color: red; font-size: medium;'>3、直博生须同时打印两份文件，复试时携带（双面打印）<br></b></span>";
+    }
+}/*
+if(in_array(10,$this->rid)|| in_array(9,$this->rid) || in_array(11,$this->rid)){
+    echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/stuPDF/uid/".$this->uid."' target='_blank'>导出复试登记表</a>";
+    if($this->stu_info['apply_type']=='直博')
+        echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/zhiboPDF/uid/".$this->uid."' target='_blank'>导出直博确认表</a>";
+}*/
+//if($this->stu_info['apply_type']=='直博')
+  //  echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/zhiboPDF/uid/'".$this->uid." target='_blank'>导出直博确认表</a>";
+?>
+<hr/>
+
+<table class="table table-bordered table-striped">
+    <tr>
+        <td colspan="7" width="" style="font-weight: bold;">1.基本信息</td>
+    </tr>
+    <tr>
+        <td class="tablestyle1">姓名</td>
+        <td class=""><?php if (empty($this->stu_info['user_name'])) echo '无'; else echo $this->stu_info['user_name']; ?></td>
+        <td class="tablestyle1">性别</td>
+        <td class=""><?php if (empty($this->stu_info['gender'])) echo '未填写'; else echo $this->stu_info['gender']; ?></td>
+        <td class="tablestyle1">出生日期</td>
+        <td class=""><?php if (empty($this->stu_info['birthday'])) echo '无'; else echo $this->stu_info['birthday'] ?></td>
+        <td rowspan="4" align="center" valign="middle" class="" width="160"><img
+                src='<?php if (empty($this->stu_info['photo_add'])) echo ''; else echo $this->basePath().$this->stu_info['photo_add'] ?>'
+                align="center" height="180" width="140" id="photo"></td>
+    </tr>
+    <tr>
+        <td class="tablestyle1">本科毕业学校</td>
+        <td class=""><?php if (empty($this->stu_info['graduate_university'])) echo '无'; else echo $this->stu_info['graduate_university'] ?></td>
+        <td class="tablestyle1">本科学院</td>
+        <td class=""><?php if (empty($this->stu_info['graduate_college'])) echo '未填写'; else echo $this->stu_info['graduate_college'] ?></td>
+        <td class="tablestyle1">本科专业</td>
+        <td class=""><?php if (empty($this->stu_info['graduate_subject'])) echo '无'; else echo $this->stu_info['graduate_subject'] ?></td>
+
+    </tr>
+    <tr>
+        <td class="tablestyle1">本科专业类别</td>
+        <td class=""><?php if (empty($this->stu_info['graduate_professional_class'])) echo '未填写'; else echo $this->stu_info['graduate_professional_class'] ?></td>
+        <td class="tablestyle1">排名</td>
+        <td class=""><?php if (empty($this->stu_info['ranking'])) echo '无'; else echo $this->stu_info['ranking'] ?></td>
+        <td class="tablestyle1">英语四级成绩</td>
+        <td class=""><?php if (empty($this->stu_info['value_cet4'])) echo '无'; else echo $this->stu_info['value_cet4']; ?></td>
+    </tr>
+
+    <tr>
+        <td class="tablestyle1">英语六级成绩</td>
+        <td class=""><?php if (empty($this->stu_info['value_cet6'])) echo '未填写'; else echo $this->stu_info['value_cet6']; ?></td>
+        <td class="tablestyle1">GRE成绩</td>
+        <td class=""><?php if (empty($this->stu_info['toefl_score'])) echo '无'; else echo $this->stu_info['toefl_score']; ?></td>
+        <td class="tablestyle1">TOEFL成绩</td>
+        <td class=""><?php if (empty($this->stu_info['staff_name'])) echo '无'; else echo $this->stu_info['staff_name']; ?></td>
+    </tr>
+    <tr>
+        <td colspan='7' style="font-weight: bold;">2.报考志愿</td>
+    </tr>
+    <tr>
+        <td class="">报考学院</td>
+        <td class=""><?php if (empty($this->stu_info['target_college'])) echo '无'; else echo $this->stu_info['target_college']; ?></td>
+        <td class="">报考组</td>
+        <td class=""  colspan="2"><?php if (empty($this->stu_info['target_team'])) echo '未填写'; else echo $this->stu_info['target_team']; ?></td>
+        <td class="">申请类型</td>
+        <td class=""><?php echo $this->stu_info['apply_type'];?></td>
+    </tr>
+    <tr>
+        <td colspan='7' style="font-weight: bold;">3.科研经历</td>
+    </tr>
+    <tr colspan='7' style="font-weight: bold;" >
+        <td>项目名称</td>
+        <td>概述</td>
+        <td>研究结论</td>
+        <td>成果</td>
+        <td>获奖凭证</td>
+        <td>获奖等级</td>
+        <td>创建时间</td>
+    </tr>
+            <?php if($this->project_table){
+                    foreach ($this->project_table as $key => $row) {
+                        ?>
+                        <tr colspan='7'>
+                            <td class="span2"> <?php echo $row->project_name;?></td>
+                            <td class="span3"> <?php echo $row->abstract;?></td>
+                            <td class="span3"> <?php echo $row->conclusion;?></td>
+                            <td class="span3"> <?php echo $row->achievement;?></td>
+                            <td  class="span6">
+                                <?php if($row->certificate){
+                                    $image_url = substr($row->certificate,6);
+                                    ?>
+                                    <!--height="220" width="150"-->
+                                    <img src='<?php echo $this->basePath($image_url); ?>' alt="certificate" />
+                                <?php } ?>
+                            </td>
+                            <td  class="span2"><?php echo $row->certificate_level;?></td>
+                            <td  class="span2"><?php echo $row->create_at;?></td>
+                        </tr>
+                    <?php } ?> <!-- 循环输出项目记录-->
+            <?php  } ?>
+    <tr>
+        <td colspan='7' style="font-weight: bold;">4.获奖情况</td>
+    </tr>
+    <tr colspan='7' style="font-weight: bold;" >
+        <td>获奖名称</td>
+        <td>具体描述</td>
+        <td>获奖时间</td>
+        <td>获奖凭证</td>
+        <td>个人奖励级别</td>
+        <td colspan="2">创建时间</td>
+    </tr>
+    <?php
+    foreach ($this->honour_table as $key => $row) {?>
+        <tr colspan='7'>
+            <td class="span3"> <?php echo $row->honour_name;?></td>
+            <td class="span4"> <?php echo $row->specificdesc;?></td>
+            <td class="span2"> <?php echo $row->honour_at;?></td>
+            <td class="span5">
+                <?php if($row->certificate){
+                    $image_url = substr($row->certificate,6);
+                    ?>
+                    <img src='<?php echo $this->basePath($image_url); ?>' alt="certificate" />
+                <?php } ?>
+            </td>
+            <!--<td> <?php echo $row->certificate;?></td>-->
+            <td class="span2"> <?php echo $row->certificate_level;?></td>
+            <td class="span2" colspan="2"> <?php echo $row->create_at;?></td>
+        </tr>
+
+    <?php }?>
+</table>
+<h4 ><b>其他文件凭证</b></h4>
+<table class='table table-bordered' style='border-collapse: collapse;'>
+    <thead>
+    <th>文件凭证类别</th>
+    <th>学生上传文件列表</th>
+    </thead>
+    <tbody>
+
+    <?php foreach ($this->einfo_list as $row){?>
+
+        <!--<form class="form-horizontal"  method="post">-->
+        <tr>
+            <td class="span4">
+                <?php echo $row->name;?>
+            </td>
+            <td class="span7">
+                <?php
+                if( $this->einfo_status[$row->id]){//已上传
+                    echo "已上传：".$this->einfo_status[$row->id];//显示上传了的文件
+                    echo "<br>";
+
+                    for( $i = 1 ; $i <= $row->maxnum ; $i++ ){
+                        if(isset($this->srcArr[$row->id][$i])){ //对应文件存在
+                            ?>
+                            <div class='span5'>
+                                <a href='<?php echo $this->basePath($this->srcArr[$row->id][$i]);?>' target='_blank'>查看文件详情</a>
+                            </div>
+                            <div class='span2'></div>
+                            <br>
+
+                        <?php }}//for 结束
+                }else{
+                    echo "<span style='color: red;'>未上传文件</span>";
+                }
+                ?>
+            </td>
+        </tr>
+    <?php } ?>
+    </tbody>
+</table>
