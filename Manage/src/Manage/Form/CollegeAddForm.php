@@ -50,7 +50,7 @@ class CollegeAddForm extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Url',
             'name' => 'ip_address',
             'options' => array(
-                'label' => '网址'
+                'label' => '学院官网网址'
             ),
         ));
 
@@ -117,8 +117,19 @@ class CollegeAddForm extends Form implements InputFilterProviderInterface
             $inputFilter->add(array(
                 'name'		=> 'college_id',
                 'required'	=> true,		//必需的
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
                 'validators' => array(
-                    array('name' => 'NotEmpty'),		//不允许为空
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 100,
+                        ),
+                    ),
                 ),
             ));
 

@@ -11,6 +11,7 @@ use Manage\Model\UsrTeacher;
 use Zend\Db\Tablegateway\TableGateway;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\Sql\Select;
+use Zend\Db\Sql\Sql;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 
@@ -19,6 +20,7 @@ class UsrTeacherTable{
 
     public function __construct(TableGateway $tg){
         $this->tableGateway = $tg;
+        $this->table = 'usr_teacher';
     }
 
     public function fetchAll($paginated=false){//获取全部
@@ -195,7 +197,42 @@ class UsrTeacherTable{
 			return false;
 		}
 		return $row;
-	}
-}//sm
+	}//sm
+
+    public function findAll($limit = 0, $offset = 0)
+    {
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $sl = new Select();
+        $sl->from(array('usr_teacher' => $this->table));
+        if ($limit != 0) {
+            $sl->limit($limit);
+        }
+        if ($offset != 0) {
+            $sl->offset($offset);
+        }
+
+        $stmt = $sql->prepareStatementForSqlObject($sl);
+        $result = $stmt->execute();
+
+
+        $resultArr = iterator_to_array($result);
+        return $resultArr;
+
+    }//sm
+    public function getTotalnum()
+    {
+        $adapter = $this->tableGateway->getAdapter();
+        $sql = new Sql($adapter);
+        $select = $sql->select('base_staff');
+        $select->columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(*)')));;
+
+        $stmt = $sql->prepareStatementForSqlObject($select);
+        $result = $stmt->execute();
+        $row = $result->current();
+        $rowCount = $row['count'];
+        return $rowCount;
+    }//sm
+}
 
 

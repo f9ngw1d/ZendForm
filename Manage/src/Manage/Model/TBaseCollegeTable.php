@@ -150,4 +150,50 @@ class TBaseCollegeTable
         $result_arr = iterator_to_array($rowSet);
         return $result_arr;
     }
+    public function deleteAll()
+    {
+        $sql_query = "Delete From base_team";
+        $sql_query1 = "Delete From base_college";
+        $sql_query2 = "Delete From base_staff";
+        $sql_query3 = "Delete From info_article";
+        $sql_query4 = "Delete From info_mail";
+        $sql_query5 = "Delete From info_text";
+        $sql_query6 = "Delete From info_validatemail";
+        $sql_query7 = "Delete From manage_filter_condition";
+        $sql_query8 = "Delete From manage_subject_map";
+        $sql_query9 = "Delete From manage_time";
+        $sql_query10 = "Delete From stu_base";
+        $sql_query11 = "Delete From stu_check";
+        $sql_query12 = "Delete From stu_einfo_map";
+        $sql_query13 = "Delete From stu_electronic_info";
+        $sql_query14 = "Delete From stu_honour";
+        $sql_query15 = "Delete From stu_project";
+        $sql_query16 = "Delete From stu_reexam_result";
+        $sql_query17 = "Delete usr_user_role From usr_user_role,usr_stu WHERE usr_user_role.uid = usr_stu.uid";
+        $sql_query18 = "Delete usr_user_role From usr_user_role,usr_teacher WHERE usr_teacher.staff_id = usr_user_role.uid AND rid <> 10 AND rid <> 99";
+        $sql_query19 = "Delete From usr_stu";
+        $sql_query20 = "Delete From usr_teacher";
+
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $rowSet1 = $this->tableGateway->getAdapter()->query($sql_query1)->execute();
+        $rowSet2 = $this->tableGateway->getAdapter()->query($sql_query2)->execute();
+        $rowSet3 = $this->tableGateway->getAdapter()->query($sql_query3)->execute();
+        $rowSet4 = $this->tableGateway->getAdapter()->query($sql_query4)->execute();
+        $rowSet5 = $this->tableGateway->getAdapter()->query($sql_query5)->execute();
+        $rowSet6 = $this->tableGateway->getAdapter()->query($sql_query6)->execute();
+        $rowSet7 = $this->tableGateway->getAdapter()->query($sql_query7)->execute();
+        $rowSet8 = $this->tableGateway->getAdapter()->query($sql_query8)->execute();
+        $rowSet9 = $this->tableGateway->getAdapter()->query($sql_query9)->execute();
+        $rowSet10 = $this->tableGateway->getAdapter()->query($sql_query10)->execute();
+        $rowSet11 = $this->tableGateway->getAdapter()->query($sql_query11)->execute();
+        $rowSet12 = $this->tableGateway->getAdapter()->query($sql_query12)->execute();
+        $rowSet13 = $this->tableGateway->getAdapter()->query($sql_query13)->execute();
+        $rowSet14 = $this->tableGateway->getAdapter()->query($sql_query14)->execute();
+        $rowSet15 = $this->tableGateway->getAdapter()->query($sql_query15)->execute();
+        $rowSet16 = $this->tableGateway->getAdapter()->query($sql_query16)->execute();
+        $rowSet17 = $this->tableGateway->getAdapter()->query($sql_query17)->execute();
+        $rowSet18 = $this->tableGateway->getAdapter()->query($sql_query18)->execute();
+        $rowSet19 = $this->tableGateway->getAdapter()->query($sql_query19)->execute();
+        $rowSet20 = $this->tableGateway->getAdapter()->query($sql_query20)->execute();
+    }
 }

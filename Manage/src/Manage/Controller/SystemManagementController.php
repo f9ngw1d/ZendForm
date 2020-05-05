@@ -4,6 +4,7 @@ namespace Manage\Controller;
 
 use Manage\Form\CollegeEditForm;
 use Manage\Form\UserSearchForm;
+use Manage\Form\OthersForm;
 use Manage\Form\PersonalForm;
 use Manage\Form\TimeeditForm;
 use Manage\Form\TimesetForm;
@@ -15,6 +16,7 @@ use Manage\Model\TDbUniversity;
 use Manage\Model\ManageTime;
 use Manage\Model\UsrTeacher;
 use Manage\Model\UsrRole;
+use Manage\Model\StaffTable;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -34,6 +36,9 @@ class SystemManagementController extends AbstractActionController
     protected $TBaseCollegeTable;
     protected $UsrTeacherTable;
     protected $UsrRoleTable;
+    protected $college_table;
+    protected $StaffTable;
+
     public function getManageTimeTable()
     {
         if (!$this->ManageTimeTable) {
@@ -58,7 +63,14 @@ class SystemManagementController extends AbstractActionController
         }
         return $this->TDbUniversityTable;
     }
-
+    public function getStaffTable()
+    {
+        if (!$this->StaffTable) {
+            $sm = $this->getServiceLocator();
+            $this->StaffTable = $sm->get('Manage\Model\StaffTable');
+        }
+        return $this->StaffTable;
+    }
     public function getTBaseCollegeTable()
     {
         if (!$this->TBaseCollegeTable) {
@@ -84,45 +96,91 @@ class SystemManagementController extends AbstractActionController
         return $this->UsrRoleTable;
     }//sm
 
+//lrn sm
+public function getRolesArr($rid_arr){
+        $roles = array();
+    if(in_array('99',$rid_arr) || in_array('10',$rid_arr)){//角色select
+        $roles = array(
+            '9'=>'学院负责人',
+            '10'=>'研究生院',
+            '11'=>'院科研秘书',
+            '14'=>'组长',
+            '99'=>'超级管理员',
+        );
+    }elseif(in_array('9',$rid_arr) || in_array('11',$rid_arr)){
+        $roles = array(
+            '14'=>'组长',
+        );
+    }else{
+        echo "<script>alert('无权访问!');window.location.href='/info';</script>";
+    }
+    return $roles;
+}
     public function addUserAction(){
         $view = new ViewModel(array());
-        $form = new PersonalForm();
-
-        /*从session中获取——————————————————————————————————————未完成*/
-        $role = "99";//测试用例
-        if($role == "99"){//角色select
-            $roles = array(
-                '0'=>'请选择角色',
-                '9'=>'学院负责人',
-                '10'=>'研究生院',
-                '11'=>'院科研秘书',
-                '14'=>'组长',
-                '99'=>'超级管理员',
-            );
-        }elseif($role == "10"){
-            $roles = array(
-                '0'=>'请选择角色',
-                '9'=>'学院负责人',
-                '10'=>'研究生院',
-                '11'=>'院科研秘书',
-                '14'=>'组长',
-            );
-        }elseif($role == "14"){
-            $roles = array(
-                '14'=>'组长',
-            );
-        }else{
-            $message = "您无权访问该页面";
-            $view->setVariables(array('form'=>$form, 'msg'=>$message));
-            return $view;
+        $login_id_container = new Container('uid');
+        $login_id = $login_id_container->item;
+        if (is_null($login_id)) {
+            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+//            $login_id = 8004044;   //测试用
         }
-        $message = '';
+        $rid_container = new Container('rid');
+        $rid_arr = $rid_container->item;//login 用户的权限
+        if (is_null($rid_arr)) {
+            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+//            $rid_arr =array(9,10,11,14);  //测试
+        }
+        $college_id_container = new Container('college_id');
+        $college_id = $college_id_container->item;
+        if (is_null($college_id)) {
+//            $college_id = array('004');  //信息学院，测试用，记得删
+        }
+        $roles_arr = $this->getRolesArr($rid_arr);
+        if (!in_array(10,$rid_arr)) {//不是研究生院
+            $college_info = $this->getTBaseCollegeTable()->getCollege($college_id);
+            if (is_null($college_info)) {
+                $college_info = $this->getTBaseCollegeTable()->getCollegebyStaffid($login_id);
+            }
+            $search_college_arr[$college_info->college_id] = $college_info->college_name;
+        } else {
+            $search_college_arr = $this->getTBaseCollegeTable()->getCollegesIDNameArr();
+        }
+        $form = new PersonalForm($roles_arr,$search_college_arr);
 
-        //set rid option
-        $form->get('Rid')->setValueOptions($roles);
-        //set YXSM option
-        /*
-         */
+//        $role = "99";//测试用例
+//        if($role == "99"){//角色select
+//            $roles = array(
+//                '0'=>'请选择角色',
+//                '9'=>'学院负责人',
+//                '10'=>'研究生院',
+//                '11'=>'院科研秘书',
+//                '14'=>'组长',
+//                '99'=>'超级管理员',
+//            );
+//        }elseif($role == "10"){
+//            $roles = array(
+//                '0'=>'请选择角色',
+//                '9'=>'学院负责人',
+//                '10'=>'研究生院',
+//                '11'=>'院科研秘书',
+//                '14'=>'组长',
+//            );
+//        }elseif($role == "14"){
+//            $roles = array(
+//                '14'=>'组长',
+//            );
+//        }else{
+//            $message = "您无权访问该页面";
+//            $view->setVariables(array('form'=>$form, 'msg'=>$message));
+//            return $view;
+//        }
+//        $message = '';
+//
+//        //set rid option
+//        $form->get('Rid')->setValueOptions($roles);
+//        //set YXSM option
+//        /*
+//         */
 
         $request = $this->getRequest();
         if($request->isPost()){
@@ -182,19 +240,167 @@ class SystemManagementController extends AbstractActionController
     }//sm
 
     public function othersAction(){
-        $view = new ViewModel(array());
-        $form = new PersonalForm();
-        $searchForm = new UserSearchForm();
+        //form
+        $login_id_container = new Container('uid');
+        $login_id = $login_id_container->item;
+        if (is_null($login_id)) {
+            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+//            $login_id = 8004044;   //测试用
+        }
+        $rid_container = new Container('rid');
+        $rid_arr = $rid_container->item;//login 用户的权限
+        if (is_null($rid_arr)) {
+            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+//            $rid_arr =array(9,10,11,14);  //测试
+        }
+        $college_id_container = new Container('college_id');
+        $college_id = $college_id_container->item;
+        if (is_null($college_id)) {
+//            $college_id = array('004');  //信息学院，测试用，记得删
+        }
+
+        $roles_arr = $this->getRolesArr($rid_arr);
+        if (!in_array(10,$rid_arr)) {//不是研究生院
+            $college_info = $this->getTBaseCollegeTable()->getCollege($college_id);
+            if (is_null($college_info)) {
+                $college_info = $this->getTBaseCollegeTable()->getCollegebyStaffid($login_id);
+            }
+            $search_college_arr[$college_info->college_id] = $college_info->college_name;
+        } else {
+            $search_college_arr = $this->getTBaseCollegeTable()->getCollegesIDNameArr();
+        }
+        $form = new PersonalForm($roles_arr,$search_college_arr);
+        $form1 = new OthersForm($roles_arr,$search_college_arr);
+        $current_page = $this->params()->fromRoute('param1');
+        if (empty($current_page)) {
+            $current_page = 1;
+        }
+        $per_page = 5;
+        $offset = ($current_page - 1) * $per_page;
+        echo $offset;
+
 
         $request = $this->getRequest();
-        if($request->isPost()){
-            $postdata = $request->getPost();
-            if($request->getPost('del','no') == 'del'){
-
+        if ($request->isPost()) {
+            $postData = array_merge_recursive(
+                $this->getRequest()->getPost()->toArray()
+            );
+            $form->setData($postData);
+            if ($form->isValid()) {
+                $uni = new ManageTime();
+                $formdata = array(
+                    'name' => $_POST['name'],
+                    'start_time' => $_POST['start_time']['year']."-".$_POST['start_time']['month']."-".$_POST['start_time']['day']." 00:00:00",
+                    'end_time' => $_POST['end_time']['year']."-".$_POST['end_time']['month']."-".$_POST['end_time']['day']." 00:00:00",
+                    'description' => $_POST['description'],
+                    'status' => $_POST['status'],
+                );
+                $uni->exchangeArray($formdata);
+                if ($this->getManageTimeTable()->saveTime($uni))
+                    echo "<script>alert('设置成功')</script>";
             }
+            else
+                echo "<script>alert('设置失败，请检查是否填写正确')</script>";
         }
+//        $time = $this->getManageTimeTable()->findAll($per_page, $offset);
+        $time = $this->getUsrTeacherTable()->findAll($per_page, $offset);
+//        $timesta = array();
+//        foreach ($time as $tt)
+//        {
+//            foreach ($tt as $key => $value)
+//            {
+//                if($key == 'id')
+//                    array_push($timesta, $this->getManageTimeTable()->getTimeSta($value));
+//            }
+//        }
+//        $i=0;
+//        foreach ($time as &$tt)
+//        {
+//            $a['sta']=$timesta[$i];
+//            array_merge($tt,$a);
+//            $tt['sta'] = $timesta[$i];
+//            $i++;
+//        }
+        $total_num = $this->getUsrTeacherTable()->getTotalnum();
+        echo 'total num:'.$total_num;
+        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
+        $paginator->setCurrentPageNumber($current_page);
+        $total_page = ceil($total_num / $per_page);
+        $pagesInRange = array();
+        for ($i = 1; $i <= $total_page; $i++) {
+            $pagesInRange[] = $i;
+        }
+        $column = array(
+            'staff_id' =>'编号',
+            'real_name'=>'姓名',
+            'user_name'=>'用户名',
+            'college'=>'学院',
+            'mobile'=>'移动电话',
+            'create_time'=>'创建时间',
+            'update_at'=>'角色',
+            'oprat'=>' ',
+        );
+        $teacher = $this->getUsrTeacherTable()->findAll($per_page, $offset);
+//        print_r($teacher);
+        echo "<br>";
+        $data_push = array();
+        foreach ($teacher as $key => $value){
+
+            //获取院系名称
+            $staff_id = $value['staff_id'];
+            $base_staff = $this->getStaffTable()->getStaff($staff_id);
+            if(!$base_staff){
+                $data_push[$key] = array(
+                    'staff_id' => $value['staff_id'],
+                    'real_name' => $value['user_name'],
+                    'user_name' => $value['email'],
+                    'college' => null,
+                    'mobile' => null,
+                    'create_time' => $value['create_time'],
+                    'update_at' => $value['staff_id'],
+                );
+                continue;
+            }
+            //获取移动电话
+            $phone = $base_staff->phone;
+            $college_id = $base_staff->college_id;
+            $college = $this->getTBaseCollegeTable()->getCollege($college_id);
+            if(!$college){
+                $data_push[$key] = array(
+                    'staff_id' => $value['staff_id'],
+                    'real_name' => $value['user_name'],
+                    'user_name' => $value['email'],
+                    'college' => null,
+                    'mobile' => $phone,
+                    'create_time' => $value['create_time'],
+                    'update_at' => $value['staff_id'],
+                );
+                continue;
+            }
+            $college_name = $college->college_name;
+            $data_push[$key] = array(
+                'staff_id' => $value['staff_id'],
+                'real_name' => $value['user_name'],
+                'user_name' => $value['email'],
+                'college' => $college_name,
+                'mobile' => $phone,
+                'create_time' => $value['create_time'],
+                'update_at' => $value['staff_id'],
+            );
+//            print_r($data_push[$key]);
+        }
+//        print_r($data_push);
         $view = new ViewModel(array(
-            'form' => $form,
+            'column' => $column,
+            'teacher' => $data_push,
+            'paginator' => $paginator,
+            'pageCount' => $total_page,
+            'pagesInRange' => $pagesInRange,
+            'previous' => $current_page > 1 ? $current_page - 1 : null,
+            'next' => $current_page < $total_page ? $current_page + 1 : null,
+            'total_num' => $total_num,
+            'current' => $current_page,
+            'form1'=>$form1,
         ));
         return $view;
     }//sm
@@ -236,8 +442,9 @@ class SystemManagementController extends AbstractActionController
                         echo "<script>alert('保存成功')</script>";
 
                 }
-                else{
-                    echo "<script>alert('保存失败，请检查所有数据是否填写完全')</script>";
+                else {
+                    //echo "<script>alert('请仔细检查上述表单填写是否符合要求！符合要求后再次点击保存')</script>";
+                    $this->formInvalidMessage($form);
                 }
 
         }
@@ -260,6 +467,44 @@ class SystemManagementController extends AbstractActionController
             'form1'=>$form1,
         ));
         return $view;
+    }
+    public function formInvalidMessage($form)
+    {//表单验证无效的原因报错
+        $messages = $form->getMessages();
+        $translate = $this->getCollegeColumns();
+        $msgCn = $this->getMsgCn();
+        echo "<script>alert('表单验证无效：";
+        foreach ($messages as $key => $value) {
+            echo $translate[$key] . " 有\"";
+            foreach ($value as $key1 => $value1) {
+                if (isset($msgCn[$key1])) {
+                    echo $msgCn[$key1];
+                } else {
+                    echo $key1;
+                }
+                echo ":" . $value1 . "\" ";
+            }
+            echo "错误，";
+        }
+        echo "请检查更正后重新保存');</script>";
+    }
+    public function getCollegeColumns()
+    {
+        return array(
+            'college_id' => '学院编号',
+            'college_name' => '学院名称',
+            'phone' => '学院电话',
+            'ip_address' => '学院官网网址',
+            'address' => '办公楼地址',
+        );
+    }
+    public function getMsgCn()
+    {
+        return array(
+            'stringLengthTooShort' => '长度不够',
+            'stringLengthTooLong' => '长度过长',
+            'notDigits' => '不是数字',
+        );
     }
     public  function addTimeAction(){
         $login_id_container = new Container('uid');

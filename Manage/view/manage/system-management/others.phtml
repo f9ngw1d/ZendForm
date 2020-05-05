@@ -1,458 +1,283 @@
-<!DOCTYPE PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-</head>
-<body>
-<?php
+<style>
+    label span, label {
+        text-align: left;
+        margin-right: 40px;
+        height: 35px;
+    }
 
-$title = '管理其他用户';
+    input[type="text"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    input[type="datetime"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    input[type="select"] {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    select {
+        height: 30px;
+        width: 150px;
+        margin-bottom: 0;
+    }
+
+    label {
+        margin-right: 40px;
+    }
+    .message1{
+        color: #EE0000;
+    }
+
+    .message2{
+        color:  #A9A9A9;
+    }
+    #myEditModal{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<!--<script type="text/javascript">-->
+<!--    function getindex()-->
+<!--    {-->
+<!---->
+<!--        var obj = event.srcElement;-->
+<!--        var trobj = obj.parentElement.parentElement;-->
+<!--        var tbobj = trobj.parentElement;-->
+<!--        //var url = window.location.href;-->
+<!--        var index = trobj.rowIndex-1;-->
+<!--        var id = parseInt(document.getElementById("id").innerText)+parseInt(index);-->
+<!--        var add = "http://211.71.149.244:11111/manage/systemManagement/edit/param1/"+id;-->
+<!--        //alert(url);-->
+<!--        //window.location.replace(add);-->
+<!--        //window.location.href=add;-->
+<!---->
+<!--        var url = window.location.protocol + "//"+window.location.host;-->
+<!--        if(window.location.port){-->
+<!--            url = url +":"+ post;-->
+<!--        }-->
+<!--        url = url+"/manage/systemManagement/others/param1/"+id;-->
+<!--        //http://tm59/stu/register/register-->
+<!--        alert(url);-->
+<!--        window.location.replace(url);-->
+<!---->
+<!--    }-->
+<!--</script>-->
+
+<?php
+$title = '用户管理';
 $this->headTitle($title);
 ?>
-<h3><?php echo $this->escapeHtml($title);?></h3>
-<ul class="nav nav-tabs">
-    <li>
-        <a href="#add" data-toggle="tab" id="add">
-            新增用户
-        </a>
-    </li>
-    <li class="active">
-        <a href="#other" data-toggle="tab" id="other">
-            管理其他用户
-        </a>
-    </li>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
+    <?php
+    echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"addUser"))."' >新增用户</a></li>";
+    echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"others"))."' >管理其他用户</a></li>";
+    ?>
 </ul>
 
+<h3>已设项</h3>
+<?php
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
+        }
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
+        }
+    }
+    return $obj;
+}
 
-<div id="mtTabContent" class="tab-content" style="margin-top: 20px">
-    <div class="row">
-        <?php
-        $searchForm = $this->searchForm;
-        $searchForm->setAttribute('action', $this->url('manage/default', array('controller' => 'systemManagement','action' => 'others')));
-        $searchForm->setAttribute('method','POST');
-        $searchForm->prepare();
-        echo $this->form()->openTag($searchForm);
-        ?>
-        <div class="col-md-2 col-xs-3" style="margin-bottom: 15px">
-            <!-- <?php echo $this->formRow($searchForm->get('column'));?> -->
-            <select id="column" name="column" class="form-control" style="width:auto;margin-right:20px;">
-                <option value="">请选择查询项</option>
-                <option value="Uname">用户名</option>
-                <option value="Realname">姓名</option>
-                <option value="Mobile">移动电话</option>
-                <option value="Email">电子邮箱</option>
-                <option value="YXSM">学院</option>
-            </select>
-        </div>
-        <div class="col-md-3 col-xs-5" style="margin-bottom: 15px">
-            <?php echo $this->formRow($searchForm->get('parame'));?>
-        </div>
-        <div class="col-md-3 col-xs-6" style="margin-left: 20px;">
-            <?php echo $this->formSubmit($searchForm->get('submit'));?>
-        </div>
-        <?php echo $this->form()->closeTag();?>
-    </div>
-    <div id="mtTabContent" class="tab-content" style="margin-top: 20px">
-        <div class="row">
-                <input type="hidden" id="sms_api" name="sms_api" value="<?php echo $this->sms_api;?>" />
+if(isset($this->teacher)){
+    echo "<table class='table table-hover'>";
+    echo "<tr>";
+    foreach ($this->column as $key => $value){
+        echo "<th>$value</th>";
+    }
+    echo "</tr>";
+    foreach ($this->teacher as $timer){
+        //var_dump($univer);
+        $uniarr = object_to_array($timer);
+        $aaa=json_encode($uniarr);
+        $str = 'editform('.$aaa.')';
+        //echo $str;
+        foreach ($this->column as $key => $value){
 
-                <button type="button" class="btn btn-default" id="all">全选</button>&nbsp;&nbsp;<button type="button" class="btn btn-default" id="allno">全不选</button>
-
-                <button id="edit_and_send" value="checker_notice_content0" class="btn btn-primary">通知选中人员</button>
-
-                <button type="button" class="btn btn-info" onclick="update_page();">刷新</button>
-            </div>
-        </div>
-    </div>
-
-    <form name="examserv"  id="choose_target">
-    <table class="table table-hover" style="margin-top: 20px">
-        <thead>
-        <tr>
-            <th>选择</th>
-            <th>姓名</th>
-            <th>用户名</th>
-            <th>学院</th>
-            <th>移动电话</th>
-            <th>电子邮箱</th>
-            <th>操作</th>
-            <th>发送详情</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        $Rname = array(
-            'secretory' => '教学秘书',
-            'monitor' => '监考人员',
-            'service' => '考务服务人员',
-            'grad_service' => '考务服务人员（研究生院）',
-            'marker' => '阅卷人员',
-            'checker' => '第一核分人',
-            'recorder' => '成绩录入人员',
-            'checker2' => '第二核分人',
-        );
-        ?>
-        <?php $college_info = $this->college_info;?>
-        <?php foreach ($this->paginator as $key=>$account): ?>
-            <tr>
-                <td><input type='checkbox' value='<?php echo $account->Uid?>' name='uid[]' class='forclick'/></td>
-                <td><?php echo $this->escapeHtml($account->Realname);?></td>
-                <td><?php echo $this->escapeHtml($account->Uname);?></td>
-                <td><?php echo $this->escapeHtml($college_info[$account->YXSM]);?></td>
-                <td name = 'Mobile'><?php echo $this->escapeHtml($account->Mobile);?></td>
-                <td><?php echo $this->escapeHtml($account->Email);?></td>
-                <td>
-                    <a href="javascript:void (0);"
-                       onclick="edit('<?php echo $account->Uid; ?>',
-                           '<?php echo $account->Uname; ?>',
-                           '<?php echo $account->Mobile; ?>',
-                           '<?php echo $account->Email; ?>',
-                           '<?php echo $account->Rid; ?>');">编辑</a>
-                    &nbsp;|&nbsp;
-                    <a href="javascript:void (0);"
-                       onclick="del('<?php echo $account->Uname; ?>',
-                           '<?php echo $account->Uid; ?>');">删除</a>
-                </td>
-                <td name = 'is_send'></td>
-            </tr>
-        <?php endforeach;?>
-        </tbody>
-    </table>
-    </form>
-    <div class="modal fade" id="sendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    发送中……
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    刷新中……
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                        &times;
-                    </button>
-                    <h4 class="modal-title" id="myEditModalLabel">
-                        系统通知
-                    </h4>
-                </div>
-                <div class="modal-body" id="returnText">发送成功</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="sure">
-                        确定
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="noticeEditModal" tabindex=-1  aria-lablledby="myEditModalLabel" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                        &times;
-                    </button>
-                    <h4 class="modal-title" id="myEditModalLabel">
-                        发送通知
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="notice_content" class="control-label">发送方式：</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <input type="radio" name="send_method" checked value="2" onclick="show_title(0);">短信
-                    </div>
-                    <div class="form-group" id="customer_receiver" style="display: none;">
-                        <label for="notice_content" class="control-label">接收者：</label>
-                        <input type="text" >
-                    </div>
-                    <div class="form-group">
-                        <label for="notice_content" class="control-label">编辑通知内容：</label>
-                        <br>
-                        <textarea class="form-control" name="notice_content" id="notice_content" style="height:80px;"></textarea>
-                    </div>
-                    <!--
-                    <div class="form-group">
-                        <button type="button" class="btn btn-primary" id="editNoticeMessage" style="float: left">保存修改</button>
-                    </div>
-                    -->
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary" id="sendNoticeMessage" style="float: right">确认发送</button>
-                    </div>
-                    <br>
-                </div>
-
-                <div class="modal-footer">
-                </div>
-            </div><!-- /.modal-content -->
-        </div>
-    </div>
-
-    <!-- 更改信息模态框（EditModal） -->
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                        &times;
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">
-                        修改账户信息
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <?php
-                    $form = $this->form;
-                    echo $this->form()->openTag($form);
-                    echo $this->formHidden($form->get('Uid'));
-                    echo "<div class=\"form-group\">";
-                    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">用户名</label>";
-                    echo "<div class=\"col-sm-9\">".$this->formRow($form->get('Uname'))."</div></div>";
-                    //echo $this->formRow($form->get('Password'))."<br>";
-                    echo "<div class=\"form-group\">";
-                    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">移动电话</label>";
-                    echo "<div class=\"col-sm-9\">".$this->formRow($form->get('Mobile'))."</div></div>";
-
-                    echo "<div class=\"form-group\">";
-                    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">电子邮箱</label>";
-                    echo "<div class=\"col-sm-9\">".$this->formRow($form->get('Email'))."</div></div>";
-                    echo $this->formHidden($form->get('Rid'));
-
-//                    echo "<div class=\"form-group\">";
-//                    echo "<label for=\"firstname\" class=\"col-sm-2 control-label\">角色</label>";
-//                    echo "<div class=\"col-sm-9\">".$this->formRow($form->get('Rid'))."</div></div>";
-                    ?>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消
-                    </button>
-                    <button type="submit" class="btn btn-primary" >
-                        确认修改
-                    </button>
-                </div>
-                <?php echo $this->form()->closeTag(); ?>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
-    </div>
-    <!-- 删除用户模态框（DeleteModal） -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                        &times;
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">
-                        删除用户
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    确认删除用户<span id="deleteName"></span>?
-                </div>
-                <div class="modal-footer">
-                    <form action="<?php echo $this->url('account/default', array('controller'=>'manage','action' => 'others')); ?>" method="post">
-                        <input type="hidden" id="deleteId" name="deleteId" />
-                        <input type="hidden" name="del" value="del" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消
-                        </button>
-                        <button type="submit" class="btn btn-primary" >
-                            确认
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php
-//    echo $this->paginationControl($this->paginator, 'Sliding', 'pagination/accountSearch.phtml');
-    if($this->msg)
-        echo "<script>alert('".$this->msg."');</script>";
+            if ($key == 'id')
+                echo "<td id='id'>".$uniarr[$key]."</td>";
+//            else if($key == 'status')
+//            {
+//                if ($uniarr[$key] == -1) {
+//                    echo "<td>关</td>";
+//                }
+//                else {
+//                    echo "<td>开</td>";
+//                }
+//            }
+//            else if ($key == 'sta') {
+//                if ($uniarr[$key] == 0) {
+//                    echo "<td>已截止</td>";
+//                }
+//                else {
+//                    echo "<td>进行中</td>";
+//                }
+//            }
+            else if ($key == 'oprat')
+            {
+                //$id = $uniarr['id'];
+                //echo "id---------------------->".$id;
+                echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
+            }
+            else
+                echo "<td>".$uniarr[$key]."</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
+$url_arr = '/manage/systemManagement/others/param1/';
+if(isset($url_arr)){
+    $get_param = "";
+    for($i=1;$i<=5;$i++){
+        if(isset($url_arr['param'.$i])){
+            $get_param .= "/param".$i."/".$url_arr['param'.$i];//$url_arr['param'.$i];
+        }
+    }
+}
+$url = '/manage/systemManagement/others/param1/';
+if ($this->pageCount):
     ?>
-    <?php
-    echo $this->paginationControl(
-        $this->results,
-        'Sliding',
-        'pagination/othersPaginator',
-        array(
-            'route' => 'manage/systemManagement/others',
-            'column' => $this->column,
-            'parame' => $this->parame,
-        ));
-    ?>
+
+    <div class="paginationControl">
+        <!-- Previous page link -->
+        共计<?php echo $this->total_num?$this->total_num:0 ;?>条数据
+        <?php if (isset($this->previous)): ?>
+            <a href="<?php echo $url. $this->previous .$get_param; ?>">
+                < 上一页
+            </a> |
+        <?php else: ?>
+            <span class="disabled">< 上一页</span> |
+        <?php endif; ?>
+
+        <!-- Numbered page links -->
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $this->current): ?>
+                <a href="<?php echo $url. $page .$get_param;?>">
+
+                    <?php echo $page; ?>
+                </a> |
+            <?php else: ?>
+                <?php echo $page; ?> |
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <!-- Next page link -->
+        <?php if (isset($this->next)): ?>
+            <a href="<?php echo $url. $this->next; ?>">
+                下一页 >
+            </a>
+        <?php else: ?>
+            <span class="disabled">下一页 ></span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<div class="modal fade" id="myEditModal" tabindex=-1  aria-lablledby="myEditModalLabel" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="myEditModalLabel">修改时间设置</h3>
+            </div>
+            <div class="modal-body">
+                <?php
+                $form1 = $this->form1;
+                $form1->setAttribute('action',$this->url('manage/default',array('controller'=>'systemManagement','action'=>'others')));
+                $form1->setAttribute('method','POST');
+                $form1->prepare();
+
+                echo $this->form()->openTag($form1);?>
+                <div class="row">
+                    <div class="span4"><?php echo $this->formLabel($form1->get('Uname')); ?></div>
+                    <div class="span7" readonly="true" disabled="true"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('Uname')); ?><span class = 'message1'>（不可更改）</span></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('Realname')); ?></div>
+                    <div class="span10"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('Realname')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span3"><?php echo $this->formLabel($form1->get('Password')); ?></div>
+                    <div class="span10"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('Password')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span4"><?php echo $this->formLabel($form1->get('Password2')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('Password2')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span4"><?php echo $this->formLabel($form1->get('Mobile')); ?></div>
+                    <div class="span7"><?php echo $this->formElement($form1->get('Mobile')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span4"><?php echo $this->formLabel($form1->get('Email')); ?></div>
+                    <div class="span7"><?php echo $this->formElement($form1->get('Email')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span4"><?php echo $this->formLabel($form1->get('YXSM')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('YXSM')); ?></div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="span4"><?php echo $this->formLabel($form1->get('Rid')); ?></div>
+                    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form1->get('Rid')); ?></div>
+                </div>
+                <br>
+            </div>
+            <div class="modal-footer" >
+                <button type="submit" class="btn btn-primary" id="confirmEdit" >确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <?php
+                $this->form()->closeTag();
+                ?>
+            </div>
+        </div>
+    </div>
 </div>
+
 <script type="application/javascript">
-    function update_page() {
-        $("#updateModal").modal();
-        $("#updateModal").modal('hide');
-
-        var is_send_data = document.getElementsByName("Mobile");
-        var connect_array = new Array();
-        for (var i = 0; i < is_send_data.length; i++) {
-            connect_array.push(new Array(is_send_data[i].innerHTML));
-        }
-        connect_array = JSON.stringify(connect_array);
-        console.log(connect_array);
-
-        $.ajax({
-            type: 'POST',
-            data: {
-                'data':connect_array
-            },
-            url: '/sms/send/getSendStatus',
-            dataType: 'json',
-            error: function() {
-                console.log("ajax error");
-            },
-            success: function (rec_data) {
-                console.log(rec_data);
-                var target = document.getElementsByName('is_send');
-                for(var i = 0;i<target.length;i++){
-                    target[i].innerHTML =  "电话 (<font color='green' '>"+rec_data[i][0]+"</font>|<font color='red'>"+rec_data[i][1]+"</font>)";
-                }
-            }
+    //编辑学生成绩
+    function editform(item) {
+        //去掉名字中间的空格
+        //var item=JSON.stringify(items);
+        //alert(item.name);
+        $("#names").attr('value',item.name);
+        $("#start_times").attr('value',item.start_time);
+        $("#end_times").val(item.end_time);
+        $("#statuss").val(item.status);
+        $("#descriptions").val(item.description);
+        $("#confirmEdit").click(function()
+        {
+            $.post('manage/SystemManagement/others',function()
+            {
+                //location.reload();
+            });
         });
+        //s$("#myEditModal").modal('toggle');
     }
 </script>
-<script type="text/javascript">
-    $("#column").val("<?php echo isset($_GET['column'])?$_GET['column']:NULL ?>");
-    $("#parame").val("<?php echo isset($_GET['parame'])?$_GET['parame']:NULL ?>");
-</script>
-<script type="application/javascript">
 
-    $(function(){
-        $('#Uname').attr('disabled',true);
-    });
-    $(document).ready(function () {
-        update_page();
-
-        document.getElementById('notice_content').innerText = '您的账号已注册，请及时登录考务系统修改密码，登录初始用户名为您的邮箱，初始密码为您的工号。';
-        var k = getUrlParam('key');
-        if(k != null)
-            $("#roles").val(k);
-    });
-    function getUrlParam(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg); //匹配目标参数
-        if (r != null) return decodeURI(r[2]); return null; //返回参数值
-    }
-    $("#add").click(function () {
-        window.location.replace("<?php echo $this->url('manage/default',array('controller'=>'systemManagement','action' => 'addUser')); ?>");
-    });
-    function change() {
-        var $key = $("#roles option:selected").val();
-        window.location.replace("<?php echo $this->url('manage/default',array('controller'=>'systemManagement','action' => 'others')); ?>"+"?x=1&key="+$key);
-    }
-    function edit(uid, name, mobile, email, rid) {
-        $("#Uid").attr('value', uid);
-        $("#Uname").attr('value', name);
-        $("#Mobile").attr('value', mobile);
-        $("#Email").attr('value', email);
-        $("#Rid").val(rid);
-        $("#editModal").modal();
-    }
-    function del(uname, uid) {
-        $("#deleteName").html(uname);
-        $("#deleteId").attr('value', uid);
-        $("#deleteModal").modal();
-    }
-    $("#all").click(function(){
-        var allpro=document.getElementsByName("uid[]");
-        for (var i = 0; i < allpro.length; i++) {
-            if (allpro[i].type=="checkbox") {
-                allpro[i].checked=true;
-            }
-        }
-    });
-    $("#allno").click(function(){
-        var allpro=document.getElementsByName("uid[]");
-        for (var i = 0; i < allpro.length; i++) {
-            if (allpro[i].type=="checkbox") {
-                allpro[i].checked=false;
-            }
-        }
-    });
-    $("#edit_and_send").click(function () {
-        var key = $(this).val();
-        if ($("#choose_target").serializeArray().length == 0)
-            alert("请选择发送人员");
-        else {
-            $("#noticeEditModal").modal();
-            $("#editNoticeMessage").val(key);
-        }
-    });
-    $("#sendNoticeMessage").click(function () {
-        // 获取手机，邮箱发送列表
-        var phoneStr = "";
-        var phone_send_num = 0, total_num = 0, send_success_num;     // 为发送后提示框提供数据
-        var data = document.getElementsByName("uid[]");
-        var Mobile_data = document.getElementsByName("Mobile");
-        for (var i = 0; i < data.length; i++) {
-            if (data[i].checked){
-                // console.log(data[i]);
-                var phone = Mobile_data[i].innerHTML;
-                // console.log(phone);
-
-                if (phone != "null") {
-                    if (phoneStr == "") phoneStr = phone;
-                    else                phoneStr += (";"+phone);
-                    phone_send_num++;
-                }
-                total_num++;
-            }
-        }
-        console.log(phoneStr);
-
-        // 获取发送内容
-        var content = document.getElementById("notice_content").value;
-
-        // 获取发送方式
-        var send_method = "phone";
-
-        // 进行发送
-        data = {
-            'receiver': phoneStr,
-            'content':content,
-        };
-        send_success_num = phone_send_num;
-
-
-        var send_url = document.getElementById('sms_api').value;
-        var sendModal = $('#sendModal');
-        sendModal.modal();
-        var confirmModal = $('#confirmModal');
-        $("#noticeEditModal").modal('hide');
-
-
-        $.ajax({
-            type:"POST",
-            url:send_url,
-            data:data,
-            success:function(result){
-                sendModal.modal('hide');
-                //$('#returnText').html(result);
-                $('#returnText').html("发送成功："+(send_success_num)+"； 发送失败："+(total_num-send_success_num));
-                confirmModal.modal('show');
-            },
-            error : function(XMLHttpRequest, textStatus, errorThrown){
-                sendModal.modal('hide');
-                $('#returnText').html(errorThrown);
-                confirmModal.modal('show');
-            }
-        });
-
-    });
-</script>
-
-</body>
-</html>

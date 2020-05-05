@@ -81,7 +81,9 @@ if($this->flag == 1)
     echo $this->form()->openTag($form);?>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('college_id')); ?></div>
-        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('college_id')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('college_id')); ?>
+        <span>（例：001依次递增）</span>
+        </div>
     </div>
     <br>
     <div class="row">
@@ -96,7 +98,8 @@ if($this->flag == 1)
     <br>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('ip_address')); ?></div>
-        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('ip_address')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('ip_address')); ?>
+        <span>（例：https://www.***.com/）</span></div>
     </div>
     <br>
     <div class="row">
@@ -141,7 +144,7 @@ if(isset($this->college)){
             if ($key == 'oprat')
             {
                 ?>
-                <td><button type='button' class="btn btn-danger"><a href="<?php echo $this->url('manage/default',array('controller'=>'SystemManagement','action'=>'deleteCollege','uid' => $uniarr[$id]));?>" onclick="return confirm('确认删除吗?')">删除</a></button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <td><button type='button' class="btn btn-danger"><a style="color: white" href="<?php echo $this->url('manage/default',array('controller'=>'SystemManagement','action'=>'deleteCollege','uid' => $uniarr[$id]));?>" onclick="return confirm('确认删除吗?')">删除</a></button>&nbsp;&nbsp;&nbsp;&nbsp;
                 <?php   echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
             }
             else

@@ -8,8 +8,11 @@
     提示：请从以下选择你要备份的数据
 </h4>
 <br/>
-<button class="btn-primary btn"><a style="" href="<?php echo $this->basePath($this->data_addr1)?>" download="<?php echo $this->file_name1;?>">备份数据库数据</a></button>
+<button class="btn-primary btn"><a href="<?php echo $this->basePath($this->data_addr1)?>" download="<?php echo $this->file_name1;?>">备份数据库数据</a></button>
 <br/><br>
-<button class="btn-primary btn"><a style="" href="<?php echo $this->basePath($this->data_addr2)?>" download="<?php echo $this->file_name2;?>">备份用户上传资料</a></button>
-
-
+<button class="btn-primary btn"><a href="<?php echo $this->basePath($this->data_addr2)?>" download="<?php echo $this->file_name2;?>">备份用户上传资料</a></button>
+<form action="/manage/Setting/backupRecover" method="post" enctype="multipart/form-data">
+    <h4>提示：备份的数据库数据进行恢复</h4>
+    <input type="file" name="uploadSqlFile" id="uploadSqlFile"></br>
+    <button class="btn-primary btn" type="submit">备份数据恢复</button>
+</form>

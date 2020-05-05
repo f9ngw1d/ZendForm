@@ -65,7 +65,7 @@ class TStuInfoController extends AbstractActionController
             $graduate_prof_class = empty($this->getUnderSubjectTable()->getUnderSubject($stu_info->graduate_professional_class)->name) ? '未填写' : $this->getUnderSubjectTable()->getUnderSubject($stu_info->graduate_professional_class)->name;
             $rank1=empty($stu_info->ranking)?'无':$stu_info->ranking;
             $rank2=empty($stu_info->pro_stu_num)?'无':$stu_info->pro_stu_num;
-            $photo_add="/img/stu/".$uid."/einfo/1/1_1.";
+            $photo_add="/img/student/".$uid."/einfo/1/1_1.";
             $server_root=$_SERVER['DOCUMENT_ROOT'];
             if(file_exists($server_root.$photo_add."jpg")==true){
                 $photo_add_dir=$photo_add."jpg";
@@ -98,7 +98,7 @@ class TStuInfoController extends AbstractActionController
             //add for show things
             $project_table =  $this->getStuProjectTable()->getProjectByUid($uid);
             $honour_table =  $this->getStuHonorTable()->getHonourByUid($uid);
-            $einfo_addr ="/img/stu/" ; //凭证存储的位置,del要访问这里
+            $einfo_addr ="/img/student/" ; //凭证存储的位置,del要访问这里
             $einfo_list = $this->getElectronicinfoTable()->fetchAll();//取学生被要求上传的电子文件信息
             $srcArr = array();
             $einfomapsurfix =array();

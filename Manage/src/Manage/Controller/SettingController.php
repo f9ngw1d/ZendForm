@@ -17,6 +17,7 @@ class SettingController extends AbstractActionController
 {
 
     protected $TStuBaseTable;
+    protected $TBaseCollegeTable;
 
     public function __construct(){
         $rid_arr_container = new Container('rid');
@@ -26,6 +27,14 @@ class SettingController extends AbstractActionController
             echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
             exit();
         }
+    }
+    public function getTBaseCollegeTable()
+    {
+        if (!$this->TBaseCollegeTable) {
+            $sm = $this->getServiceLocator();
+            $this->TBaseCollegeTable = $sm->get('Manage\Model\TBaseCollegeTable');
+        }
+        return $this->TBaseCollegeTable;
     }
     public $config_table;
     /*author:lrn
@@ -211,15 +220,17 @@ class SettingController extends AbstractActionController
         $filename1='tmk_database'.date("Y-m-d").'-'.time();
         $dir1="tmkbackup";
         $file_path2="mkdir tmkbackup";
-        chdir("/usr/local/www/tm/public");
+        chdir("/usr/local/www/xly/public");
         //echo "当前路径：".getcwd() . "<br>";
         if(is_dir($dir1)){
-        }else{
+
+        }
+        else{
             $res=mkdir($dir1,0777,true);
         }
         // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
-        $db_name="new_freetest";
-        $name="/usr/local/www/tm/public/".$dir1."/".$filename1.".sql";//数据库文件存储路径
+        $db_name="student_camp";
+        $name="/usr/local/www/xly/public/".$dir1."/".$filename1.".sql";//数据库文件存储路径
         $exec="mysqldump --databases ".$db_name." > ".$name;
         $result=exec($exec);
 //        return array(
@@ -230,7 +241,7 @@ class SettingController extends AbstractActionController
         $source_dir2="./img/stu/*";
         $dir2="tmkbackup";
         $file_path="mkdir tmkbackup";
-        chdir("/usr/local/www/tm/public");
+        chdir("/usr/local/www/xly/public");
         // echo "当前路径：".getcwd() . "<br>";
         if(is_dir($dir2)){
             //echo "yicunzai  mulu";
@@ -257,49 +268,44 @@ class SettingController extends AbstractActionController
     }
     public function deleteAction()
     {
-        $sql_query = "Delete From base_team";
-        $sql_query1 = "Delete From base_college";
-        $sql_query2 = "Delete From base_staff";
-        $sql_query3 = "Delete From info_article";
-        $sql_query4 = "Delete From info_mail";
-        $sql_query5 = "Delete From info_text";
-        $sql_query6 = "Delete From info_validatemail";
-        $sql_query7 = "Delete From manage_filtercondition";
-        $sql_query8 = "Delete From manage_subject_map";
-        $sql_query9 = "Delete From manage_time";
-        $sql_query10 = "Delete From stu_base";
-        $sql_query11 = "Delete From stu_check";
-        $sql_query12 = "Delete From stu_einfo_map";
-        $sql_query13 = "Delete From stu_electronic";
-        $sql_query14 = "Delete From stu_honnor";
-        $sql_query15 = "Delete From stu_project";
-        $sql_query16 = "Delete From stu_reexam_result";
-        $sql_query17 = "Delete usr_user_role From usr_user_role,usr_stu WHERE usr_user_role.uid = usr_stu.uid";
-        $sql_query18 = "Delete usr_user_role From usr_user_role,usr_teacher WHERE usr_teacher.uid = usr_user_role.uid AND rid <> 10 AND rid <> 99";
-        $sql_query19 = "Delete From usr_stu";
-        $sql_query20 = "Delete From usr_teacher";
+        $this->getTBaseCollegeTable()->deleteAll();
+        $redirect_url = "/info";
+        echo "<script language='javascript'>window.location.href='".$redirect_url."';</script>";
+    }
+    public function backupRecoverAction()
+    {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            var_dump($_FILES["uploadSqlFile"]);
+            $dir1 = "backupsql";
+            if ($_FILES["uploadSqlFile"]["error"] > 0)
+            {
+                echo "错误：" . $_FILES["uploadSqlFile"]["error"] . "<br>";
+            }
+            $filename = date("YmdHis").rand(100,999).".sql";
+            if(is_dir("/usr/local/www/xly/public/".$dir1)){
 
-        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
-        $rowSet1 = $this->tableGateway->getAdapter()->query($sql_query1)->execute();
-        $rowSet2 = $this->tableGateway->getAdapter()->query($sql_query2)->execute();
-        $rowSet3 = $this->tableGateway->getAdapter()->query($sql_query3)->execute();
-        $rowSet4 = $this->tableGateway->getAdapter()->query($sql_query4)->execute();
-        $rowSet5 = $this->tableGateway->getAdapter()->query($sql_query5)->execute();
-        $rowSet6 = $this->tableGateway->getAdapter()->query($sql_query6)->execute();
-        $rowSet7 = $this->tableGateway->getAdapter()->query($sql_query7)->execute();
-        $rowSet8 = $this->tableGateway->getAdapter()->query($sql_query8)->execute();
-        $rowSet9 = $this->tableGateway->getAdapter()->query($sql_query9)->execute();
-        $rowSet10 = $this->tableGateway->getAdapter()->query($sql_query10)->execute();
-        $rowSet11 = $this->tableGateway->getAdapter()->query($sql_query11)->execute();
-        $rowSet12 = $this->tableGateway->getAdapter()->query($sql_query12)->execute();
-        $rowSet13 = $this->tableGateway->getAdapter()->query($sql_query13)->execute();
-        $rowSet14 = $this->tableGateway->getAdapter()->query($sql_query14)->execute();
-        $rowSet15 = $this->tableGateway->getAdapter()->query($sql_query15)->execute();
-        $rowSet16 = $this->tableGateway->getAdapter()->query($sql_query16)->execute();
-        $rowSet17 = $this->tableGateway->getAdapter()->query($sql_query17)->execute();
-        $rowSet18 = $this->tableGateway->getAdapter()->query($sql_query18)->execute();
-        $rowSet19 = $this->tableGateway->getAdapter()->query($sql_query19)->execute();
-        $rowSet20 = $this->tableGateway->getAdapter()->query($sql_query20)->execute();
-        return $this->redirect()->toRoute('manage/default');
+            }
+            else{
+                $res=mkdir("/usr/local/www/xly/public/".$dir1,0777,true);
+            }
+            if(is_uploaded_file($_FILES['uploadSqlFile']['tmp_name'])){
+                if(!move_uploaded_file($_FILES["uploadSqlFile"]["tmp_name"], "/usr/local/www/xly/public/".$dir1."/" . $filename))
+                {
+                    echo "不能将文件移动到指定目录";
+                }
+                else{
+                    echo "存储在: " . "/usr/local/www/xly/public/".$dir1."/" . $filename;
+                }
+            }
+            else{
+                echo "上传文件：".$_FILES['uploadSqlFile']['name']."不是一个合法文件";
+            }
+            $name="/usr/local/www/xly/public/".$dir1."/".$filename;//数据库文件存储路径
+            echo $name;
+            exec("mysql student_camp <".$name);
+        }
+        $redirect_url = "http://211.71.149.246/manage/Setting/deleteAllData";
+        echo "<script language='javascript'>window.location.href='".$redirect_url."';</script>";
     }
 }

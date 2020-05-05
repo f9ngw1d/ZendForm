@@ -7,7 +7,7 @@ use Zend\Form\Element\Radio;
 
 class PersonalForm extends Form
 {
-    public function __construct($name = null)
+    public function __construct($roles,$search_college_arr)
     {
         parent::__construct('new-account');
         $this->setAttribute('method','post');
@@ -23,6 +23,9 @@ class PersonalForm extends Form
 
         $this->add(array(
             'name'=>'Uname',
+            'options' => array(
+                'label' => '用户名',
+            ),
             'attributes' => array(
                 'type'  => 'text',
                 'id'=>'Uname',
@@ -32,6 +35,9 @@ class PersonalForm extends Form
 
         $this->add(array(
             'name' => 'Realname',
+            'options' => array(
+                'label' => '真实姓名',
+            ),
             'attributes' => array(
                 'type' => 'text',
                 'id' => 'Realname',
@@ -41,6 +47,9 @@ class PersonalForm extends Form
 
         $this->add(array(
             'name'=>'Password',
+            'options' => array(
+                'label' => '密码',
+            ),
             'attributes' => array(
                 'type'  => 'password',
                 'class'=>'form-control',
@@ -49,22 +58,9 @@ class PersonalForm extends Form
 
         $this->add(array(
             'name'=>'Password2',
-            'attributes' => array(
-                'type'  => 'password',
-                'class'=>'form-control',
+            'options' => array(
+                'label' => '确认密码',
             ),
-        ));
-
-        $this->add(array(
-            'name'=>'new_pwd',
-            'attributes' => array(
-                'type'  => 'password',
-                'class'=>'form-control',
-            ),
-        ));
-
-        $this->add(array(
-            'name'=>'new_pwd2',
             'attributes' => array(
                 'type'  => 'password',
                 'class'=>'form-control',
@@ -73,6 +69,9 @@ class PersonalForm extends Form
 
         $this->add(array(
             'name'=>'Mobile',
+            'options' => array(
+                'label' => '移动电话',
+            ),
             'attributes' => array(
                 'type'  => 'text',
                 'id'=>'Mobile',
@@ -82,6 +81,9 @@ class PersonalForm extends Form
 
         $this->add(array(
             'name'=>'Email',
+            'options' => array(
+                'label' => '电子邮箱',
+            ),
             'attributes' => array(
                 'type'  => 'text',
                 'id'=>'Email',
@@ -97,9 +99,9 @@ class PersonalForm extends Form
                 'class'=>'form-control',
             ),
             'options'=>array(
-                'value_options'=>array(
-                    '信息学院',
-                ),
+                'label' => '院系所',
+                'empty_option' => '请选择',
+                'value_options' => $search_college_arr,
             ),
         ));
 
@@ -111,17 +113,13 @@ class PersonalForm extends Form
                 'class'=>'form-control',
             ),
             'options'=>array(
-                'value_options'=>array(
-//                    '学院负责人',
-//                    '研究生院',
-//                    '院科研秘书',
-//                    '组长',
-//                    '超级管理员',
-                ),
+                'label' => '用户角色',
+                'empty_option' => '请选择',
+                'value_options'=> $roles,
             ),
         ));
 
-        
+
         $this->add(array(
             'name' => 'submit',
             'attributes' => array(
