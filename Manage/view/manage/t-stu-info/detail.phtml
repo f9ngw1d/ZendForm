@@ -114,21 +114,21 @@ if (isset($this->nav)) {
 <h3><?php echo $this->escapeHtml($title); ?></h3>
 <?php
 if(in_array(1,$this->rid) ){
-    echo "<a class='btn btn-primary'  style='color: white;' href='/Student/info/stuPDF/uid/".$this->uid."' target='_blank'>导出复试登记表</a>";
+    echo "<a class='btn btn-primary'  style='color: white;' href='/manage/TStuInfo/stuPDF/uid/".$this->uid."' target='_blank'>导出复试登记表</a>";
     if($this->stu_info['apply_type']=='直博')
-        echo "<a class='btn btn-primary'  style='color: white;' href='/Student/info/zhiboPDF/uid/".$this->uid."' target='_blank'>导出直博确认表</a>";
+//        echo "<a class='btn btn-primary'  style='color: white;' href='/Student/info/zhiboPDF/uid/".$this->uid."' target='_blank'>导出直博确认表</a>";
     echo "<br>
 <span style='color: red; font-size: medium;'>1、请确认个人信息准确无误后再进行打印<br></b></span>
 <span style='color: red; font-size: medium;'>2、复式时请携带此复式单纸质版（双面打印）<br></b></span>";
     if($this->stu_info['apply_type']=='直博'){
-        echo "<span style='color: red; font-size: medium;'>3、直博生须同时打印两份文件，复试时携带（双面打印）<br></b></span>";
+//        echo "<span style='color: red; font-size: medium;'>3、直博生须同时打印两份文件，复试时携带（双面打印）<br></b></span>";
     }
-}/*
-if(in_array(10,$this->rid)|| in_array(9,$this->rid) || in_array(11,$this->rid)){
-    echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/stuPDF/uid/".$this->uid."' target='_blank'>导出复试登记表</a>";
-    if($this->stu_info['apply_type']=='直博')
-        echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/zhiboPDF/uid/".$this->uid."' target='_blank'>导出直博确认表</a>";
-}*/
+}
+if(in_array(10,$this->rid)|| in_array(9,$this->rid) || in_array(11,$this->rid) || in_array(99,$this->rid)){
+    echo "<a class='btn btn-primary'  style='color: white;' href='/manage/TStuInfo/stuPDF/uid/".$this->uid."' target='_blank'>导出复试登记表</a>";
+//    if($this->stu_info['apply_type']=='直博')
+//        echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/zhiboPDF/uid/".$this->uid."' target='_blank'>导出直博确认表</a>";
+}
 //if($this->stu_info['apply_type']=='直博')
   //  echo "<a class='btn btn-primary'  style='color: white;' href='/stu/stu/zhiboPDF/uid/'".$this->uid." target='_blank'>导出直博确认表</a>";
 ?>
@@ -267,7 +267,7 @@ if(in_array(10,$this->rid)|| in_array(9,$this->rid) || in_array(11,$this->rid)){
             </td>
             <td class="span7">
                 <?php
-                if( $this->einfo_status[$row->id]){//已上传
+                if( isset($this->einfo_status[$row->id])){//已上传
                     echo "已上传：".$this->einfo_status[$row->id];//显示上传了的文件
                     echo "<br>";
 

@@ -1,12 +1,17 @@
 <?php
 namespace Manage\Form;
 
+use Manage\Model\SystemManagement;
 use Zend\Form\Form;
 use Zend\Form\Element\Select;
 use Zend\Form\Element\Radio;
+use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterProviderInterface;
+use Zend\Validator\Identical\EmailAddress;
 
-class PersonalForm extends Form
+class PersonalForm extends Form implements InputFilterProviderInterface
 {
+    protected $inputFilter;
     public function __construct($roles,$search_college_arr)
     {
         parent::__construct('new-account');
@@ -24,12 +29,13 @@ class PersonalForm extends Form
         $this->add(array(
             'name'=>'Uname',
             'options' => array(
-                'label' => '用户名',
+                'label' => '账号',
             ),
             'attributes' => array(
                 'type'  => 'text',
                 'id'=>'Uname',
                 'class'=>'form-control',
+                'placeholder' => '请使用老师邮箱作为账号'
             ),
         ));
 
@@ -53,6 +59,7 @@ class PersonalForm extends Form
             'attributes' => array(
                 'type'  => 'password',
                 'class'=>'form-control',
+                'placeholder' => '密码由6-24个数字或字母组成'
             ),
         ));
 
@@ -76,6 +83,7 @@ class PersonalForm extends Form
                 'type'  => 'text',
                 'id'=>'Mobile',
                 'class'=>'form-control',
+                'placeholder' => '请填入11位数字号码'
             ),
         ));
 
@@ -88,6 +96,7 @@ class PersonalForm extends Form
                 'type'  => 'text',
                 'id'=>'Email',
                 'class'=>'form-control',
+                'placeholder' => '例：xxx@xxx.xxx'
             ),
         ));
 
@@ -130,5 +139,149 @@ class PersonalForm extends Form
             ),
         ));
 
+    }
+
+    public function getInputFilter()
+    {
+        if (!$this->inputFilter) {
+            $inputFilter = new InputFilter();
+
+            $inputFilter->add(array(
+                'name'     => 'Uname',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),//去除前后空格
+                ),
+                'validators' => array(
+                    array('name' => 'NotEmpty'),
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 50,
+                        ),
+                    ),
+                ),
+            ));
+            $inputFilter->add(array(
+                'name'     => 'Realname',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'Password',
+                'required'	=> true,		//必需的
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 6,
+                            'max'      => 24,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'Password2',
+                'required'	=> true,		//必需的
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 6,
+                            'max'      => 24,
+                        ),
+                    ),
+                    array(
+                        'name'    => 'Identical',//检验是否和password1相同，Zend\Validator\Identical可以用于检验另一个元素和自己是否相同
+                        'options' => array(
+                            'token' => 'Password',
+                        ),
+                    )
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'Mobile',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                    array(
+                        'name' => 'StringLength',//限制长度
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 11,
+                            'max'      => 11,
+                        ),
+                    ),
+                    array('name' => 'Digits')//必须为数字字符
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'Email',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                    array(
+                        'name' => 'StringLength',//限制长度
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 3,
+                            'max'      => 256,
+                        ),
+                    ),
+//                    array('name' => 'EmailAddress'),//检验邮箱格式，Zend\Validator\Identical\EmailAddress专门用于检验邮箱格式
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'YXSM',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'Rid',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+            $this->inputFilter = $inputFilter;
+        }
+        return $this->inputFilter;
+    }
+
+    public function getInputFilterSpecification(){
     }
 }

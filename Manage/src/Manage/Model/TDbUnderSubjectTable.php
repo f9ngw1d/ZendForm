@@ -120,7 +120,15 @@ class TDbUnderSubjectTable
         }
         return $subArr;
     }
-
+public function getUnderSubjectByid($id){
+    $rowSet  = $this->tableGateway->select(array('id'=>$id));
+    $row = $rowSet->current();
+    if(!$row){
+        return false;
+        //throw new \Exception("could not find row");
+    }
+    return $row;
+}
     public function saveUnderSubject($data){
         $row = $this->getUnderSubjectByid($data['id']);
         if(!$row){

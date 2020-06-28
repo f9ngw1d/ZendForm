@@ -2,15 +2,15 @@
     提示：点击此按钮会将数据库置于初始状态
 </h4>
 <br/>
-<button class="btn-primary btn"><a href="<?php echo $this->url(NULL, array('controller'=>'Setting', 'action'=>'delete'));?>" onclick="return confirm('确认删除吗?')">清空数据库</a></button>
+<button class="btn-primary btn"><a style="color: white;" href="<?php echo $this->url(NULL, array('controller'=>'Setting', 'action'=>'delete'));?>" onclick="return confirm('确认删除吗?')">清空数据库</a></button>
 <br/>
 <h4>
     提示：请从以下选择你要备份的数据
 </h4>
 <br/>
-<button class="btn-primary btn"><a href="<?php echo $this->basePath($this->data_addr1)?>" download="<?php echo $this->file_name1;?>">备份数据库数据</a></button>
+<button class="btn-primary btn"><a style="color: white;" href="<?php echo $this->basePath($this->data_addr1)?>" download="<?php echo $this->file_name1;?>">备份数据库数据</a></button>
 <br/><br>
-<button class="btn-primary btn"><a href="<?php echo $this->basePath($this->data_addr2)?>" download="<?php echo $this->file_name2;?>">备份用户上传资料</a></button>
+<button class="btn-primary btn"><a style="color: white;" href="<?php echo $this->basePath($this->data_addr2)?>" download="<?php echo $this->file_name2;?>">备份用户上传资料</a></button>
 <form action="/manage/Setting/backupRecover" method="post" enctype="multipart/form-data">
     <h4>提示：备份的数据库数据进行恢复</h4>
     <input type="file" name="uploadSqlFile" id="uploadSqlFile"></br>

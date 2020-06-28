@@ -11,11 +11,13 @@ use Manage\Form\TimesetForm;
 use Manage\Form\UnisearchForm;
 use Manage\Form\UnisetForm;
 use Manage\Form\CollegeAddForm;
+use Manage\Model\Staff;
 use Manage\Model\TBaseCollege;
 use Manage\Model\TDbUniversity;
 use Manage\Model\ManageTime;
 use Manage\Model\UsrTeacher;
 use Manage\Model\UsrRole;
+use Manage\Model\RoleName;
 use Manage\Model\StaffTable;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -36,6 +38,7 @@ class SystemManagementController extends AbstractActionController
     protected $TBaseCollegeTable;
     protected $UsrTeacherTable;
     protected $UsrRoleTable;
+    protected $RoleNameTable;
     protected $college_table;
     protected $StaffTable;
 
@@ -95,27 +98,51 @@ class SystemManagementController extends AbstractActionController
         }
         return $this->UsrRoleTable;
     }//sm
+    public function getRoleNameTable()
+    {
+        if (!$this->RoleNameTable) {
+            $sm = $this->getServiceLocator();
+            $this->RoleNameTable = $sm->get('Manage\Model\RoleNameTable');
+        }
+        return $this->RoleNameTable;
+    }//sm
+
 
 //lrn sm
-public function getRolesArr($rid_arr){
+    public function getRolesArr($rid_arr){
         $roles = array();
-    if(in_array('99',$rid_arr) || in_array('10',$rid_arr)){//角色select
-        $roles = array(
-            '9'=>'学院负责人',
-            '10'=>'研究生院',
-            '11'=>'院科研秘书',
-            '14'=>'组长',
-            '99'=>'超级管理员',
-        );
-    }elseif(in_array('9',$rid_arr) || in_array('11',$rid_arr)){
-        $roles = array(
-            '14'=>'组长',
-        );
-    }else{
-        echo "<script>alert('无权访问!');window.location.href='/info';</script>";
+        if(in_array('99',$rid_arr) || in_array('10',$rid_arr)){//角色select
+            $roles = array(
+                '99'=>'超级管理员',
+                '10'=>'研究生院',
+                '9'=>'学院负责人',
+                '11'=>'院科研秘书',
+                '14'=>'招生组长',
+            );
+        }elseif(in_array('9',$rid_arr) || in_array('11',$rid_arr)){
+            $roles = array(
+                '11'=>'院科研秘书',
+                '14'=>'招生组长',
+            );
+        }else{
+            echo "<script>alert('无权访问!');window.location.href='/info';</script>";
+        }
+        return $roles;
     }
-    return $roles;
-}
+
+    public function assemble($data_arr,$college,$mobile,$rid){
+        $res_arr = array(
+            'staff_id' => $data_arr['staff_id'],
+            'real_name' => $data_arr['user_name'],
+            'user_name' => $data_arr['email'],
+            'college' => $college,
+            'mobile' => $mobile,
+            'create_time' => $data_arr['create_time'],
+            'rid' => $rid,
+        );
+        return $res_arr;
+    }//sm
+
     public function addUserAction(){
         $view = new ViewModel(array());
         $login_id_container = new Container('uid');
@@ -147,41 +174,6 @@ public function getRolesArr($rid_arr){
         }
         $form = new PersonalForm($roles_arr,$search_college_arr);
 
-//        $role = "99";//测试用例
-//        if($role == "99"){//角色select
-//            $roles = array(
-//                '0'=>'请选择角色',
-//                '9'=>'学院负责人',
-//                '10'=>'研究生院',
-//                '11'=>'院科研秘书',
-//                '14'=>'组长',
-//                '99'=>'超级管理员',
-//            );
-//        }elseif($role == "10"){
-//            $roles = array(
-//                '0'=>'请选择角色',
-//                '9'=>'学院负责人',
-//                '10'=>'研究生院',
-//                '11'=>'院科研秘书',
-//                '14'=>'组长',
-//            );
-//        }elseif($role == "14"){
-//            $roles = array(
-//                '14'=>'组长',
-//            );
-//        }else{
-//            $message = "您无权访问该页面";
-//            $view->setVariables(array('form'=>$form, 'msg'=>$message));
-//            return $view;
-//        }
-//        $message = '';
-//
-//        //set rid option
-//        $form->get('Rid')->setValueOptions($roles);
-//        //set YXSM option
-//        /*
-//         */
-
         $request = $this->getRequest();
         if($request->isPost()){
             $account = new UsrTeacher();
@@ -190,23 +182,23 @@ public function getRolesArr($rid_arr){
             if($form->isValid()){
                 $data = $form->getData();
                 if($data['Password'] == $data['Password2']){
-                    $account->exchangeArray($data);
                     //生成salt
                     $psw = md5($data['Password']);
-                    $salt = substr($psw,-1,5);
-                    print_r($data['Rid']);
+                    $salt = substr(md5(uniqid()), 1, 5);
+//                    $password = md5($salt . strtoupper(trim($data['Password'])) . $salt);
+                    $password = md5(strtoupper(trim($data['Password'])));
                     $LastUid = $this->getUsrTeacherTable()->getLastUID();
                     $insert_data = array(
                         'staff_id' => $LastUid+1,
-                        'user_name'=> $data['Realname'],
-                        'email'=> $data['Email'],
+                        'user_name'=> strip_tags(trim($data['Realname'])),
+                        'email'=> strip_tags(trim($data['Email'])),
                         'salt'=> $salt,
-                        'password'=> md5($salt.$data['Password'].$salt),
+                        'password'=> $password,
                         'create_time'=> date('Y-m-d H:i:s'),
                         'update_at'=> null,
                         'rid'=>$data['Rid'],
                     );
-                    print_r($insert_data);
+                    $account->exchangeArray($insert_data);
                     //用户已存在
                     if($this->getUsrTeacherTable()->registercheck($insert_data['email'])){
                         $view->setVariables(array('form'=>$form, 'msg'=>'用户已存在,插入失败'));
@@ -214,12 +206,47 @@ public function getRolesArr($rid_arr){
                     }
                     //save
                     $res1 = $this->getUsrTeacherTable()->saveUser2($insert_data);
+                    $base_staff_arr = new Staff();
+                    $insert_staff_arr=array(
+                        'staff_id' =>$LastUid+1,
+                        'staff_name' => strip_tags(trim($data['Realname'])),
+                        'college_id' => $data['YXSM'],
+                        'title' => null,
+                        'phone' => $data['Mobile'],
+                        'cellphone' => $data['Mobile'],
+                        'email' => $data['Email'],
+                        'position' => null,
+                    );
+                    $base_staff_arr->exchangeArray($insert_staff_arr);
+                    $res3 = $this->getStaffTable()->saveStaff($base_staff_arr);
+
+                    //添加教师用户的教师权限
+                    $insert_rid2 = new UsrRole();
+                    $insert_rid2_arr=array(
+                        'uid' => $insert_data['staff_id'],
+                        'rid' => '2'
+                    );
+                    $insert_rid2->exchangeArray($insert_rid2_arr);
+                    $res5 = $this->getUsrRole()->saveUserrole($insert_rid2);
+
+                    //添加到base_staff表里！！！！！
                     $insert_rid = new UsrRole();
-                    $insert_rid->uid = $insert_data['staff_id'];
-                    $insert_rid->rid = $insert_data['rid'];
+                    $insert_rid_arr=array(
+                        'uid' => $insert_data['staff_id'],
+                        'rid' => $insert_data['rid']
+                    );
+                    $insert_rid->exchangeArray($insert_rid_arr);
                     $res2 = $this->getUsrRole()->saveUserrole($insert_rid);
+
+
+                    //添加base_college的manager id
+                    if($insert_data['rid'] == '9'){
+                        $update_basecol = $this->getTBaseCollegeTable()->find($data['YXSM']);
+                        $update_basecol->manager_id = $insert_data['staff_id'];
+                        $res4 = $this->getTBaseCollegeTable()->saveCollege($update_basecol);
+                    }
                     //判断是否插入成功否则回滚
-                    if($res1 && $res2){
+                    if($res1&&$res2&&$res3&&$res5){
                         echo "<script type=\"text/javascript\" >alert('新增用户成功!');</script>";
                     }else{
                         echo "<script type=\"text/javascript\" >alert('新增用户失败!');</script>";
@@ -229,9 +256,14 @@ public function getRolesArr($rid_arr){
                             $last_insert = $this->getUsrTeacherTable()->getLastUID();
                             $this->getUsrTeacherTable()->deleteUser($last_insert);
                         }
+                        elseif(!res3){
+                            $last_insert = $this->getStaffTable()->getLastUID();
+                            $this->getStaffTable()->deletestaff($last_insert);
+                        }
                     }
                 }
-            }
+            }else
+                echo "<script>alert('提交失败，请检查表单是否填写正确')</script>";
         }
         $view = new ViewModel(array(
             'form' => $form,
@@ -269,61 +301,71 @@ public function getRolesArr($rid_arr){
         } else {
             $search_college_arr = $this->getTBaseCollegeTable()->getCollegesIDNameArr();
         }
+        //获取可修改的角色数组(用于修改时的选择)
         $form = new PersonalForm($roles_arr,$search_college_arr);
         $form1 = new OthersForm($roles_arr,$search_college_arr);
         $current_page = $this->params()->fromRoute('param1');
         if (empty($current_page)) {
             $current_page = 1;
         }
-        $per_page = 5;
+        $per_page = 15;
         $offset = ($current_page - 1) * $per_page;
-        echo $offset;
 
-
+        //post
         $request = $this->getRequest();
         if ($request->isPost()) {
             $postData = array_merge_recursive(
                 $this->getRequest()->getPost()->toArray()
             );
-            $form->setData($postData);
-            if ($form->isValid()) {
-                $uni = new ManageTime();
-                $formdata = array(
-                    'name' => $_POST['name'],
-                    'start_time' => $_POST['start_time']['year']."-".$_POST['start_time']['month']."-".$_POST['start_time']['day']." 00:00:00",
-                    'end_time' => $_POST['end_time']['year']."-".$_POST['end_time']['month']."-".$_POST['end_time']['day']." 00:00:00",
-                    'description' => $_POST['description'],
-                    'status' => $_POST['status'],
-                );
-                $uni->exchangeArray($formdata);
-                if ($this->getManageTimeTable()->saveTime($uni))
-                    echo "<script>alert('设置成功')</script>";
+            $form1->setData($postData);
+            if ($form1->isValid()) {
+                $data = $form1->getData();
+                $staff_id = $data['Staffid'];
+                $rid = $data['Rid'];
+                //获取该用户所有权限记录的数组usr_arr
+                $usr_rid = $this->getUsrRole()->getRidArr($staff_id);
+                $usr_arr = array();
+                foreach ($usr_rid as $k => $v){
+                    $usr_arr[$k]['uid'] = $staff_id;
+                    $usr_arr[$k]['rid'] = $v['rid'];
+                }
+                //删除所有权限
+                if(!empty($usr_arr)){
+                    $res1 = $this->getUsrRole()->deleteUsrRid($staff_id);
+                }else
+                    $res1 = true;
+                //赋予新权限
+                $insert_rid2 = new UsrRole();
+                $insert_rid2->uid = $staff_id;
+                $insert_rid2->rid = '2';
+                $res3 = $this->getUsrRole()->saveUserrole($insert_rid2);
+
+                $insert_rid = new UsrRole();
+                $insert_rid->uid = $staff_id;
+                $insert_rid->rid = $rid;
+                $res2 = $this->getUsrRole()->saveUserrole($insert_rid);
+                if($res1 && $res2 && $res3){
+                    echo "<script>alert('修改成功')</script>";
+                }elseif(!$res1 && !$res2){
+                    echo "<script>alert('修改失败')</script>";
+                }else{
+                    echo "<script>alert('修改失败')</script>";
+                    if(!$res1){//删除失败，添加成功
+                        $this->getUsrRole()->deleteLastInsert();
+                    }elseif(!$res2){//删除成功，添加失败
+                        foreach ($usr_arr as $key => $value){
+                            $this->getUsrRole()->saveUserrole($value);
+                        }
+                    }
+                }
             }
             else
-                echo "<script>alert('设置失败，请检查是否填写正确')</script>";
+                echo "<script>alert('提交失败，请检查是否填写正确')</script>";
         }
-//        $time = $this->getManageTimeTable()->findAll($per_page, $offset);
-        $time = $this->getUsrTeacherTable()->findAll($per_page, $offset);
-//        $timesta = array();
-//        foreach ($time as $tt)
-//        {
-//            foreach ($tt as $key => $value)
-//            {
-//                if($key == 'id')
-//                    array_push($timesta, $this->getManageTimeTable()->getTimeSta($value));
-//            }
-//        }
-//        $i=0;
-//        foreach ($time as &$tt)
-//        {
-//            $a['sta']=$timesta[$i];
-//            array_merge($tt,$a);
-//            $tt['sta'] = $timesta[$i];
-//            $i++;
-//        }
+
+        $usr_teacher = $this->getUsrTeacherTable()->findAll($per_page, $offset);
         $total_num = $this->getUsrTeacherTable()->getTotalnum();
-        echo 'total num:'.$total_num;
-        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($time));
+        $paginator = new \Zend\Paginator\Paginator(new \Zend\Paginator\Adapter\ArrayAdapter($usr_teacher));
         $paginator->setCurrentPageNumber($current_page);
         $total_page = ceil($total_num / $per_page);
         $pagesInRange = array();
@@ -337,59 +379,40 @@ public function getRolesArr($rid_arr){
             'college'=>'学院',
             'mobile'=>'移动电话',
             'create_time'=>'创建时间',
-            'update_at'=>'角色',
+            'rid'=>'角色',
             'oprat'=>' ',
         );
         $teacher = $this->getUsrTeacherTable()->findAll($per_page, $offset);
-//        print_r($teacher);
-        echo "<br>";
         $data_push = array();
         foreach ($teacher as $key => $value){
-
-            //获取院系名称
             $staff_id = $value['staff_id'];
+            //获取教师角色（$rid）
+            $usr_rid = $this->getUsrRole()->getRidArr($staff_id);
+            $rid = "";
+            foreach ($usr_rid as $k => $v){
+                //将rid转换为name
+                $ridname = $this->getRoleNameTable()->getRole($v['rid']);
+                $Name = $this->getRoleNameTable()->changeRoleToArr($ridname);
+                $rid = $rid." ".$Name[1]." ";
+            }
+            //获取院系名称（$college_name）
             $base_staff = $this->getStaffTable()->getStaff($staff_id);
             if(!$base_staff){
-                $data_push[$key] = array(
-                    'staff_id' => $value['staff_id'],
-                    'real_name' => $value['user_name'],
-                    'user_name' => $value['email'],
-                    'college' => null,
-                    'mobile' => null,
-                    'create_time' => $value['create_time'],
-                    'update_at' => $value['staff_id'],
-                );
+                $data_push[$key] = $this->assemble($value,null,null,$rid);
                 continue;
             }
-            //获取移动电话
+
+            //获取移动电话（$phone）
             $phone = $base_staff->phone;
             $college_id = $base_staff->college_id;
             $college = $this->getTBaseCollegeTable()->getCollege($college_id);
             if(!$college){
-                $data_push[$key] = array(
-                    'staff_id' => $value['staff_id'],
-                    'real_name' => $value['user_name'],
-                    'user_name' => $value['email'],
-                    'college' => null,
-                    'mobile' => $phone,
-                    'create_time' => $value['create_time'],
-                    'update_at' => $value['staff_id'],
-                );
+                $data_push[$key] = $this->assemble($value,null,$phone,$rid);
                 continue;
             }
             $college_name = $college->college_name;
-            $data_push[$key] = array(
-                'staff_id' => $value['staff_id'],
-                'real_name' => $value['user_name'],
-                'user_name' => $value['email'],
-                'college' => $college_name,
-                'mobile' => $phone,
-                'create_time' => $value['create_time'],
-                'update_at' => $value['staff_id'],
-            );
-//            print_r($data_push[$key]);
+            $data_push[$key] = $this->assemble($value,$college_name,$phone,$rid);
         }
-//        print_r($data_push);
         $view = new ViewModel(array(
             'column' => $column,
             'teacher' => $data_push,
@@ -400,6 +423,7 @@ public function getRolesArr($rid_arr){
             'next' => $current_page < $total_page ? $current_page + 1 : null,
             'total_num' => $total_num,
             'current' => $current_page,
+            'form' => $form,
             'form1'=>$form1,
         ));
         return $view;
@@ -424,28 +448,31 @@ public function getRolesArr($rid_arr){
         $form1 = new CollegeEditForm();
         $request = $this->getRequest();
         if ($request->isPost()) {
-                $postData = array_merge_recursive(
-                    $this->getRequest()->getPost()->toArray()
+            $postData = array_merge_recursive(
+                $this->getRequest()->getPost()->toArray()
+            );
+            $form->setData($postData);
+            if ($form->isValid()) {
+                $uni = new TBaseCollege();
+                $formdata = array(
+                    'college_id' => $_POST['college_id'],
+                    'college_name' => $_POST['college_name'],
+                    'phone' => $_POST['phone'],
+                    'ip_address' => $_POST['ip_address'],
+                    'address' => $_POST['address']
                 );
-                $form->setData($postData);
-                if ($form->isValid()) {
-                    $uni = new TBaseCollege();
-                    $formdata = array(
-                        'college_id' => $_POST['college_id'],
-                        'college_name' => $_POST['college_name'],
-                        'phone' => $_POST['phone'],
-                        'ip_address' => $_POST['ip_address'],
-                        'address' => $_POST['address']
-                    );
-                    $uni->exchangeArray($formdata);
-                    if ($this->getTBaseCollegeTable()->saveCollege($uni))
-                        echo "<script>alert('保存成功')</script>";
+                $uni->exchangeArray($formdata);
+                if ($this->getTBaseCollegeTable()->saveCollege($uni))
+                    echo "<script>alert('保存成功')</script>";
+                else{
+                    echo "<script>alert('操作失败')</script>";
+                }
 
-                }
-                else {
-                    //echo "<script>alert('请仔细检查上述表单填写是否符合要求！符合要求后再次点击保存')</script>";
-                    $this->formInvalidMessage($form);
-                }
+            }
+            else {
+                //echo "<script>alert('请仔细检查上述表单填写是否符合要求！符合要求后再次点击保存')</script>";
+                $this->formInvalidMessage($form);
+            }
 
         }
 
@@ -530,27 +557,30 @@ public function getRolesArr($rid_arr){
         $form1 = new TimeeditForm();
         $request = $this->getRequest();
         if ($request->isPost()) {
-                $postData = array_merge_recursive(
-                    $this->getRequest()->getPost()->toArray()
-                );
+            $postData = array_merge_recursive(
+                $this->getRequest()->getPost()->toArray()
+            );
 //                var_dump($_POST['start_time']);
 //                var_dump($_POST['end_time']);
-                $form->setData($postData);
-                if ($form->isValid()) {
-                    $uni = new ManageTime();
-                    $formdata = array(
-                        'name' => $_POST['name'],
-                        'start_time' => $_POST['start_time']['year']."-".$_POST['start_time']['month']."-".$_POST['start_time']['day']." 00:00:00",
-                        'end_time' => $_POST['end_time']['year']."-".$_POST['end_time']['month']."-".$_POST['end_time']['day']." 00:00:00",
-                        'description' => $_POST['description'],
-                        'status' => $_POST['status'],
-                    );
-                    $uni->exchangeArray($formdata);
-                    if ($this->getManageTimeTable()->saveTime($uni))
-                        echo "<script>alert('设置成功')</script>";
+            $form->setData($postData);
+            if ($form->isValid()) {
+                $uni = new ManageTime();
+                $formdata = array(
+                    'name' => $_POST['name'],
+                    'start_time' => $_POST['start_time']['year']."-".$_POST['start_time']['month']."-".$_POST['start_time']['day']." 00:00:00",
+                    'end_time' => $_POST['end_time']['year']."-".$_POST['end_time']['month']."-".$_POST['end_time']['day']." 00:00:00",
+                    'description' => $_POST['description'],
+                    'status' => $_POST['status'],
+                );
+                $uni->exchangeArray($formdata);
+                if ($this->getManageTimeTable()->saveTime($uni))
+                    echo "<script>alert('设置成功')</script>";
+                else{
+                    echo "<script>alert('操作失败')</script>";
                 }
-                else
-                    echo "<script>alert('设置失败，请检查是否填写正确')</script>";
+            }
+            else
+                echo "<script>alert('设置失败，请检查是否填写正确')</script>";
         }
         $time = $this->getManageTimeTable()->findAll($per_page, $offset);
         $timesta = array();
@@ -887,7 +917,6 @@ public function getRolesArr($rid_arr){
                 );
                 //$form1->setData($request->getPost());
                 $uni = new TDbUniversity();
-
                 $uni->exchangeArray($formdata);
                 //var_dump($uni);
                 if($this->TDbUniversityTable()->updateUni($uni))
@@ -1085,6 +1114,38 @@ public function getRolesArr($rid_arr){
         //$view->addChild($tutor_cond_view,'tutor_cond_view');
         return $view;
     }
+
+    public function deleteUserAction(){
+        //从url中读出staff id
+        $staff_id = $this->params()->fromRoute('uid');
+        //删权限
+        $uid_rid = $this->getUsrRole()->getRidArr($staff_id);
+        $usr_arr = array();
+        foreach ($uid_rid as $k => $v){
+            $usr_arr[$k]['uid'] = $staff_id;
+            $usr_arr[$k]['rid'] = $v['rid'];
+        }
+        //删除所有权限
+        if(!empty($usr_arr)){
+            $res1 = $this->getUsrRole()->deleteUsrRid($staff_id);
+        }else
+            $res1 = false;
+
+        //删除teacher表记录
+        $res2 = $this->getUsrTeacherTable()->deleteUser($staff_id);
+        if($res1 && $res2){
+            echo "<script>alert('删除成功')</script>";
+        }else{
+            if(!$res1){//权限删除失败
+                echo "<script>alert('权限删除失败')</script>";
+            }elseif(!$res2){//teacher注册表删除失败
+                echo "<script>alert('teacher表删除失败')</script>";
+            }
+        }
+
+        //路由名 参数
+        return $this->redirect()->toRoute('manage/default', array('controller' => 'SystemManagement', 'action' => 'others'));
+    }//sm
 
     public function deleteCollegeAction()
     {

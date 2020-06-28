@@ -24,17 +24,29 @@ class OthersForm extends Form implements InputFilterProviderInterface
         $this->setAttribute('method','post');
         $this->setAttribute('class','form-horizontal');
 
+//        $this->add(array(
+//            'name'=>'Uid',
+//            'attributes' => array(
+//                'type'  => 'hidden',
+//                'id' => 'Uid',
+//            ),
+//        ));
+
         $this->add(array(
-            'name'=>'Uid',
-            'attributes' => array(
-                'type'  => 'hidden',
-                'id' => 'Uid',
+            'name' => 'Staffid',
+            'options' => array(
+                'label' => '用户编号'
             ),
+            'attributes' => array(
+                'type' => 'text',
+                'id' => 'Staffid',
+                'class'=>'form-control',
+                'readonly'=>true,
+            )
         ));
 
         $this->add(array(
             'name' => 'Uname',
-            'readonly'=>true,
             'options' => array(
                 'label' => '用户名'
             ),
@@ -42,6 +54,7 @@ class OthersForm extends Form implements InputFilterProviderInterface
                 'type' => 'text',
                 'id' => 'Uname',
                 'class'=>'form-control',
+                'readonly'=>true,
             )
         ));
 
@@ -54,68 +67,7 @@ class OthersForm extends Form implements InputFilterProviderInterface
                 'type' => 'text',
                 'id' => 'Realname',
                 'class' => 'form-control',
-            )
-        ));
-
-        $this->add(array(
-            'type' => 'text',
-            'name' => 'Password',
-            'options' => array(
-                'label' => '密码'
-            ),
-            'attributes' => array(
-                'id' => 'Password',
-                'class'=>'form-control',
-            )
-        ));
-
-        $this->add(array(
-            'type' => 'text',
-            'name' => 'Password2',
-            'options' => array(
-                'label' => '确认密码'
-            ),
-            'attributes' => array(
-                'id' => 'Password2',
-                'class'=>'form-control',
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'Mobile',
-            'options' => array(
-                'label' => '移动电话'
-            ),
-            'attributes' => array(
-                'type' => 'text',
-                'id' => 'Mobile',
-                'class'=>'form-control',
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'Email',
-            'options' => array(
-                'label' => '电子邮箱'
-            ),
-            'attributes' => array(
-                'type' => 'text',
-                'id' => 'Email',
-                'class'=>'form-control',
-            )
-        ));
-
-        $this->add(array(
-            'type' => 'select',
-            'name' => 'YXSM',
-            'options' => array(
-                'label' => '院系所',
-                'empty_option' => '请选择',
-                'value_options'=>$search_college_arr
-            ),
-            'attributes' => array(
-                'id' => 'YXSM',
-                'class'=>'form-control',
+                'readonly'=>true,
             )
         ));
 
@@ -136,9 +88,8 @@ class OthersForm extends Form implements InputFilterProviderInterface
     public function getInputFilter(){
         if(!$this->inputFilter){
             $inputFilter = new InputFilter();
-
             $inputFilter->add(array(
-                'name'		=> 'user_name',
+                'name'		=> 'Staffid',
                 'required'	=> true,		//必需的
                 'validators' => array(
                     array('name' => 'NotEmpty'),		//不允许为空
@@ -146,7 +97,7 @@ class OthersForm extends Form implements InputFilterProviderInterface
             ));
 
             $inputFilter->add(array(
-                'name'		=> 'start_time',
+                'name'		=> 'Uname',
                 'required'	=> true,		//必需的
                 'validators' => array(
                     array('name' => 'NotEmpty'),		//不允许为空
@@ -154,7 +105,15 @@ class OthersForm extends Form implements InputFilterProviderInterface
             ));
 
             $inputFilter->add(array(
-                'name'		=> 'end_time',
+                'name'		=> 'Realname',
+                'required'	=> true,		//必需的
+                'validators' => array(
+                    array('name' => 'NotEmpty'),		//不允许为空
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'		=> 'Rid',
                 'required'	=> true,		//必需的
                 'validators' => array(
                     array('name' => 'NotEmpty'),		//不允许为空

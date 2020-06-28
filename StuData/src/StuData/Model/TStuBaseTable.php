@@ -172,13 +172,17 @@ class TStuBaseTable
         $data = array(
             'uid' => $Tstu->uid,
             'target_college' => $Tstu->target_college,
-            'target_profession' => $Tstu->target_profession,
-            'target_subject' => $Tstu->target_subject,
+            'target_team' => $Tstu->target_team,
         );
         if (!$this->getStu($Tstu->uid)) {
-            $this->tableGateway->insert($data);
+            $res=$this->tableGateway->insert($data);
         } else {
-            $this->tableGateway->update($data, array('uid' => $Tstu->uid));
+            $res=$this->tableGateway->update($data, array('uid' => $Tstu->uid));
+        }
+        if($res){
+            return $res;
+        }else{
+            return false;
         }
     }
     /*

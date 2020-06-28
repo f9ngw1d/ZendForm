@@ -197,18 +197,28 @@ class TDbUniversityTable
         //echo  ">>>>>>>>>>>>>>>>>>>>>>>>>>>>update";
         $data = array(
             'university_name' => $uni->university_name,
-            'university_id'  => $uni->university_id,
+//            'university_id'  => $uni->university_id,
             'SSDM'  => $uni->SSDM,
             'SSDMC' => $uni->SSDMC,
             'is985' => $uni->is985,
             'is211'  => $uni->is211,
             'freetest_qualified' => $uni->freetest_qualified,
         );
-
-        $id = (int) $uni->university_id;
-        unset($data['university_id']);
-        if($this->tableGateway->update($data, array('university_id' => $id)))
-            return 1;
+        $id = $uni->university_id;
+        if($this->getUniversityByUid($id)){
+            $res=$this->tableGateway->update($data,array('university_id'=>$id));
+            if($res)
+                return true;
+            else
+                return false;
+        }else{
+            throw new \Exception("系统中找不到该学校信息，请先添加高校信息");
+        }
+//        unset($data['university_id']);
+//        if($this->tableGateway->update($data, array('university_id' => $id)))
+//            return true;
+//        else
+//            return false;
     }
 
     public function getConnum($condArr)

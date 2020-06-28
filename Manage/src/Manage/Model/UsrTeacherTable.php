@@ -52,6 +52,7 @@ class UsrTeacherTable{
      */
     public function saveUserRegister(UsrTeacher $user){//增加 和 修改
         $data = array(
+            'staff_id' => $user->staff_id,
             'user_name' => $user->user_name,
             'email' => $user->email,
             'salt' => $user->salt,
@@ -59,21 +60,22 @@ class UsrTeacherTable{
             'create_time' => $user->create_time,
             'update_at' => $user->update_at,
         );
-
+        $id = $user->staff_id;
         if (!$this->getUserById($user->staff_id)) {
-//            return $this->tableGateway->insert($data);
             $res = $this->tableGateway->insert($data);
             if($res){
-                return $res;
+                return true;
             }else{
-                throw new \Exception("insert usr_teacher fail");
+                return false;
+                //throw new \Exception("insert usr_teacher fail");
             }
         } else {
-            $res = $this->tableGateway->update($data, array('staff_id' => $user->staff_id));
-            if($res){
-                return $res;
+            $res = $this->tableGateway->update($data, array('staff_id' => $id));
+            if($res >= 0){//当更新数据相同时不认为错误
+                return true;
             }else{
-                throw new \Exception("update usr_teacher fail");
+                //throw new \Exception("update usr_teacher fail");
+                return false;
             }
         }
     }
@@ -85,7 +87,7 @@ class UsrTeacherTable{
      * @throws \Exception
      */
     public function saveUser2($user){//增加 和 修改
-        print_r($user);
+//        print_r($user);
         $data = array(
             'staff_id' => $user['staff_id'],
             'user_name' => $user['user_name'],
@@ -106,7 +108,7 @@ class UsrTeacherTable{
             }
         } else {
             //echo "update";
-            $res = $this->tableGateway->update($data, array('staff_id' => $user->staff_id));
+            $res = $this->tableGateway->update($data, array('staff_id' => $user['staff_id']));
             if($res){
                 return $res;
             }else{
@@ -211,7 +213,6 @@ class UsrTeacherTable{
         if ($offset != 0) {
             $sl->offset($offset);
         }
-
         $stmt = $sql->prepareStatementForSqlObject($sl);
         $result = $stmt->execute();
 
@@ -224,7 +225,7 @@ class UsrTeacherTable{
     {
         $adapter = $this->tableGateway->getAdapter();
         $sql = new Sql($adapter);
-        $select = $sql->select('base_staff');
+        $select = $sql->select('usr_teacher');
         $select->columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(*)')));;
 
         $stmt = $sql->prepareStatementForSqlObject($select);
@@ -233,6 +234,40 @@ class UsrTeacherTable{
         $rowCount = $row['count'];
         return $rowCount;
     }//sm
+
+//    public function findAllByCol($limit = 0, $offset = 0)
+//    {
+//        $adapter = $this->tableGateway->getAdapter();
+//        $sql = new Sql($adapter);
+//        $sl = new Select();
+//        $sl->from(array('usr_teacher' => $this->table));
+//        if ($limit != 0) {
+//            $sl->limit($limit);
+//        }
+//        if ($offset != 0) {
+//            $sl->offset($offset);
+//        }
+//        $stmt = $sql->prepareStatementForSqlObject($sl);
+//        $result = $stmt->execute();
+//        $resultArr = iterator_to_array($result);
+//        return $resultArr;
+//
+//    }//sm
+//    public function getColTotalnum($staff_id)
+//    {
+//        $adapter = $this->tableGateway->getAdapter();
+//        $sql = new Sql($adapter);
+//        $select = $sql->select('usr_teacher');
+//        $select->columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(*)')));
+//        $select->where(array('staff_id'=>$staff_id));
+//
+//        $stmt = $sql->prepareStatementForSqlObject($select);
+//        $result = $stmt->execute();
+//        print_r($result);
+//        $row = $result->current();
+//        $rowCount = $row['count'];
+//        return $rowCount;
+//    }//sm
 }
 
 

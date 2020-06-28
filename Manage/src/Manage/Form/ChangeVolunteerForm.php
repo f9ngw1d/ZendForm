@@ -12,44 +12,34 @@ use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\Validator\Identical\EmailAddress;
 use Zend\I18n\Validator;
 
-class ChangeStatusForm extends Form{
+class ChangeVolunteerForm extends Form implements InputFilterProviderInterface{
 
     protected $inputFilter;
 
-    public function __construct($targetstatus,$name,$now_status){
-        parent::__construct('changestatus');
+    public function __construct($targetcollege){
+        parent::__construct('changevolunteer');
 
-        $this->add(array(
-            'name' => 'user_name',
-            'type' => 'Text',
-            'options' => array(
-            ),
-            'attributes'=>array(
-                'id'=>'user_name',
-                'value'=>$name,
-                'readonly' => true,
-            ),
-        ));
-        $this->add(array(
-            'name' => 'now_status',
-            'type' => 'Text',
-            'options' => array(
-            ),
-            'attributes'=>array(
-                'id'=>'now_status',
-                'value'=>$now_status,
-                'readonly' => true,
-            ),
-        ));
         $this->add(array(//target_college Select
-            'name' => 'target_status',
+            'name' => 'target_college',
             'type' => 'Select',
             'options' => array(
+//                'label' => '调整报考院系到：',
                 'empty_option' => '请选择',
-                'value_options' => $targetstatus,
+                'value_options' => $targetcollege,
             ),
             'attributes'=>array(
-                'id'=>'target_status',
+                'id'=>'target_college',
+            ),
+        ));
+        $this->add(array(//target_direction Text
+            'name' => 'target_team',
+            'type' => 'Select',
+            'options' => array(
+//                'label' => '调整报考组到：',
+                'empty_option' => '请选择',
+            ),
+            'attributes'=>array(
+                'id'=>'target_team',
             ),
         ));
 
@@ -57,7 +47,7 @@ class ChangeStatusForm extends Form{
             'name'=>'submit',
             'type'=>'Submit',
             'attributes'=>array(
-                'value'=>'确认修改',
+                'value'=>'确认',
                 'id'=>'submitbutton',
                 'class'=>'btn btn-primary',
             ),
@@ -69,7 +59,7 @@ class ChangeStatusForm extends Form{
             $inputFilter = new InputFilter();
 
             $inputFilter->add(array(
-                'name'		=> 'user_name',
+                'name'		=> 'target_college',
                 'required'	=> true,		//必需的
                 'validators' => array(
                     array('name' => 'NotEmpty'),		//不允许为空
@@ -77,15 +67,7 @@ class ChangeStatusForm extends Form{
             ));
 
             $inputFilter->add(array(
-                'name'		=> 'now_status',
-                'required'	=> true,		//必需的
-                'validators' => array(
-                    array('name' => 'NotEmpty'),		//不允许为空
-                ),
-            ));
-
-            $inputFilter->add(array(
-                'name'		=> 'target_status',
+                'name'		=> 'target_team',
                 'required'	=> true,		//必需的
                 'validators' => array(
                     array('name' => 'NotEmpty'),		//不允许为空
@@ -97,4 +79,6 @@ class ChangeStatusForm extends Form{
     }
 
 
+    public function getInputFilterSpecification(){
+    }
 }

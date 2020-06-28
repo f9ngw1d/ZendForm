@@ -26,8 +26,11 @@ class CollegeAddForm extends Form implements InputFilterProviderInterface
             'type' => 'text',
             'name' => 'college_id',
             'options' => array(
-                'label' => '学院编号'
+                'label' => '学院编号',
             ),
+            'attributes' =>array(
+                'placeholder' => '例：001依次递增'
+            )
         ));
 
         $this->add(array(
@@ -42,16 +45,22 @@ class CollegeAddForm extends Form implements InputFilterProviderInterface
             'type' => 'text',
             'name' => 'phone',
             'options' => array(
-                'label' => '学院电话'
+                'label' => '学院电话',
             ),
+            'attributes' =>array(
+                'placeholder' => '例：010-11111111'
+            )
         ));
 
         $this->add(array(
             'type' => 'Zend\Form\Element\Url',
             'name' => 'ip_address',
             'options' => array(
-                'label' => '学院官网网址'
+                'label' => '学院官网网址',
             ),
+            'attributes' =>array(
+                'placeholder' => '例：https://www.***.com/'
+            )
         ));
 
         $this->add(array(
@@ -108,7 +117,7 @@ class CollegeAddForm extends Form implements InputFilterProviderInterface
                         'options' => array(
                             'encoding' => 'UTF-8',
                             'min'      => 7,
-                            'max'      => 11,
+                            'max'      => 12,
                         ),
                     ),
                 ),

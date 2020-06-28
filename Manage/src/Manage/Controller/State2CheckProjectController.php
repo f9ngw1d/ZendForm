@@ -19,6 +19,7 @@ class State2CheckProjectController extends AbstractActionController
     public $team_table;
     public $college_table;
     public $teacher_table;
+    public $config_table;
     public function __construct(){
         $rid_arr_container = new Container('rid');
         $rid_arr = $rid_arr_container->item;
@@ -27,6 +28,14 @@ class State2CheckProjectController extends AbstractActionController
             echo "<script language='javascript'>alert('没有访问权限');window.location.href='".$redirect_url."';</script>";
             exit();
         }
+    }
+    protected function getConfigTable()
+    {
+        if (!$this->config_table) {
+            $sm = $this->getServiceLocator();
+            $this->config_table = $sm->get('Manage\Model\ConfigKeyTable');
+        }
+        return $this->config_table;
     }
     public function getTeamTable()
     {
@@ -53,6 +62,9 @@ class State2CheckProjectController extends AbstractActionController
         return $this->teacher_table;
     }
     public  function showAllProjectAction(){
+        $mail_api = $this->getConfigTable()->getConfigKey("mail_api");
+        $txtmsg_api = $this->getConfigTable()->getConfigKey("txtmsg_api");
+        $teacher_sendinfo = $this->getConfigTable()->getConfigKey("teacher_sendinfo");
         $team_list = $this->getTeamTable()->getTeamAll();
         $college_list =$this->getTeamTable()->getCollegeAll();
         $i = -1;
@@ -91,6 +103,9 @@ class State2CheckProjectController extends AbstractActionController
             'status'=>'当前状态',
         );
         return array(
+            'teacher_sendinfo'=>$teacher_sendinfo,
+            'mail_api'=>$mail_api,
+            'txtmsg_api'=>$txtmsg_api,
             'college_list'=>$college_list,
             'team_list'=>$team_list,
             'column'=>$column,
@@ -109,6 +124,8 @@ class State2CheckProjectController extends AbstractActionController
                 foreach ($post_team_ids as $per_team_id) {
                     if ($this->getTeamTable()->saveStatus($per_team_id))
                         echo "<script>alert('保存成功')</script>";
+                    else
+                        echo "<script>alert('保存失败')</script>";
                 }
             }
             else if(isset($submit) && ($submit == '12'))
@@ -116,6 +133,8 @@ class State2CheckProjectController extends AbstractActionController
                 foreach ($post_team_ids as $per_team_id) {
                     if ($this->getTeamTable()->saveStatus1($per_team_id))
                         echo "<script>alert('保存成功')</script>";
+                    else
+                        echo "<script>alert('保存失败')</script>";
                 }
             }
         }

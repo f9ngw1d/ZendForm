@@ -98,7 +98,6 @@ class StaffTable{
         $data = array(
             'staff_id' => $staff->staff_id,
             'staff_name' => $staff->staff_name,
-//            'uid' => $staff->uid,
             'college_id'=>$staff->college_id,
             'title' =>$staff->title,
             'phone'=>$staff->phone,
@@ -108,15 +107,17 @@ class StaffTable{
         );
         $id =$staff->staff_id;
         if(!$this->getstaff($id)){
-            return $this->tableGateway->insert($data);
+            $res =  $this->tableGateway->insert($data);
+            if($res)
+                return true;
+            else
+                return false;
         }else{
-            if($this->getstaff($id)){
-                unset($data['staff_id']);
-//                unset($data['uid']);
-                return  $this->tableGateway->update($data,array('staff_id'=>$id));
-            }else{
-                return 0;
-            }
+            $res = $this->tableGateway->update($data,array('staff_id'=>$id));
+            if($res >= 0)//当更新数据相同时不认为错误
+                return true;
+            else
+                return false;
         }
     }
 
@@ -151,5 +152,26 @@ class StaffTable{
             else echo "empty select result<br/>";
         }
         return $staffArr;
+    }
+    //lrn
+    public function getLastUID(){
+        $select = new Select();
+        $select ->from('base_staff')
+            ->order('staff_id desc')
+            ->limit(1);
+        $result = $this->tableGateway->selectWith($select);
+        $uid = ($row = $result->toArray()) ? $row[0]['staff_id'] : 0;
+        return $uid;
+    }
+
+    public function getColBySid($id){//根据staff_id返回college_id
+        $id = (int)$id;
+        $rowSet  = $this->tableGateway->select(array('staff_id'=>$id));
+        $row = $rowSet->current();
+        if(!$row){
+            return false;
+            //throw new \Exception("could not find row");
+        }
+        return $row->college_id;
     }
 }

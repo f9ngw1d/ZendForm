@@ -4,6 +4,7 @@
 namespace Manage\Controller;
 
 use Info\Model\Mailqueue;
+use StuData\Model\TStuBase;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -12,10 +13,9 @@ use Zend\ProgressBar\Upload\SessionProgress;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-use Manage\Model\ConfigKeyTable;
 use Manage\Form\ChangeStatusForm;
 use College\Model\StuStatus;
-
+use Manage\Form\ChangeVolunteerForm;
 
 class SuperChargeController extends AbstractActionController
 {
@@ -24,6 +24,12 @@ class SuperChargeController extends AbstractActionController
     protected $stubase_table;
     protected $college_table;
     protected $team_table;
+    protected $stu_project_table;
+    protected $stu_honor_table;
+    protected $einfo_table;
+    protected $validatemailTable;
+    protected $UsrStuTable;
+    protected $mailqueue;
     public function __construct()
     {
     }
@@ -72,10 +78,6 @@ class SuperChargeController extends AbstractActionController
             $delstu_name = $delstuid_base->user_name;
             $delstu_email = $delstuid_base->email;
             $delstu_phone = $delstuid_base->phone;
-            $this->getStuBaseTable()->deleteStu($delstuid);
-
-            //2-stu_check
-            $this->getCheckTable()->deleteStuStatus($delstuid);
 
             //3-stu_project
             $isexist_project = $this->getStuProjectTable()->getProjectBystuid($delstuid);
@@ -101,7 +103,9 @@ class SuperChargeController extends AbstractActionController
             //6-info_validatemail  删除激活信息
             $this->getvalidatemailTable()->deleteStuAllEinfo($delstu_email);
 //            echo "<script> alert('delmailactive:".$delstu_email."') </script>"; //9
-
+            //2-stu_check
+//            $this->getCheckTable()->deleteStuStatus($delstuid);
+            $this->getStuBaseTable()->deleteStu($delstuid);
             //7-usr_stu
             $this->getUsrStuTable()->deleteUserStu($delstuid);
 
@@ -121,11 +125,13 @@ class SuperChargeController extends AbstractActionController
 //
             /*  ******************** 给学生发邮件/发短信 ********************  */ //$delstu_phone   $delstu_email
 //            $delstu_email = "ruiyangchen@qq.com";//测试邮箱
+            $school_name=$this->getConfigTable()->getConfigKey('school_name');
+            $sys_name=$this->getConfigTable()->getConfigKey('system_name');
             $recv = array(  //邮箱信息
                 'receiver' => $delstu_email,
                 'status' => '-1',
-                'title' => 'BFU test ',
-                'content' => $delstu_name.'同学你好，已经根据你的邮件，将注册信息删除，以便于你重新注册时修改错误！',
+                'title' => $school_name.$sys_name.'【重新注册提示】 ',
+                'content' => $delstu_name.'同学你好，已经根据你的邮件，将注册信息从系统删除，以便于你重新注册时修改错误！',
             );
             $mailtable = new Mailqueue();
             $mailtable->exchangeArray($recv);
@@ -192,8 +198,12 @@ class SuperChargeController extends AbstractActionController
                                 $check_table = new StuStatus();
                                 $check_table->exchangeArray($status_data);
                                 $result2 = $this->getCheckTable()->updateStatus($check_table);
-                                echo "<script>alert('返回查看结果');window.location.href=''/manage/SuperCharge/changeStuStatus/uid/'.$this->uid';</script>";
-                        }
+                                if($result2){
+                                    echo "<script>alert('修改成功，返回查看结果');window.location.href='/manage/SuperCharge/changeStuStatus/uid/'.$uid';</script>";
+                                }else{
+                                    echo "<script>alert('修改失败，返回重试');window.location.href='/manage/SuperCharge/changeStuStatus/uid/'.$uid';</script>";
+                                }
+                            }
                     }
                     else{
                         echo "<script> alert('表单数据有误！');window.location.href='/manage/SuperCharge/changeStuStatus/uid/'.$uid';</script>";
@@ -212,10 +222,120 @@ class SuperChargeController extends AbstractActionController
             );
 
     }
+    /*
+       * author:lrn
+       * function:改志愿   改导师
+       * attention:
+       */
+    public function changeVolunteerAction()
+    {
+        $uid = $this->params()->fromRoute('uid'); //从路由取uid
+        if (is_null($uid)) {
+            echo "<script> alert('非法访问！');window.location.href='/info';</script>";
+        }
+        $container_rid = new Container('rid');
+        $rid_arr = $container_rid->item;
+        $container_username = new Container('username');
+        $username = $container_username->item;
+        $status = $this->getCheckTable()->getCheck($uid);
+        if($status==false){
+            echo "<script> alert('未查询到该生状态，非法访问！');window.location.href='/info';</script>";
+        }
+        $now_status=$status->status;
+            $all_college = $this->getCollegeTable()->fetchAll();//获取所有学院
+            $target_college = array();
+            foreach ($all_college as $key => $row) {
+                if (!empty($row)) {
+                    $cid = $row->college_id;//学院id
+                    $cname = $row->college_name;//学院名
+                    $target_college[$cid] = $cname;
+                }
+            }
+            $form = new ChangeVolunteerForm($target_college);
+            $user = $this->getStuBaseTable()->getStu($uid);
+            //涉及表单提交
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $arrayData = $request->getPost()->toArray();
+                if (isset($_POST['submit'])) {//strcmp($arrayData['submit'], '保存')
+                    $postData = array_merge_recursive(
+                        $this->getRequest()->getPost()->toArray()
+                    );
+                    $form->setData($postData);
+                    if ($form->isValid()) {
+                        if (in_array(10, $rid_arr) || in_array(99, $rid_arr) ) {
+                            $data = array(
+                                'uid' => $uid,
+                                'target_college' => $postData['target_college'],
+                                'target_team' => $postData['target_team'],
+                            );
+                            $stu_base_table = new TStuBase();
+                            $stu_base_table->exchangeArray($data);
+                            $result = $this->getStuBaseTable()->updateStuVolunteer($stu_base_table);
+//                           if($now_status>=3 && $now_status<=5){
+//                                $status_data = array(
+//                                    'uid' => $uid,
+//                                    'status' => 3,
+//                                );
+//                                $check_table = new StuStatus();
+//                                $check_table->exchangeArray($status_data);
+//                                $result2 = $this->getCheckTable()->updateStatus($check_table);
+//                            }
+//                            else{
+//                                $status_data = array(
+//                                    'uid' => $uid,
+//                                    'status' => 7,
+//                                );
+//                                $check_table = new StuStatus();
+//                                $check_table->exchangeArray($status_data);
+//                                $result2 = $this->getCheckTable()->updateStatus($check_table);
+//                            }
+                            if($result){
+                                echo "<script>alert('修改成功，返回查看结果');window.location.href=''/manage/SuperCharge/changeVolunteer/uid/".$uid."';</script>";
+                            }else{
+                                echo "<script>alert('修改失败，返回重试');window.location.href=''/manage/SuperCharge/changeVolunteer/uid/".$uid."';</script>";
+                            }
+                            }//if  有权操作
+                        else {
+                            echo "<script>alert('无权操作');window.location.href='/info';</script>";
+                        }
+                    } else {
+                        echo "<script>alert('the form is not valid！');window.location.href='/manage/stu/SuperCharge/uid/".$uid."';</script>";
+                    }
+                }//if   点击的是submit，提交志愿
+            }//if    ispost
+            $status_arr= $this->getConfigTable()->getConfigValueByKey("stu_status",array(),false,true);
+            return array(
+                'form' => $form,
+                'uid' => $uid,
+                'username' => $user->user_name,
+                'status' => $status_arr[$now_status],//this->getConfigTable()->getConfigValueByKey('stu_status',$now_status),
+                'college' => empty($this->getCollegeTable()->getCollege($user->target_college)->college_name)?'无':$this->getCollegeTable()->getCollege($user->target_college)->college_name,
+                'team' => empty($this->getTeamTable()->getTeam($user->target_team)->team_name)?'无':$this->getTeamTable()->getTeam($user->target_team)->team_name,
+            );
+    }
     public function exportDbfAction(){
     }
 
-
+    /*
+           * author:lrn
+           * function:根绝college选学科
+           * attention:
+           */
+    public function selectSubByCidAction()
+    {
+        $cid = $this->params()->fromRoute('param3', 0);
+        $teams = $this->getTeamTable()->getTeamIDByCollegeID($cid);
+        $target_team = array();
+        foreach ($teams as $key => $row) {
+            if (!empty($row)) {
+                $sid = $row->team_id;//专业id
+                $sname = $row->team_name;//专业名
+                $target_team[$sid] = $sname;
+            }
+        }
+        return array('target_team' => $target_team, 'cid' => $cid);
+    }
     //lrn
     public function getCheckTable()
     {

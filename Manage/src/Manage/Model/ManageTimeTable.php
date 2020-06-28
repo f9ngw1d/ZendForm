@@ -97,11 +97,23 @@ class ManageTimeTable
 
         if ($this->find($name)) {
 //            echo "update<br><br>";
-            $this->tableGateway->update($data, array('name' => $name));
+            $res = $this->tableGateway->update($data, array('name' => $name));
+            if($res){
+                return true;
+            }else{
+                return false;
+                //throw new \Exception("insert usr_teacher fail");
+            }
         } else
         {
 //            echo "insert<br><br>";
-            $this->tableGateway->insert($data);
+            $res = $this->tableGateway->insert($data);
+            if($res){
+                return true;
+            }else{
+                return false;
+                //throw new \Exception("insert usr_teacher fail");
+            }
         }
     }
 

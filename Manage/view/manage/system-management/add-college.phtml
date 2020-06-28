@@ -1,3 +1,8 @@
+<?php
+use Zend\Session\Container;
+echo $this->doctype();
+?>
+
 <style>
     label span, label {
         text-align: left;
@@ -71,7 +76,21 @@
 if($this->flag == 1)
     echo "<script>alert('设置成功！')</script>";
 ?>
+
+
 <div id="div2">
+    <br>
+    <?php
+    $rid_arr_container = new Container('rid');
+    $rid_arr = $rid_arr_container->item;
+    if (in_array(10, $rid_arr)){
+        echo '<a class="btn btn-primary" id="addNewArticle" href="/college/otherOperation/loadData">excel文件一键导入</a>';
+        echo '<p ><span style="color: #A9A9A9;">注：点击此处可以通过excel导入学院及用户信息</span></p>';
+    }
+    ?>
+    <!--<a class="btn btn-primary" id="addNewArticle" href="/college/otherOperation/loadData">excel文件一键导入</a>-->
+    <!--<p ><span style="color: #A9A9A9;">注：点击此处可以通过excel导入学院及用户信息</span></p>-->
+<!--    <br>-->
     <h3>添加学院</h3>
     <?php
     $form = $this->form;
@@ -82,7 +101,6 @@ if($this->flag == 1)
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('college_id')); ?></div>
         <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('college_id')); ?>
-        <span>（例：001依次递增）</span>
         </div>
     </div>
     <br>
@@ -99,12 +117,12 @@ if($this->flag == 1)
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('ip_address')); ?></div>
         <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('ip_address')); ?>
-        <span>（例：https://www.***.com/）</span></div>
+        </div>
     </div>
     <br>
     <div class="row">
         <div class="span2"><?php echo $this->formLabel($form->get('address')); ?></div>
-        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('address')); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->formElement($form->get('submit')); ?></div>
+        <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('address')); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><br><?php echo $this->formElement($form->get('submit')); ?></div>
     </div>
     <br>
 
@@ -145,7 +163,7 @@ if(isset($this->college)){
             {
                 ?>
                 <td><button type='button' class="btn btn-danger"><a style="color: white" href="<?php echo $this->url('manage/default',array('controller'=>'SystemManagement','action'=>'deleteCollege','uid' => $uniarr[$id]));?>" onclick="return confirm('确认删除吗?')">删除</a></button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <?php   echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
+                <?php   echo "<button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";
             }
             else
                 echo "<td>".$uniarr[$key]."</td>";

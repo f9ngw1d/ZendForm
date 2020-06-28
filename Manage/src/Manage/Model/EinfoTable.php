@@ -133,6 +133,7 @@ class EinfoTable
     public function deleteStuEinfo($uid,$eid)
     {//删
         return $this->tableGateway->delete(array('uid' => $uid,'eid' => $eid));
+
     }
 
     /**
@@ -144,10 +145,12 @@ class EinfoTable
     public function deleteStuAllEinfo($uid)
     {
         $res = $this->tableGateway->delete(array('uid' => $uid));
+//        var_dump($res);
+//        die();
         if($res){
             return $res;
         }else{//失败则抛出异常，for事务
-            throw new \Exception("del stu_einfo_map uid:".$uid." fail");
+            throw new \Exception("delete stu_einfo_map uid=".$uid." fail");
         }
     }
 }

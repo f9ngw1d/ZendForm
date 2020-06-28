@@ -32,11 +32,11 @@
 //$title = '高校信息';
 //$this->headTitle($title);
 ?>
-<h1><?php echo $this->escapeHtml($title); ?></h1>
+<!--<h1>--><?php //echo $this->escapeHtml($title); ?><!--</h1>-->
 <ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
     <?php
     echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSet"))."' >添加高校信息</a></li>";
-    echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSearch"))."' >查询高校信息</a></li>";
+    echo "<li class='active'><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"uniSearch"))."' >查询高校信息</a></li>";
     ?>
 </ul>
 
@@ -128,6 +128,8 @@ if(isset($this->uni_list)){
                 echo "<td><button type='button' class='btn btn-primary' id='btn' data-toggle='modal' data-target='#myEditModal' onclick='".$str."'>编辑</button></td>";}
             else if ($uniarr[$key] == 1)
                 echo "<td>是</td>";
+//            else if(empty($uniarr[$key]))
+//                echo "<td>否</td>";
             else
                 echo "<td>".$uniarr[$key]."</td>";
         }

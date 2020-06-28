@@ -34,6 +34,9 @@ class AccountController extends AbstractActionController{
      */
     public function loginTeacherAction() {
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['captcha'])) {
+            if($_POST['username'] == '' || $_POST['password'] == ''){
+                echo "<script>alert('请输入账号和密码');window.location.href='/manage/Account/loginTeacher';</script>";
+            }
             //setcookie('sign', $_POST['username'], 0, '/');
             $containerCaptcha = new Container('captcha');
             //echo $_POST['captcha']."cap: ".$containerCaptcha->item."<br>"; exit;
@@ -74,17 +77,8 @@ class AccountController extends AbstractActionController{
             //2.用staffid查所有的rid userrole表
             $staffids = array("uid"=>$staffid);//定义一个数组，键名为uid，值为staffid
             $userroles = $this->getUserroleTable()->getUserrole($staffids);
-            $ridArr = array();
-
-            foreach ($userroles as $key => $urrow) {
-                if(!$urrow){
-                    //throw new \Exception("could not find row");
-                }
-                else{
-                    $ridArr[] = $urrow->rid;
-                }
-            }
-
+            $ridArr = $this->getUserroleTable()->getRidArr($staffid);
+            $ridArr = array_column($ridArr,'rid');
 
             $team_id = $this->getTeamTable()->getTeamsByLeaderID($user->staff_id)->toArray();
             $team_id = array_column($team_id,'team_id');

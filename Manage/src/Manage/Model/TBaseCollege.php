@@ -16,6 +16,7 @@ class TBaseCollege implements InputFilterAwareInterface
     public $manager_id;
     public $ip_address;
     public $address;
+    protected $inputFilter;
 
     //简单地将 data 数组中的数据拷贝到College实体属性。ORM映射
     public function exchangeArray($data){

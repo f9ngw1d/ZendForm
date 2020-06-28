@@ -1,0 +1,116 @@
+<?php
+$title = 'ip配置信息';
+$this->headTitle($title);
+//echo "<br><a href='/Manage/Setting/configIp';><<<返回上一界面</a>";
+?>
+<br>
+<?php
+echo "<h3>".$this->escapeHtml($title)."</h3>";
+$form=$this->form;
+$url='/manage/Setting/configIp';
+$form->setAttribute('action', $url);//$this->url('stu/default', array('Controller'=>'stu','action' => 'changeVolunteer')));
+$form->setAttribute('method', 'POST');
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+echo $this->form()->openTag($form);
+?>
+
+<div class="form-group">
+    <label class="control-label" for="inputEmail">ip地址：</label>
+    <div class="controls">
+        <div class="ip-input-group" data-plugin="ipinput">
+            <div class="ip-input-group-w d-flex">
+        <?php
+        echo $this->formRow($form->get('ip_address1')).".";
+        echo $this->formRow($form->get('ip_address2')).".";
+        echo $this->formRow($form->get('ip_address3')).".";
+        echo $this->formRow($form->get('ip_address4'));
+        //目标院?>
+            </div>
+        </div>
+    </div>
+</div><br>
+<div class="form-group">
+    <label class="control-label" for="inputEmail">子网掩码：</label>
+    <div class="controls">
+        <?php echo $this->formRow($form->get('net_mask'));	//目标xuek ?>
+    </div>
+</div><br>
+<div class="form-group">
+    <label class="control-label" for="inputEmail">默认网关：</label>
+    <div class="controls">
+        <?php echo $this->formRow($form->get('default_gateway'));	//目标fangxiang?>
+    </div>
+</div><br>
+<div class="form-group">
+    <div class="controls">
+        <?php echo $this->formSubmit($form->get('submit')); 			//提交?>
+    </div>
+</div>
+<?php
+echo $this->form()->closeTag();
+?>
+
+<?php
+echo "<h3>ip配置信息</h3>";
+
+echo "<table class='table table-hover'>";
+echo "<thead><tr>";
+echo "<th>ip</th>";
+echo "<th>子网掩码</th>";
+echo "<th>默认网关</th>";
+echo "</tr></thead>";
+
+echo "<tr>";
+echo "<td>" . $this->ip . "</td>";
+echo "<td>" . $this->net_mask . "</td>";
+echo "<td>" . $this->default_gateway. "</td>";
+echo "</tr>";
+echo "</table>";
+?>
+
+
+<!--<script type="text/javascript" src="--><?php //echo $this->basePath('js/stu/change_volunteer.js?v=2');?><!--"></script>-->
+<script>
+    $('[data-plugin="ipinput"]').each(function(){
+        var elem = $(this);
+        var inputs = elem.find('input');
+        var len = inputs.length;
+        var letter_limit = parseInt(elem.attr('data-letterlimit'));
+        if(!letter_limit){ letter_limit = 3; }
+        elem.find('input').each(function(index, item){
+            var $item = $(item);
+            $item.on('focus', function(){
+                if($(this).val()!=''){
+                    $(this).select();
+                }
+                elem.addClass('focus');
+                $(this).addClass('focus');
+            });
+            $item.on('blur', function(){
+                elem.removeClass('focus');
+                $(this).removeClass('focus');
+            });
+            $item.on('keyup', function(e){
+                var thisinput = $(this);
+                var v = $(this).val();
+                // 输入↓或→键自动跳到下一个输入框内
+                if( (e.keyCode == 39 || e.keyCode == 40) && index<len-1){
+                    inputs.eq(index+1).focus();
+                }
+                // 输入↓或→键自动跳到上一个输入框内
+                else if( (e.keyCode == 38 || e.keyCode == 37) && index!=0){
+                    inputs.eq(index-1).focus();
+                }
+                // 输入3个字符自动跳到下一个输入框内
+                else if(v.length == letter_limit && index<len-1){
+                    inputs.eq(index+1).focus();
+                }
+                // 删除的时候，一个输入框没有了字符，自动跳回上一个输入框
+                else if(v == '' && e.keyCode == 8 && index!=0){
+                    inputs.eq(index-1).focus();
+                }
+            });
+        })
+    });
+</script>

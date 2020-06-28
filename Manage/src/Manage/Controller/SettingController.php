@@ -3,6 +3,7 @@
 namespace Manage\Controller;
 
 use Manage\Form\DeleteAllDataForm;
+use Manage\Form\DnsConfigForm;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -11,7 +12,7 @@ use Zend\ProgressBar\Upload\SessionProgress;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Select;
 use Zend\Db\TableGateway\TableGateway;
-
+use Manage\Form\IpConfigForm;
 
 class SettingController extends AbstractActionController
 {
@@ -71,10 +72,152 @@ class SettingController extends AbstractActionController
             'update_at'=>'更新时间',
             'operation'=>'操作',
         );
-        $setting_data = $this->getConfigTable()->getConfigKey(array('school_name','system_name','current_year','short_name','DWDM','KDH','copy_right','tech_support',),false,true);
+        $setting_data = $this->getConfigTable()->getConfigKey(array('school_name','system_name','current_year','short_name','DWDM','KDH','full_marks','copy_right','tech_support',),false,true);
         return array(
             'setting'=>$setting_data,
             'column'=>$column,
+        );
+    }
+    //lrn ip配置
+    public function configIpAction(){
+        // 权限判断
+        $login_id_container = new Container('uid');
+        $login_id = $login_id_container->item;
+        if (is_null($login_id)) {
+            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+        }
+        $rid_container = new Container('rid');
+        $rid_arr = $rid_container->item;//login 用户的权限
+        if (is_null($rid_arr)) {
+            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+        }
+        if (!in_array("99", $rid_arr) && !in_array("10", $rid_arr)) {//url中取得用户角色不属于该用户的话
+            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
+
+        }
+        $ip_info = $this->getConfigTable()->getConfigKey(array('ip','net_mask','default_gateway'));
+        $form = new IpConfigForm();
+        //涉及表单提交
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $arrayData = $request->getPost()->toArray();
+            if (isset($_POST['submit'])) {//strcmp($arrayData['submit'], '保存')
+                $postData = array_merge_recursive(
+                    $this->getRequest()->getPost()->toArray()
+                );
+                $form->setData($postData);
+                //var_dump($postData);
+                if ($form->isValid()){
+                   // var_dump($postData);
+                   // echo "<br><br>";
+                    $content = "hostname='xly'
+ifconfig_em0='inet ".trim($postData['ip_address1']).".".trim($postData['ip_address2']).".".trim($postData['ip_address3']).".".trim($postData['ip_address4'])." netmask ".trim($postData['net_mask'])."'\n
+defaultrouter=".trim($postData['default_gateway'])."
+sshd_enable='YES'
+# Set dumpdev to 'AUTO' to enable crash dumps, 'NO' to disable
+dumpdev='AUTO'
+git_daemon_enable='YES'
+sendmail_enable='NO'
+sendmail_submit_enable='NO'
+sendmail_outbound_enable='NO'
+sendmail_msp_queue_enable='NO'
+";
+                    //var_dump($content);
+                    $res=file_put_contents("/etc/rc.conf", $content);
+                    if($res!=0){
+                        $result = $this->getConfigTable()->saveConfigKey(array('id'=>23,'key_value'=>$postData['ip_address1'].".".$postData['ip_address2'].".".$postData['ip_address3'].".".$postData['ip_address4']));
+                        $result1 = $this->getConfigTable()->saveConfigKey(array('id'=>24,'key_value'=>$postData['net_mask']));
+                        $result2 = $this->getConfigTable()->saveConfigKey(array('id'=>25,'key_value'=>$postData['default_gateway']));
+                        echo "<script>alert('已成功设置并写入文件');window.location.href='/manage/Setting/configIp';</script>";
+                        $res1 = system('/bin/sh  /usr/local/www/xly/ipanddns.sh',$return_status1);
+//                        $res2 = system('/bin/sh  /etc/rc.d/routing  restart',$return_status2);
+                        if($return_status1==0){
+                            echo "<script>alert('netif restart success')</script>";
+                        }
+                        else{
+                            echo "<script>alert('netif restart failed!')</script>";
+                        }
+//                        if($return_status2==0){
+//                            echo "<script>alert('routing restart success')</script>";
+//                        }
+//                        else{
+//                            echo "<script>alert('routing restart failed!')</script>";
+//                        }
+
+                    }else{
+                        echo "<script>alert('设置失败，请检查文件读写权限并再次检查')</script>";
+                    }
+                 }
+                else{
+                    echo "<script> alert('表单数据有误！请按规范填写');window.location.href='/manage/Setting/configIp';</script>";
+                }
+            }
+        }
+        return array(
+            'form' => $form,
+            'uid' => $login_id,
+            'ip' => empty($ip_info['ip']['key_value'])?'未设置':$ip_info['ip']['key_value'],
+            'net_mask' =>empty($ip_info['net_mask']['key_value'])?'未设置':$ip_info['net_mask']['key_value'],
+            'default_gateway' => empty($ip_info['default_gateway']['key_value'])?'未设置':$ip_info['default_gateway']['key_value'],
+        );
+    }
+    //lrn dns配置
+    public function configDnsAction(){
+        // 权限判断
+        $login_id_container = new Container('uid');
+        $login_id = $login_id_container->item;
+        if (is_null($login_id)) {
+            echo "<script> alert('您未登录，尚无权访问！');window.location.href='/info';</script>";
+        }
+        $rid_container = new Container('rid');
+        $rid_arr = $rid_container->item;//login 用户的权限
+        if (is_null($rid_arr)) {
+            echo "<script> alert('系统中未查到您的权限，尚无权访问！');window.location.href='/info';</script>";
+        }
+        if (!in_array("99", $rid_arr) && !in_array("10", $rid_arr)) {//url中取得用户角色不属于该用户的话
+            echo "<script> alert('您无该项角色权限，无权访问！');window.location.href='/info';</script>";
+
+        }
+        $dns_info = $this->getConfigTable()->getConfigKey(array('dns_name','dns1','dns2'));
+        $form = new DnsConfigForm();
+        //涉及表单提交
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $arrayData = $request->getPost()->toArray();
+            if (isset($_POST['submit'])) {//strcmp($arrayData['submit'], '保存')
+                $postData = array_merge_recursive(
+                    $this->getRequest()->getPost()->toArray()
+                );
+                $form->setData($postData);
+                //var_dump($postData);
+                if ($form->isValid()){
+                    // var_dump($postData);
+                    // echo "<br><br>";
+                    $content = "search ".trim($postData['dns_name'])."
+nameserver ".trim($postData['dns1'])."
+nameserver ".trim($postData['dns2']);
+                    //var_dump($content);
+                    $res=file_put_contents("/etc/resolv.conf", $content);
+                    if($res!=0){
+                        $result = $this->getConfigTable()->saveConfigKey(array('id'=>26,'key_value'=>$postData['dns_name']));
+                        $result1 = $this->getConfigTable()->saveConfigKey(array('id'=>27,'key_value'=>$postData['dns1']));
+                        $result2 = $this->getConfigTable()->saveConfigKey(array('id'=>28,'key_value'=>$postData['dns2']));
+                        echo "<script>alert('已成功设置并写入文件');window.location.href='/manage/Setting/configDns';</script>";
+                    }else{
+                        echo "<script>alert('设置失败，请检查文件读写权限并再次检查')</script>";
+                    }
+                    }
+                else{
+                    echo "<script> alert('表单数据有误！请按规范填写');window.location.href='/manage/Setting/configDns';</script>";
+                }
+            }
+        }
+        return array(
+            'form' => $form,
+            'uid' => $login_id,
+            'dns_name' => empty($dns_info['dns_name']['key_value'])?'未设置':$dns_info['dns_name']['key_value'],
+            'dns1' =>empty($dns_info['dns1']['key_value'])?'未设置':$dns_info['dns1']['key_value'],
+            'dns2' => empty($dns_info['dns2']['key_value'])?'未设置':$dns_info['dns2']['key_value'],
         );
     }
     //lrn 上传logo
@@ -231,7 +374,7 @@ class SettingController extends AbstractActionController
         // mysqldump --all-databases new_freetest > /new/new_freetest3.sql
         $db_name="student_camp";
         $name="/usr/local/www/xly/public/".$dir1."/".$filename1.".sql";//数据库文件存储路径
-        $exec="mysqldump --databases ".$db_name." > ".$name;
+        $exec="mysqldump --set-gtid-purged=off --databases ".$db_name." > ".$name;
         $result=exec($exec);
 //        return array(
 //            'data_addr1'=>"./".$dir1."/".$filename1.".sql",

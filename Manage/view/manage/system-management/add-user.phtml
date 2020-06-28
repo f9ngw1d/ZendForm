@@ -1,3 +1,8 @@
+<?php
+use Zend\Session\Container;
+echo $this->doctype();
+?>
+
 <style>
     label span, label {
         text-align: left;
@@ -27,18 +32,17 @@
         color: #EE0000;
     }
     .message2{
-
         color:  #A9A9A9;
     }
 </style>
 <?php
-$title = '用户管理';
-$this->headTitle($title);
-?>
-<h1><?php echo $this->escapeHtml($title); ?></h1>
+//$title = '用户管理';
+//$this->headTitle($title);
+//?>
+<!--<h1>--><?php //echo $this->escapeHtml($title); ?><!--</h1>-->
 <ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
     <?php
-    echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"addUser"))."' >新增用户</a></li>";
+    echo "<li class='active'><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"addUser"))."' >新增用户</a></li>";
     echo "<li><a href='".$this->url("manage/default",array("controller"=>"systemManagement","action"=>"others"))."' >管理其他用户</a></li>";
     ?>
 </ul>
@@ -57,7 +61,7 @@ $this->headTitle($title);
 <!--    </li>-->
 <!--</ul>-->
 
-<p style='color:red'>创建用户时，用户名请填写老师的邮箱，并将老师的工号作为密码</p>
+<!--<p style='color:red'>创建用户时，用户名请填写老师的邮箱，并将老师的工号作为密码</p>-->
 <div id="add">
     <?php
     $form = $this->form;
@@ -68,18 +72,31 @@ $this->headTitle($title);
     ?>
 </div>
 
+<?php
+    $rid_arr_container = new Container('rid');
+    $rid_arr = $rid_arr_container->item;
+    if (in_array(10, $rid_arr)){
+        echo '<a class="btn btn-primary" id="addNewArticle" href="/college/otherOperation/loadData">excel文件一键导入</a>';
+        echo '<p ><span style="color: #A9A9A9;">注：点击此处可以通过excel导入学院及用户信息</span></p>';
+    }
+?>
+<!--<a class="btn btn-primary" id="addNewArticle" href="/college/otherOperation/loadData">excel文件一键导入</a>-->
+<!--<p ><span style="color: #A9A9A9;">注：点击此处可以通过excel导入学院及用户信息</span></p>-->
+<!--<br>-->
+<!--<br>-->
+
 
 
 <!--    echo $this->form()->openTag($form);-->
 <!--    echo $this->formHidden($form->get('Uid'));-->
 <div class="row">
     <div class="span3"><?php echo $this->formLabel($form->get('Uname')); ?></div>
-    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Uname')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;请使用老师邮箱作为账号</span></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Uname')); ?></div>
 </div>
 <br>
 <div class="row">
     <div class="span3"><?php echo $this->formLabel($form->get('Password')); ?></div>
-    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Password')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;请使用老师工号作为注册密码，密码由6-24个数字或字母组成</span></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Password')); ?></div>
 </div>
 <br>
 <div class="row">
@@ -94,12 +111,12 @@ $this->headTitle($title);
 <br>
 <div class="row">
     <div class="span3"><?php echo $this->formLabel($form->get('Mobile')); ?></div>
-    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Mobile')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Mobile')); ?></div>
 </div>
 <br>
 <div class="row">
     <div class="span3"><?php echo $this->formLabel($form->get('Email')); ?></div>
-    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Email')); ?><span class = 'message2'>&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+    <div class="span7"><span class = 'message1'>*</span><?php echo $this->formElement($form->get('Email')); ?></div>
 </div>
 <br>
 <div class="row">

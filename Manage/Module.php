@@ -7,6 +7,10 @@ use Manage\Model\ConfigValue;
 use Manage\Model\ConfigValueTable;
 use Manage\Model\ManageTime;
 use Manage\Model\ManageTimeTable;
+use Manage\Model\Msgqueue;
+use Manage\Model\MsgqueueTable;
+use Manage\Model\RoleName;
+use Manage\Model\RoleNameTable;
 use Manage\Model\Rolepermission;
 use Manage\Model\RolepermissionTable;
 use Manage\Model\TBaseCollege;
@@ -172,6 +176,17 @@ class Module{
                     $resultSetPrototype->setArrayObjectPrototype(new UsrPermission());
                     return new TableGateway('usr_permission',$dbAdapter,null,$resultSetPrototype);
                 },
+                'Manage\Model\RoleNameTable' => function($sm){
+                    $tableGateway = $sm->get('RoleNameTableGateway');
+                    $table = new RoleNameTable($tableGateway);
+                    return $table;
+                },
+                'RoleNameTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new RoleName());
+                    return new TableGateway('usr_role',$dbAdapter,null,$resultSetPrototype);
+                },
                 'Manage\Model\UsrRoleTable' => function($sm){
                     $tableGateway = $sm->get('UsrRoleTableGateway');
                     $table = new UsrRoleTable($tableGateway);
@@ -281,6 +296,17 @@ class Module{
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Electronicinfo());
                     return new TableGateway('stu_electronic_info',$dbAdapter,null,$resultSetPrototype);
+                },
+                'Manage\Model\MsgqueueTable' => function($sm){
+                    $tableGateway = $sm->get('MsgqueueTableGateway');
+                    $table = new MsgqueueTable($tableGateway);
+                    return $table;
+                },
+                'MsgqueueTableGateway' => function($sm){
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Msgqueue());
+                    return new TableGateway('msg_queue',$dbAdapter,null,$resultSetPrototype);
                 },
             )
         );

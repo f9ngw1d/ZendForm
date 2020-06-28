@@ -36,6 +36,7 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
     public  function getUserrole($conArr){ //通过uid 查询rid
         //传入一个数组 attay $id ,两个字段 uid 和rid
         $rowSet = $this->tableGateway->select($conArr);
+        $rowSet = $rowSet->current();
         if(!$rowSet){
             return false;
         }
@@ -58,30 +59,32 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
             'uid' => $Userrole->uid
         );
         $resultSet = $this->getUserrole($data);
-        $row = $resultSet->current();
-        if($Userrole->rid && $Userrole->uid && !$row){
+//        $row = $resultSet->current();
+        if(!$resultSet){
             //echo "<br/>插入新的userrole <br/>";
-            $this->tableGateway->insert($data);
-            return true;
-        }
-        elseif($row){
-            //echo "数据库中有这对uid rid<br/>";
-            return false;
+            $res = $this->tableGateway->insert($data);
+            if($res)
+                return true;
+            else
+                return false;
         }
         else{
             //echo "数组中uid rid有错<br/>";
-            return false;
+            $res = $this->tableGateway->update($data, array('uid' => $Userrole->uid));
+            if($res >= 0)
+                return true;
+            else
+                return false;
             //throw new \Exception("could not insert {$Userrole->rid} & {$Userrole->uid}");
         }
     }
 
     public function getRid($uid){
         $rowSet  = $this->tableGateway->select(array('uid'=>$uid));
-        $row = $rowSet->current();
-        if(!$row){
+        if(!$rowSet){
             return false;
         }
-        return $row;
+        return $rowSet;
     }
 
     public function modifyrid3($id){
@@ -187,7 +190,8 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
 				continue;
 			}
 			else{
-				$rid_arr[] = $ur_row->rid;
+			    array_push($rid_arr,$ur_row);
+//				$rid_arr[] = $ur_row->rid;//lrn改之前189行
 			}
 		}
 		return $rid_arr;
@@ -204,5 +208,35 @@ class UsrRoleTable{//usrRole表 只能增删查，不能修改
 		$this->userroleTable = $table;
 		return $table;
 	}
+
+    /**
+     * @author sm
+     * @param $uid
+     * @return int
+     * @throws \Exception
+     */
+    public function getRidArr($id)
+    {
+        $sql_query = "SELECT rid FROM usr_user_role WHERE uid =".$id;
+        $rowSet = $this->tableGateway->getAdapter()->query($sql_query)->execute();
+        $result_arr = iterator_to_array($rowSet);
+        return $result_arr;
+    }
+
+    /**
+     * @author sm
+     * @param $uid
+     * @return int
+     * @throws \Exception
+     */
+    public function deleteUsrRid($uid)
+    {
+        $res = $this->tableGateway->delete(array('uid' => $uid));
+        if($res){
+            return $res;
+        }else{//失败则抛出异常，for事务
+            throw new \Exception("del usr_user_role uid:".$uid." fail");
+        }
+    }
 
 }

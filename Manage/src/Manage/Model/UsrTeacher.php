@@ -23,7 +23,7 @@ class UsrTeacher implements InputFilterAwareInterface{
         $this->email = (!empty($data['email']))?$data['email']:null;
         $this->salt = (!empty($data['salt']))?$data['salt']:null;
         $this->password = (!empty($data['password']))? $data['password'] : null;
-        $this->create_at = (!empty($data['create_time']))?$data['create_time'] : null;
+        $this->create_time = (!empty($data['create_time']))?$data['create_time'] : null;
         $this->update_at = (!empty($data['update_at']))?$data['update_at'] : null;
     }
 

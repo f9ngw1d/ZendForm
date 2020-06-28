@@ -1,0 +1,61 @@
+<?php
+$title = 'dns配置信息';
+$this->headTitle($title);
+//echo "<br><a href='/Manage/Setting/configDns';><<<返回上一界面</a>";
+?>
+<br>
+<?php
+echo "<h3>".$this->escapeHtml($title)."</h3>";
+$form=$this->form;
+$url='/manage/Setting/configDns';
+$form->setAttribute('action', $url);//$this->url('stu/default', array('Controller'=>'stu','action' => 'changeVolunteer')));
+$form->setAttribute('method', 'POST');
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+echo $this->form()->openTag($form);
+?>
+
+<div class="form-group">
+    <label class="control-label" for="inputEmail">域名：</label>
+    <div class="controls">
+                <?php
+                echo $this->formRow($form->get('dns_name'));
+                //目标院?>
+    </div>
+</div><br>
+<div class="form-group">
+    <label class="control-label" for="inputEmail">域名服务器1：</label>
+    <div class="controls">
+        <?php echo $this->formRow($form->get('dns1'));	//目标xuek ?>
+    </div>
+</div><br>
+<div class="form-group">
+    <label class="control-label" for="inputEmail">域名服务器2(选填)：</label>
+    <div class="controls">
+        <?php echo $this->formRow($form->get('dns2'));	//目标fangxiang?>
+    </div>
+</div><br>
+<div class="form-group">
+    <div class="controls">
+        <?php echo $this->formSubmit($form->get('submit')); 			//提交?>
+    </div>
+</div>
+<?php
+echo $this->form()->closeTag();
+echo "<h3>dns配置信息</h3>";
+
+echo "<table class='table table-hover'>";
+echo "<thead><tr>";
+echo "<th>域名</th>";
+echo "<th>域名服务器1</th>";
+echo "<th>域名服务器2</th>";
+echo "</tr></thead>";
+
+echo "<tr>";
+echo "<td>" . $this->dns_name . "</td>";
+echo "<td>" . $this->dns1 . "</td>";
+echo "<td>" . $this->dns2. "</td>";
+echo "</tr>";
+echo "</table>";
+?>
+

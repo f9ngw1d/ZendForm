@@ -47,9 +47,9 @@ if($this->flag == 1)
         echo "<p id = 'sum'>".$this->range."当前无人报考</p>";
     }
     else{
-        echo "<p id = 'sum'>".$this->range."学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
-        echo "<p id = 'sum'>".$this->range."女性人数".$female."，".$this->range."男性人数".$male."。</p><br>";
-        echo "<h4>".$this->range."生源大学排序</h4>";
+        echo "<p id = 'sum'>报考学生总人数".$total."，其中985/211总人数".$good."。</p><br>";
+        echo "<p id = 'sum'>其中女性人数".$female."，男性人数".$male."。</p><br>";
+        echo "<h4>生源大学排序</h4>";
         echo "<table class='table table-striped'><thead>";
         foreach ($this->column as $key => $value) {
             echo "<th/>".$value."</th>";
@@ -95,7 +95,7 @@ else if($this->flag == 2)
                 $total++;
             }
         }
-        echo "<p id = 'sum'>".$total."</p>";
+//        echo "<p id = 'sum'>".$total."</p>";
         if($total == 0)
         {
             echo "<p id = 'sum'>".$this->range[$i][0]["team_name"]."当前无人报考</p>";

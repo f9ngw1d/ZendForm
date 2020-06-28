@@ -1,14 +1,15 @@
 <?php
-$title = '修改学生状态';
+$title = '调整报考志愿';
 $this->headTitle($title);
 echo "<br><a href='/check/check/stuList/rid/10/now_stage/2';><<<返回上一界面</a>";
 ?>
-<!--<br>-->
+<br>
 <span style='color: red; font-size: medium;'>提示：操作此功能前，需要与学院、夏令营招生组协商一致，避免出现纠纷<br></b></span>
+<!--<span style='color: red; font-size: medium;'>注意：学院操作此功能前，需要与双方学科、方向负责人、导师沟通、协商一致，避免出现纠纷<br></b></span>-->
 <?php
 echo "<h3>".$this->escapeHtml($title)."</h3>";
 $form=$this->form;
-$url='/manage/SuperCharge/changeStuStatus/uid/'.$this->uid;
+$url='/manage/SuperCharge/changeVolunteer/uid/'.$this->uid;
 $form->setAttribute('action', $url);//$this->url('stu/default', array('Controller'=>'stu','action' => 'changeVolunteer')));
 $form->setAttribute('method', 'POST');
 $form->setAttribute('class', 'form-horizontal');
@@ -16,47 +17,42 @@ $form->prepare();
 echo $this->form()->openTag($form);
 ?>
 <div class="form-group">
-    <label class="control-label" for="inputEmail">姓名</label>
+    <label class="control-label" for="inputEmail">调整报考院系到：</label>
     <div class="controls">
-    <?php echo $this->formRow($form->get('user_name'));		//目标院?>
+    <?php echo $this->formRow($form->get('target_college'));		//目标院?>
     </div>
 </div><br>
 <div class="form-group">
-    <label class="control-label" for="inputEmail">当前状态</label>
+    <label class="control-label" for="inputEmail">调整报考组到：</label>
     <div class="controls">
-    <?php echo $this->formRow($form->get('now_status'));	//目标xuek ?>
-    </div>
-</div><br>
-<div class="form-group">
-    <label class="control-label" for="inputEmail">修改为</label>
-    <div class="controls">
-<?php echo $this->formRow($form->get('target_status'));	//目标fangxiang?>
+        <?php echo $this->formRow($form->get('target_team'));		//目标院?>
     </div>
 </div><br>
 <div class="form-group">
     <div class="controls">
-<?php echo $this->formSubmit($form->get('submit')); 			//提交?>
+        <?php echo $this->formRow($form->get('submit'));		//目标院?>
     </div>
-</div>
+</div><br>
+
 <?php
 echo $this->form()->closeTag();
-echo "<h3>基本信息</h3>";
+echo "<h3>已选学院 / 组 </h3>";
 
 echo "<table class='table table-hover'>";
 echo "<thead><tr>";
 echo "<th>姓名</th>";
-echo "<th>报考学院</th>";
-echo "<th>报考组</th>";
+echo "<th>学院</th>";
+echo "<th>组</th>";
 echo "<th>状态</th>";
 echo "</tr></thead>";
 
 echo "<tr>";
 echo "<td>" . $this->username . "</td>";
-echo "<td>" . $this->target_college . "</td>";
-echo "<td>" . $this->target_team. "</td>";
+echo "<td>" . $this->college . "</td>";
+echo "<td>" . $this->team . "</td>";
 echo "<td>" . $this->status . "</td>";
 echo "</tr>";
 echo "</table>";
 ?>
 
-<!--<script type="text/javascript" src="--><?php //echo $this->basePath('js/stu/change_volunteer.js?v=2');?><!--"></script>-->
+<script type="text/javascript" src="<?php echo $this->basePath('js/manage/change_volunteer.js?v=2');?>"></script>

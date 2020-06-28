@@ -1,4 +1,5 @@
 <h3>所有申请的夏令营项目</h3>
+
 <?php
 $url2 = '/manage/State2CheckProject/checkProject';
 $str = "<form action = '" . $url2 . "' method = 'post'>";
@@ -54,8 +55,294 @@ if(isset($this->college_list))
 ?>
 </table><!------form   table1----->
 </div>
-<div style="margin-left: 220px">
+<div style="margin-left: 300px">
     <button name='submit' id='status' value='1' class='btn btn-primary'>审核通过</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <button name='submit' id='status' value='12' class='btn btn-primary'>退回</button>
+    <button name='submit' id='status' value='12' class='btn btn-primary'>退回</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button name='submit' id='status' value='123' class='btn btn-primary' data-toggle='modal' data-target='#noticeEditModal' onclick='sendMessage2()'>全部审核完毕，通知各院</button>
+<!--    <script>alert(receiver_data);</script>-->
 </div>
 </form>
+<div style="margin-left: 215px;margin-top: 20px;">
+    <p>【提示】：点击“全部审核完毕，通知各院”按钮不会直接发送短信，请在审核结束后，点击并确认信息无误后发送通知。</p>
+</div>
+
+
+<div class="modal fade" id="noticeEditModal" tabindex=-1 aria-lablledby="myEditModalLabel" role="dialog"
+     aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myEditModalLabel">
+                    短信通知
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="notice_content1" class="control-label">接收者：</label>
+                    <div id="msg_receiver"></div>
+                </div>
+                <div class="form-group">
+                    <p>如需自选短信接受者，可至<a href="/info/send/sendMsg" target="_blank">手动选择短信接收者</a></p>
+                </div>
+                <div class="form-group">
+                    <label for="notice_content1" class="control-label">发送方式：</label>
+                    <input type="radio" name="send_method" checked="checked" value="1" onclick="show_title(1);">邮箱
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" name="send_method" value="2" onclick="show_title(0);">短信
+                </div>
+                <div class="form-group">
+                    <label for="notice_content1" class="control-label">信息模板：</label>
+                    <select id="msg_template" onclick="change_notice_content2(this);"></select>
+                </div>
+                <div class="form-group">
+                    <label for="notice_content1" class="control-label">编辑短信内容：</label>
+                    <textarea class="form-control" name="notice_content" id="notice_content"
+                              style="height:80px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" id="sendNoticeMessage" style="float: right" onclick="sendMessage2()">确认发送
+                    </button>
+                </div>
+                <br>
+            </div>
+
+            <div class="modal-footer">
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+</div>
+
+<script type="text/javascript">
+    // send api
+    var mail_api = '<?php echo $this->mail_api;?>';
+    var phone_api = '<?php echo $this->txtmsg_api;?>';
+
+    if (mail_api == '') alert("邮箱网关为空，将导致邮箱发送失败！请及时检查配置");
+    if (phone_api == '') alert("短信网关为空，将导致短信发送失败！请及时检查配置");
+
+
+    // 人员名单显示涉及全局变量
+    var info_address = '';
+    var teainfo_address = '<?php echo $this->teacher_sendinfo;?>'; // 后跟： /学院/身份/页数
+    var stuinfo_address = "/info/send/getinfo";                    // 后跟： /学院/身份/页数
+
+    var mail_send_num = 0, phone_send_num = 0, total_num = 0;     // 为发送后提示框提供数据
+
+    var colleges = -1;          // [-1：所有学院]； [001：A学院]； [001;002：A学院和B学院]
+    var role = "teacher";       // [yjsy：研究生院]； [college：院秘书]； [subject：学科负责人]； [teacher：教师]；
+                                // [pass： 通过复试的推免生]； [pre-enroll：拟录取]
+
+    var receiver_data = new Array();    // 存储 接收人员 数组
+    var mail_str = "", phone_str = "";
+    var show_html = "";
+
+    // document.write(receiver_data);
+    /**
+     * @author  lwb
+     * @brief   为了接口复用，递归查询人员名单
+     *          获得发送人员名单（因为后端api采用分页机制，所以需要多次请求）
+     * @param all_result_num        人员名单总记录数
+     * @param one_page_result_num   一个页面的展示记录数
+     * @param now_page_num          现在处于第几页
+     * @constructor
+     */
+    function ReceiverList2(all_result_num, one_page_result_num, now_page_num, receier_idtag) {
+        // alert('ReceiverList begin');
+        if (parseInt(all_result_num/one_page_result_num) <= now_page_num) {
+            // console.log(parseInt(all_result_num/one_page_result_num)+"over"+now_page_num);
+            if (receier_idtag && document.getElementById(receier_idtag)) {
+                console.log("output");
+                console.log(show_html);
+                document.getElementById(receier_idtag).innerHTML = show_html;
+            }
+            return;
+        }
+        // alert(info_address+'/id/'+colleges+'/rid/'+role+'/page/'+now_page_num);
+        $.ajax({
+            type: 'GET',
+            url: info_address+'/id/'+colleges+'/rid/'+role+'/page/'+now_page_num,//info_address+'/'+colleges+'/'+role+'/'+now_page_num,
+            dataType: 'json',
+            error: function() {
+                console.log("ajax error");
+            },
+            success: function (json) {
+                receiver_data = json.data;
+                all_result_num = receiver_data[0][0];
+                one_page_result_num = receiver_data[0][1];
+                // console.log(receiver_data);
+                for (var i = 1; i < receiver_data.length; i++) {
+                    show_html += ("<p>" + receiver_data[i][2] + " | " + receiver_data[i][3] + " | " + receiver_data[i][4] + "</p><br>" );
+                    // console.log("input");
+                    // console.log(show_html);
+                    // 将发送者信息存储为逗号分割形式
+                    if (receiver_data[i][3] != "null") {
+                        if (phone_str == "")    phone_str = receiver_data[i][3];
+                        else                    phone_str += (";"+receiver_data[i][3]);
+                        phone_send_num++;
+                    }
+
+                    if (receiver_data[i][4] != "null") {
+                        if (mail_str == "") mail_str = receiver_data[i][4];
+                        else                mail_str += (";"+receiver_data[i][4]);
+                        mail_send_num++;
+                    }
+                    total_num++;
+                }
+                ReceiverList2(all_result_num, one_page_result_num, parseInt(now_page_num+1), receier_idtag);
+            }
+        });
+        // alert('ReceiverList end');
+    }
+
+
+    // 获取并填写发送人名单
+    /**
+     * @author  lwb
+     * @param colleges_param        // 学院id
+     *                              // [-1：所有学院]； [001：A学院]； [001;002：A学院和B学院]
+     * @param role_param            // 角色
+     *                              // [yjsy：研究生院]； [college：院秘书]； [subject：学科负责人]； [teacher：教师]；
+     *                              // [pass： 通过复试的推免生]； [pre-enroll：拟录取]
+     * @param show_idtag_param      // 需要展示的便签的id名
+     * @constructor
+     */
+    function GetReceiverList2(colleges_param, role_param, receier_idtag_param) {
+        // alert('GetReceiverList begin');
+        // 设置 全局变量
+        colleges = colleges_param;
+        role = role_param;
+        mail_send_num = 0, phone_send_num = 0, total_num = 0;
+
+        // 设置查询
+        if (role=='pass' || role=='pre-enroll') // 学生
+            info_address = stuinfo_address;
+        else                                    // 老师
+            info_address = teainfo_address;
+
+        // 进行查询，并显示
+        ReceiverList2(999, 9, 1, receier_idtag_param);
+        // alert('GetReceiverList end111');
+    }
+
+
+    /**
+     * @author  lwb
+     * @brief   返回短信模板（如何显示数据可以在此函数里改）
+     * @param show_idtag_param  需要显示的id标签名
+     * @constructor
+     */
+    function GetMsgTemplate2(show_idtag_param) {
+        // alert('GetMsgTemplate begin');
+        var show_html = "";
+        $.get("/info/send/getSendTemplate", function (result) {
+            result = JSON.parse(result);
+            var show_html = "<option value=''>无</option>";
+            for (var i in result) {     // 采用 select 标签显示
+                show_html += "<option value='"+result[i]['value_cn']+"'id='"+result[i]['value_cn']+"'>"+result[i]['value_cn']+"</option>";
+            }
+            document.getElementById(show_idtag_param).innerHTML = show_html;
+        });
+        // alert('GetMsgTemplate end');
+    }
+
+    /**
+     * @author  lwb
+     * @brief   选择 邮箱/短信，判断是否显示 标题输入框
+     * @param flag  1为邮箱
+     */
+    function show_title(flag) {
+        document.getElementById('notice_title').parentNode.style.display = "none";
+        if (flag == 1)
+            document.getElementById('notice_title').parentNode.style.display = "block";
+    }
+    /**
+     * @author  lwb
+     * @brief   发送短信
+     * @param method    ['mail':邮箱]；   ['phone':短信]
+     * @param data      格式为 array['title':XXXX; 'content':XXXXX]
+     *                  注：邮箱有title, 短信没有title
+     * @constructor
+     */
+    function SendMsg(method, data) {
+        // 获取发送内容
+        var title = data['title']==null ? "null":data['title'];
+        var content = data['content']==null ? "null":data['content'];
+        var send_success_num;
+
+        // 获取发送方式
+        var send_method = method;
+
+        // 进行发送
+        if (send_method == "mail") {
+            send_data = {
+                'receiver': mail_str,
+                'title' : title,
+                'content': content,
+            };
+            send_success_num = mail_send_num;
+        }
+        else {
+            send_data = {
+                'receiver': phone_str,
+                'content':content,
+            };
+            send_success_num = phone_send_num;
+        }
+
+        var send_url = send_method=="mail" ? mail_api:phone_api;
+
+        // 清空自定义发送的隐藏框
+        if (document.getElementById('customer_info'))
+            document.getElementById('customer_info').parentNode.removeChild(document.getElementById('customer_info').parentNode.lastChild);
+
+        $.ajax({
+            type:"POST",
+            url:send_url,
+            data:send_data,
+            success:function(result){
+                alert("发送成功："+(send_success_num)+"； 发送失败："+(total_num-send_success_num));
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+        });
+    }
+
+
+
+</script>
+
+<script type="text/javascript">
+    function change_notice_content2(obj) {
+        document.getElementById('notice_content').value = obj.options[obj.selectedIndex].value;
+    }
+    function sendMessage2() {
+        // var role=document.getElementById('role').value;
+        // var status=document.getElementById('status1').value;
+        // var college_id=document.getElementById('college_id').value;
+        // var casenum=status+role;
+        //alert(casenum);
+        GetMsgTemplate2('msg_template');
+        GetReceiverList2(-1,"college","msg_receiver");
+        // alert($receiver_data);
+        var mes_cont="已审核完成，可以公示拟授信名单";
+        document.getElementById("notice_content").innerHTML = mes_cont;
+
+    }
+    // alert('jinxingfasong');
+    // 进行发送
+    document.getElementById('sendNoticeMessage').onclick = function() {
+        console.log("phone:" + phone_str + "; mail:" + mail_str);
+
+        var test_data = new Array();
+        test_data['title'] = "【中国人民大学研招办】给院负责人的邮件";
+        test_data['content'] = document.getElementById('notice_content').value;
+        var send_method = document.getElementsByName("send_method");
+        send_method = send_method[0].checked ? "mail":"phone";
+        SendMsg(send_method, test_data);
+    }
+</script>
+
